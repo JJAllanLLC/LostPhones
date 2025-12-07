@@ -6,6 +6,10 @@ body {
   color: #333;
   line-height: 1.6;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
 }
 
 header {
@@ -194,6 +198,61 @@ section h2 {
   text-align: center;
 }
 
+/* PDF Promotion Sections */
+.pdf-promo {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem 2rem;
+  text-align: center;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.pdf-promo.top {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.pdf-promo.bottom {
+  margin-top: 2rem;
+  margin-bottom: 0;
+}
+
+.pdf-promo p {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  color: #333;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pdf-button {
+  display: inline-block;
+  background: #007bff;
+  color: white;
+  padding: 1.2rem 3rem;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.pdf-button:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.pdf-button:active {
+  transform: translateY(0);
+}
+
 /* Accordion Styles */
 .accordion {
   max-width: 900px;
@@ -285,6 +344,8 @@ section h2 {
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 120px;
+  height: 100%;
+  margin: 0;
 }
 
 /* Mobile Responsiveness */
@@ -347,6 +408,20 @@ html {
   .accordion .panel {
     padding: 1rem;
   }
+
+  .pdf-promo {
+    padding: 1.5rem 1.5rem;
+    margin: 1.5rem auto;
+  }
+
+  .pdf-promo p {
+    font-size: 1.1rem;
+  }
+
+  .pdf-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -388,6 +463,24 @@ html {
 
   .start-content {
     font-size: 1.1rem;
+  }
+
+  .pdf-promo {
+    padding: 1.25rem 1rem;
+    margin: 1.25rem auto;
+  }
+
+  .pdf-promo p {
+    font-size: 1rem;
+  }
+
+  .pdf-button {
+    padding: 0.9rem 1.8rem;
+    font-size: 1rem;
+    width: 90%;
+    max-width: 300px;
+    display: block;
+    margin: 0 auto;
   }
 }
 
@@ -550,4 +643,148 @@ html {
   .blog-content h3 {
     font-size: 1.1rem;
   }
+}
+
+/* Light gray background for everything below hero section */
+body {
+  background-color: #e2e8f0 !important;
+}
+
+body > *:not(.hero):not(header):not(.video-container) {
+  background-color: #e2e8f0 !important;
+}
+
+section:not(.hero) {
+  background-color: #e2e8f0 !important;
+}
+
+/* Footer Styles */
+footer {
+  background: #e9ecef;
+  padding: 3rem 2rem 1.5rem;
+  margin-top: auto;
+  border-top: 1px solid #dee2e6;
+}
+
+.footer-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.footer-column {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.footer-links {
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.footer-legal {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.footer-column a {
+  color: #495057;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.footer-column a:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.footer-separator {
+  color: #adb5bd;
+  margin: 0 0.25rem;
+}
+
+.footer-copyright {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid #dee2e6;
+  margin-top: 1.5rem;
+}
+
+.footer-copyright p {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Footer Mobile Responsiveness */
+@media (max-width: 768px) {
+  footer {
+    padding: 2rem 1.5rem 1rem;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .footer-links,
+  .footer-legal {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .footer-column {
+    flex-wrap: wrap;
+  }
+
+  .footer-copyright {
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  footer {
+    padding: 1.5rem 1rem 0.75rem;
+  }
+
+  .footer-column a {
+    font-size: 0.9rem;
+  }
+
+  .footer-copyright p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Footer Visibility Fix - Ensure footer stays at bottom */
+/* Make main content areas grow to fill space */
+section:not(.hero),
+article,
+.blog-post,
+.about-section {
+  flex: 1;
+}
+
+html, body { height: 100%; margin: 0; }
+
+body { display: flex; flex-direction: column; min-height: 100vh; }
+
+footer { margin-top: auto; background: #e9ecef !important; padding: 40px 20px !important; }
+
+.main-content { flex: 1; }
+
+footer {
+  position: relative !important;
+  z-index: 1000 !important;
+  background: #e9ecef !important;
 }

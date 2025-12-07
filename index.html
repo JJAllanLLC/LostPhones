@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LostPhones.com</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    html,body{height:100%;margin:0}body{display:flex;flex-direction:column;min-height:100vh}
+    footer{margin-top:auto;background:#e9ecef;padding:40px 20px}
+  </style>
 </head>
 <body>
 
@@ -21,6 +25,7 @@
     </nav>
   </header>
 
+  <div class="main-content">
   <!-- Hero Section -->
   <section id="home" class="hero">
     <video class="hero-video" autoplay loop muted playsinline>
@@ -43,6 +48,11 @@
   <!-- Guide Section -->
   <section id="guide" class="guide-section">
     <h2>Step-by-Step Recovery Guide</h2>
+    
+    <div class="pdf-promo top">
+      <p>Get a printable PDF with all 10 steps, direct links, safety warnings, and critical must-do actions not shown on the site — all designed to protect your data, your accounts, and your identity.</p>
+      <a href="#" class="pdf-button">Download the PDF Guide ($9)</a>
+    </div>
     
     <div class="accordion">
     
@@ -692,14 +702,46 @@
         </details>
     
     </div>
+    
+    <div class="pdf-promo bottom">
+      <p>Download the complete PDF guide, including unpublished critical steps and extra security checks.</p>
+      <a href="#" class="pdf-button">Download the PDF Guide ($9)</a>
+    </div>
   </section>
+ 
+<footer style="background:#e9ecef; padding:60px 20px; text-align:center; border-top:5px solid #007bff; margin-top:120px; font-family:Arial, sans-serif;">
 
-  <!-- Recovery Log Section -->
-  <section id="phone-recovery-log" class="recovery-section">
-    <h2>Phone Recovery Log</h2>
-    <p>List of recently recovered phones or success stories.</p>
-  </section>
+  <div style="max-width:1200px; margin:0 auto;">
 
+    <div style="margin-bottom:20px;">
+
+      <a href="index.html" style="margin:0 15px; color:#333; text-decoration:none;">Home</a>
+
+      <a href="#start" style="margin:0 15px; color:#333; text-decoration:none;">Start</a>
+
+      <a href="#guide" style="margin:0 15px; color:#333; text-decoration:none;">Guide</a>
+
+      <a href="blog1.html" style="margin:0 15px; color:#333; text-decoration:none;">Phone Recovery Log</a>
+
+      <a href="about.html" style="margin:0 15px; color:#333; text-decoration:none;">About</a>
+
+    </div>
+
+    <div style="margin-bottom:20px;">
+
+      <a href="privacy.html" style="margin:0 15px; color:#333; text-decoration:none;">Privacy Policy</a>
+
+      <a href="terms.html" style="margin:0 15px; color:#333; text-decoration:none;">Terms of Service</a>
+
+      <a href="contact.html" style="margin:0 15px; color:#333; text-decoration:none;">Contact</a>
+
+    </div>
+
+    <div style="color:#555; font-size:0.9rem; margin-top:30px;">© 2025 LostPhones.com</div>
+
+  </div>
+
+</footer>
 
 </body>
 </html>
