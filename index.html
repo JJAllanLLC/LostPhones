@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LostPhones.com</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://js.stripe.com/v3/"></script>
+  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+  <script src="checkout.js" defer></script>
   <style>
     html,body{height:100%;margin:0}body{display:flex;flex-direction:column;min-height:100vh}
     footer{margin-top:auto;background:#e9ecef;padding:40px 20px}
@@ -51,7 +54,11 @@
     
     <div class="pdf-promo top">
       <p>Get a printable PDF with all 10 steps, direct links, safety warnings, and critical must-do actions not shown on the site — all designed to protect your data, your accounts, and your identity.</p>
-      <a href="#" class="pdf-button">Download the PDF Guide ($9)</a>
+      <stripe-buy-button
+        buy-button-id="buy_btn_1SbuGh6SN9rpiA04nutIOxl3"
+        publishable-key="pk_test_51SbsOq6SN9rpiA04VH13F4vsQpZSWpa3latHAsBstp38OfaZcXnQcxKCPWFTyOCHslYBvewAWp5az1S5vXSMcRXK00RzOb4g55"
+      >
+      </stripe-buy-button>
     </div>
     
     <div class="accordion">
@@ -705,7 +712,11 @@
     
     <div class="pdf-promo bottom">
       <p>Download the complete PDF guide, including unpublished critical steps and extra security checks.</p>
-      <a href="#" class="pdf-button">Download the PDF Guide ($9)</a>
+      <stripe-buy-button
+        buy-button-id="buy_btn_1SbuGh6SN9rpiA04nutIOxl3"
+        publishable-key="pk_test_51SbsOq6SN9rpiA04VH13F4vsQpZSWpa3latHAsBstp38OfaZcXnQcxKCPWFTyOCHslYBvewAWp5az1S5vXSMcRXK00RzOb4g55"
+      >
+      </stripe-buy-button>
     </div>
   </section>
  

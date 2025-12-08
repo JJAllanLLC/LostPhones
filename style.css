@@ -253,6 +253,41 @@ section h2 {
   transform: translateY(0);
 }
 
+/* Stripe Buy Button Styling */
+.pdf-promo stripe-buy-button {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+/* Target the button that Stripe renders */
+.pdf-promo stripe-buy-button button,
+.pdf-promo stripe-buy-button [role="button"] {
+  background: #007bff !important;
+  color: white !important;
+  padding: 1.2rem 3rem !important;
+  font-size: 1.3rem !important;
+  font-weight: bold !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
+  transition: background 0.3s ease, transform 0.2s ease !important;
+  border: none !important;
+  cursor: pointer !important;
+  width: auto !important;
+  min-width: auto !important;
+}
+
+.pdf-promo stripe-buy-button button:hover,
+.pdf-promo stripe-buy-button [role="button"]:hover {
+  background: #0056b3 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.pdf-promo stripe-buy-button button:active,
+.pdf-promo stripe-buy-button [role="button"]:active {
+  transform: translateY(0) !important;
+}
+
 /* Accordion Styles */
 .accordion {
   max-width: 900px;
