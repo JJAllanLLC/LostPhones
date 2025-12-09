@@ -1,27 +1,25 @@
-# Cover
-
-**Lost Phone Emergency Checklist + Permanent Protection Guide**
-
-*The exact steps + bonus moves that saved my identity*
-
-**$9 one-time · Instant download · No subscription**
-
 ---
+header-includes: |
+
+  \usepackage{graphicx}
+---
+
+![cover](assets/cover.jpg){width=100% height=100% page-break-after=always}
 
 # Quick 1-Page Printable Checklist
 
 **Lost Phone Emergency Checklist**
 
-- [ ] **Step 1:** Check Find My (iPhone: icloud.com/find | Android: google.com/android/find)
-- [ ] **Step 2:** Play Sound to locate phone nearby
-- [ ] **Step 3:** Activate Lost Mode (iPhone) or Secure Device (Android)
-- [ ] **Step 4:** Erase device remotely (only if stolen/moving location)
-- [ ] **Step 5:** Call carrier to suspend service and block IMEI
-- [ ] **Step 6:** If phone not found, review recent locations and check again in 5-10 minutes
-- [ ] **Step 7:** Change Apple ID/Google password, email password, banking passwords
-- [ ] **Step 8:** Call carrier to add Port Freeze/Number Lock and account PIN
-- [ ] **Step 9:** Watch for scams — never pay tracking sites, never trust fake recovery texts
-- [ ] **Step 10:** Review account security, enable 2FA everywhere, bookmark this guide
+- ☐ **Step 1:** Check Find My (iPhone: icloud.com/find | Android: google.com/android/find)
+- ☐ **Step 2:** Play Sound to locate phone nearby
+- ☐ **Step 3:** Activate Lost Mode (iPhone) or Secure Device (Android)
+- ☐ **Step 4:** Erase device remotely (only if stolen/moving location)
+- ☐ **Step 5:** Call carrier to suspend service and block IMEI
+- ☐ **Step 6:** If phone not found, review recent locations and check again in 5-10 minutes
+- ☐ **Step 7:** Change Apple ID/Google password, email password, banking passwords
+- ☐ **Step 8:** Call carrier to add Port Freeze/Number Lock and account PIN
+- ☐ **Step 9:** Watch for scams — never pay tracking sites, never trust fake recovery texts
+- ☐ **Step 10:** Review account security, enable 2FA everywhere, bookmark this guide
 
 ---
 
@@ -483,15 +481,14 @@ Your immediate crisis is handled. Now make sure it never turns into a nightmare 
 
 **For iPhone Users (Apple Devices) - Best tools for preventing future loss and speeding up recovery on iPhones.**
 
-- **AirTag** — The most reliable tracker for iPhones. If your phone goes missing again, you'll see its last known location instantly through Find My. [AFFILIATE LINK]
-- **AirTag-Compatible Phone Case** — A protective case with a built-in AirTag slot so you never forget the tracker at home. [AFFILIATE LINK]
-- **AirTag Keychain / Luggage Holder** — Great for wallets, bags, backpacks, and anything else you want to keep tabs on. [AFFILIATE LINK]
+- **AirTag** — The most reliable tracker for iPhones. If your phone goes missing again, you'll see its last known location instantly through Find My. [Buy Apple AirTag here](https://amzn.to/4rL89t6)
+- **AirTag-Compatible Phone Case** — A protective case with a built-in AirTag slot so you never forget the tracker at home. [Buy AirTag-Compatible iPhone Case here](https://amzn.to/4oIuSTY)
+- **AirTag Keychain / Luggage Holder** — Great for wallets, bags, backpacks, and anything else you want to keep tabs on. [Buy AirTag Keychain Holder here](https://amzn.to/44fTts4)
 
 **For Android Users - Reliable trackers and accessories that integrate smoothly with Android devices.**
 
-- **Samsung SmartTag 2** — Works seamlessly with Samsung Galaxy devices. Lets you locate your phone or items through SmartThings Find. [AFFILIATE LINK]
-- **Tile Tracker** — A cross-platform tracker compatible with most Android phones. Perfect for keys, bags, or keeping your phone findable through the Tile app. [AFFILIATE LINK]
-- **Combo Phone Case + Tile Holder** — For Android users who want a case that always keeps their tracker attached. [AFFILIATE LINK]
+- **Samsung SmartTag 2** — Works seamlessly with Samsung Galaxy devices. Lets you locate your phone or items through SmartThings Find. [Buy Samsung SmartTag 2 here](https://amzn.to/44hLxqh)
+- **Tile Tracker** — A cross-platform tracker compatible with most Android phones. Perfect for keys, bags, or keeping your phone findable through the Tile app. [Buy Tile Pro Tracker here](https://amzn.to/44cioN9)
 
 - These small upgrades make your next lost-phone situation far easier to handle — and in many cases, prevent it entirely.
 
@@ -589,21 +586,19 @@ After losing my phone and going through the recovery process, I built a preventi
 **1. Apple AirTag (4-pack)**
 - Attach one to your keys, one in your wallet, one in your bag, and keep one as a backup.
 - The Find My network has over a billion devices — your AirTag will update its location constantly.
-- [AFFILIATE LINK - Apple AirTag 4-Pack]
+- [Buy Apple AirTag 4-Pack here](https://amzn.to/4oL5Vrh)
 
 **2. AirTag-Compatible Phone Case**
 - I use a case with a built-in AirTag slot. This ensures the tracker is always with my phone, not forgotten at home.
 - Look for cases that are MagSafe compatible and have a secure AirTag holder.
-- [AFFILIATE LINK - AirTag-Compatible iPhone Case]
+- [Buy AirTag-Compatible iPhone Case here](https://amzn.to/4oIuSTY)
 
 **3. AirTag Keychain Holder**
 - For keys, wallets, and bags. The keychain design makes it easy to attach and hard to lose.
-- [AFFILIATE LINK - AirTag Keychain Holder]
+- [Buy AirTag Keychain Holder here](https://amzn.to/44fTts4)
 
 **4. Screen Protector + Strong Case**
 - A good case and screen protector won't prevent loss, but they'll protect your phone if it falls — and a protected phone is less likely to break and become unusable.
-- [AFFILIATE LINK - iPhone Screen Protector]
-- [AFFILIATE LINK - Protective iPhone Case]
 
 **5. Find My iPhone Settings Checklist:**
 - ✅ Find My iPhone: ON
@@ -618,22 +613,19 @@ After losing my phone and going through the recovery process, I built a preventi
 **1. Samsung SmartTag 2 (Samsung users) or Tile Pro (all Android)**
 - Samsung SmartTag 2 integrates seamlessly with Galaxy devices through SmartThings Find.
 - Tile Pro works with any Android phone and has a loud ring and long battery life.
-- [AFFILIATE LINK - Samsung SmartTag 2]
-- [AFFILIATE LINK - Tile Pro Tracker]
+- [Buy Samsung SmartTag 2 here](https://amzn.to/44hLxqh)
+- [Buy Tile Pro Tracker here](https://amzn.to/44cioN9)
 
 **2. Phone Case with Tracker Slot**
 - Similar to iPhone cases, Android cases with built-in tracker slots ensure your tracker is always attached.
-- [AFFILIATE LINK - Android Case with Tracker Slot]
 
 **3. Tile Keychain or Wallet Card**
 - For keys and wallets. The Tile Wallet Card is thin enough to fit in any wallet without bulk.
-- [AFFILIATE LINK - Tile Keychain]
-- [AFFILIATE LINK - Tile Wallet Card]
+- [Buy Tile Keychain here](https://amzn.to/4ptE7c2)
+- [Buy Tile Wallet Card here](https://amzn.to/4ptE7c2)
 
 **4. Screen Protector + Strong Case**
 - Protection against drops means your phone stays functional longer.
-- [AFFILIATE LINK - Android Screen Protector]
-- [AFFILIATE LINK - Protective Android Case]
 
 **5. Find My Device Settings Checklist:**
 - ✅ Find My Device: ON
@@ -660,70 +652,6 @@ After losing my phone and going through the recovery process, I built a preventi
 - Android: Google backup (automatic)
 - Regular backups mean you can erase a lost phone without losing your data.
 
-**5. Insurance (see comparison table below)**
-- Phone insurance gives you peace of mind and a replacement device if recovery isn't possible.
-
----
-
-## Insurance comparison table (AppleCare vs SquareTrade vs AKKO — placeholders for affiliate links)
-
-Choosing the right phone insurance can save you thousands if your phone is lost, stolen, or damaged. Here's a detailed comparison of the top options:
-
-| Feature | AppleCare+ (iPhone only) | SquareTrade | AKKO | Carrier Insurance |
-|---------|-------------------------|-------------|------|-------------------|
-| **Monthly Cost** | $9.99-$13.99/month | $8.99-$11.99/month | $7.99-$12.99/month | $11-$17/month |
-| **Deductible (Lost/Stolen)** | $149-$249 | $99-$149 | $99-$199 | $100-$250 |
-| **Deductible (Damage)** | $29-$99 | $25-$99 | $25-$99 | $29-$199 |
-| **Coverage Type** | Loss, theft, damage | Loss, theft, damage | Loss, theft, damage | Loss, theft, damage |
-| **Replacement Speed** | 1-3 business days | 2-5 business days | 1-3 business days | 2-7 business days |
-| **Device Support** | iPhone only | iPhone, Android, tablets | iPhone, Android, tablets | iPhone, Android |
-| **Screen Repair** | Apple Store or authorized repair | Mail-in or local repair | Mail-in or local repair | Carrier store or mail-in |
-| **Unlimited Claims** | Yes | Yes | Yes | Varies by carrier |
-| **Battery Replacement** | Covered if <80% capacity | Covered if <80% capacity | Covered if <80% capacity | Varies |
-| **Water Damage** | Covered | Covered | Covered | Covered |
-| **Best For** | iPhone users who want Apple service | Anyone wanting lower cost | Budget-conscious users | People who prefer carrier support |
-
-**Detailed Breakdown:**
-
-**AppleCare+**
-- **Pros:** Official Apple support, fastest replacement, Apple Store repairs, covers AirPods and Apple Watch
-- **Cons:** iPhone only, higher monthly cost, higher deductibles
-- **Best if:** You have an iPhone and want the fastest, most reliable service
-- [AFFILIATE LINK - AppleCare+]
-
-**SquareTrade**
-- **Pros:** Works with any device, lower deductibles, good customer service, covers accessories
-- **Cons:** Mail-in repairs can take longer, not as fast as AppleCare
-- **Best if:** You want comprehensive coverage at a lower price point
-- [AFFILIATE LINK - SquareTrade Phone Insurance]
-
-**AKKO**
-- **Pros:** Lowest monthly cost, covers multiple devices, good for families
-- **Cons:** Less established brand, customer service varies
-- **Best if:** You're budget-conscious and want basic protection
-- [AFFILIATE LINK - AKKO Phone Insurance]
-
-**Carrier Insurance (AT&T, Verizon, T-Mobile)**
-- **Pros:** Convenient billing, carrier support, sometimes includes other benefits
-- **Cons:** Most expensive monthly, higher deductibles, slower replacement
-- **Best if:** You prefer dealing directly with your carrier
-
-**My Recommendation:**
-
-For iPhone users: **AppleCare+** — The peace of mind and fast replacement are worth the extra cost.
-
-For Android users: **SquareTrade** — Best balance of coverage, cost, and service quality.
-
-For budget-conscious users: **AKKO** — Lower monthly cost with solid coverage.
-
-**Important Notes:**
-
-- Most insurance requires you to report the loss within 24-48 hours
-- You'll need a police report for stolen devices
-- Insurance doesn't cover data recovery — that's why backups are essential
-- Read the fine print on deductibles — they vary by device model and claim type
-
----
 
 ## Final encouragement page
 
@@ -754,6 +682,29 @@ You've taken control. That's the most important step of all.
 
 ---
 
+\newpage
+
+<div style="text-align: center; font-size: 0.9em; color: #666; margin: 40px;">
+
+**Important Disclaimer**
+
+This guide is provided for informational purposes only and is not professional legal, financial, or technical advice. 
+
+The steps described are general recommendations based on publicly available best practices from Apple, Google, carriers, and security experts as of December 2025. 
+
+Following these steps may result in permanent data loss, service changes, or other irreversible actions. Always consider your specific situation and consult official support from your device manufacturer, carrier, or law enforcement when needed.
+
+LostPhones.com and its creators are not responsible for any loss of data, device functionality, or other outcomes that may occur from following this guide.
+
+By using this guide, you agree that you are doing so at your own risk.
+
+Thank you for trusting us during a stressful time. We wish you a swift and calm resolution.
+
+</div>
+
+\newpage
+
+---
+
 *Lost Phone Emergency Checklist + Permanent Protection Guide*  
-*© 2025 LostPhones.com*  
-*$9 one-time · Instant download · No subscription*
+*© 2025 LostPhones.com*

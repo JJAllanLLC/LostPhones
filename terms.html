@@ -3,14 +3,45 @@
 <html lang="en">
 
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KQTTP3KMKN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KQTTP3KMKN');
+  </script>
 
   <meta charset="UTF-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Terms of Service – LostPhones.com</title>
+  <title>Terms of Service | LostPhones.com</title>
+  <meta name="description" content="Terms of Service for LostPhones.com. Read our terms of use for the lost phone recovery guide and premium PDF resources.">
+  
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Terms of Service | LostPhones.com">
+  <meta property="og:description" content="Terms of Service for LostPhones.com. Read our terms of use for the lost phone recovery guide and premium PDF resources.">
+  <meta property="og:image" content="https://lostphones.com/assets/cover.jpg">
+  <meta property="og:url" content="https://lostphones.com/terms.html">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Terms of Service | LostPhones.com">
+  <meta name="twitter:description" content="Terms of Service for LostPhones.com. Read our terms of use for the lost phone recovery guide and premium PDF resources.">
+  <meta name="twitter:image" content="https://lostphones.com/assets/cover.jpg">
 
   <link rel="stylesheet" href="style.css">
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
+  <link rel="shortcut icon" href="/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#2c7be5">
+  <meta name="msapplication-TileColor" content="#2c7be5">
+  <meta name="theme-color" content="#ffffff">
 
 </head>
 
@@ -18,7 +49,7 @@
 
 
 
-<main style="max-width:800px; margin:60px auto; padding:20px; line-height:1.7; font-family:Arial,sans-serif;">
+<main style="max-width:800px; margin:60px auto; padding:20px; padding-top:120px; line-height:1.7; font-family:Arial,sans-serif;">
 
   <h1>Terms of Service</h1>
 
@@ -130,7 +161,72 @@
 
 </main>
 
+  <!-- Exit-Intent Lightbox -->
+  <div id="exitIntentOverlay" class="exit-intent-overlay">
+    <div class="exit-intent-modal">
+      <h2>One last thing before you go…</h2>
+      <p>Don't leave empty-handed. Get the complete Premium PDF guide with all 10 steps, direct links, safety warnings, and critical must-do actions not shown on the site.</p>
+      <div class="price">$8.95</div>
+      <div class="exit-intent-buttons">
+        <a href="https://buy.stripe.com/test_eVqfZabEN0Hh8V17Ufgfu00" class="exit-intent-btn-primary" id="exitIntentYes" target="_self">🔒 Yes, Secure My Data Now ($8.95 Instant PDF)</a>
+        <button class="exit-intent-btn-secondary" id="exitIntentNo">No thanks, I'll risk it</button>
+      </div>
+    </div>
+  </div>
 
+  <script>
+    (function() {
+      'use strict';
+      if (sessionStorage.getItem('exitIntentShown')) return;
+      
+      var overlay = document.getElementById('exitIntentOverlay');
+      var btnNo = document.getElementById('exitIntentNo');
+      var hasShown = false;
+      var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      function showLightbox() {
+        if (hasShown) return;
+        hasShown = true;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        sessionStorage.setItem('exitIntentShown', 'true');
+      }
+      
+      function hideLightbox() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+      
+      btnNo.addEventListener('click', hideLightbox);
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) hideLightbox();
+      });
+      
+      if (isMobile) {
+        var initialHistoryLength = window.history.length;
+        var pushedState = false;
+        
+        window.addEventListener('popstate', function() {
+          if (!hasShown && !pushedState) {
+            showLightbox();
+            history.pushState(null, null, location.href);
+            pushedState = true;
+          }
+        });
+        
+        if (history.length === 1) {
+          history.pushState(null, null, location.href);
+          pushedState = true;
+        }
+      } else {
+        document.addEventListener('mouseout', function(e) {
+          if (!e.toElement && !e.relatedTarget && e.clientY < 10 && !hasShown) {
+            showLightbox();
+          }
+        });
+      }
+    })();
+  </script>
 
 </body>
 

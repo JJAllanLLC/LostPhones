@@ -1,9 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KQTTP3KMKN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KQTTP3KMKN');
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LostPhones.com</title>
+  <title>Lost Your Phone? Do This Immediately – Free Checklist 2025 | LostPhones.com</title>
+  <meta name="description" content="Lost your iPhone or Android? Calm, step-by-step checklist to locate, lock, and protect your data fast. Free guide + premium PDF available.">
+  
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Lost Your Phone? Do This Immediately – Free Checklist 2025">
+  <meta property="og:description" content="Free checklist + premium guide to find, lock, and wipe your lost phone before it's too late. Instant peace of mind.">
+  <meta property="og:image" content="https://lostphones.com/assets/cover.jpg">
+  <meta property="og:url" content="https://lostphones.com">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Lost Your Phone? Do This Immediately – Free Checklist 2025">
+  <meta name="twitter:description" content="Free checklist + premium guide to find, lock, and wipe your lost phone before it's too late. Instant peace of mind.">
+  <meta name="twitter:image" content="https://lostphones.com/assets/cover.jpg">
   <link rel="stylesheet" href="style.css">
   <script src="https://js.stripe.com/v3/"></script>
   <script async src="https://js.stripe.com/v3/buy-button.js"></script>
@@ -12,6 +34,15 @@
     html,body{height:100%;margin:0}body{display:flex;flex-direction:column;min-height:100vh}
     footer{margin-top:auto;background:#e9ecef;padding:40px 20px}
   </style>
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
+  <link rel="shortcut icon" href="/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#2c7be5">
+  <meta name="msapplication-TileColor" content="#2c7be5">
+  <meta name="theme-color" content="#ffffff">
 </head>
 <body>
 
@@ -22,7 +53,7 @@
         <li><a href="#home">Home</a></li>
         <li><a href="#start">Start</a></li>
         <li><a href="#guide">Guide</a></li>
-        <li><a href="blog1.html">Recovery Log</a></li>
+        <li><a href="blog/index.html">Blog</a></li>
         <li><a href="about.html">About</a></li>
       </ul>
     </nav>
@@ -732,7 +763,7 @@
 
       <a href="#guide" style="margin:0 15px; color:#333; text-decoration:none;">Guide</a>
 
-      <a href="blog1.html" style="margin:0 15px; color:#333; text-decoration:none;">Phone Recovery Log</a>
+      <a href="blog/index.html" style="margin:0 15px; color:#333; text-decoration:none;">Blog</a>
 
       <a href="about.html" style="margin:0 15px; color:#333; text-decoration:none;">About</a>
 
@@ -753,6 +784,123 @@
   </div>
 
 </footer>
+
+  <!-- Exit-Intent Lightbox -->
+  <div id="exitIntentOverlay" class="exit-intent-overlay">
+    <div class="exit-intent-modal">
+      <h2>One last thing before you go…</h2>
+      <p>Don't leave empty-handed. Get the complete Premium PDF guide with all 10 steps, direct links, safety warnings, and critical must-do actions not shown on the site.</p>
+      <div class="price">$8.95</div>
+      <div class="exit-intent-buttons">
+        <a href="https://buy.stripe.com/test_eVqfZabEN0Hh8V17Ufgfu00" class="exit-intent-btn-primary" id="exitIntentYes" target="_self">🔒 Yes, Secure My Data Now ($8.95 Instant PDF)</a>
+        <button class="exit-intent-btn-secondary" id="exitIntentNo">No thanks, I'll risk it</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+      if (sessionStorage.getItem('exitIntentShown')) return;
+      
+      var overlay = document.getElementById('exitIntentOverlay');
+      var btnNo = document.getElementById('exitIntentNo');
+      var hasShown = false;
+      var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      function showLightbox() {
+        if (hasShown) return;
+        hasShown = true;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        sessionStorage.setItem('exitIntentShown', 'true');
+      }
+      
+      function hideLightbox() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+      
+      btnNo.addEventListener('click', hideLightbox);
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) hideLightbox();
+      });
+      
+      if (isMobile) {
+        var initialHistoryLength = window.history.length;
+        var pushedState = false;
+        
+        window.addEventListener('popstate', function() {
+          if (!hasShown && !pushedState) {
+            showLightbox();
+            history.pushState(null, null, location.href);
+            pushedState = true;
+          }
+        });
+        
+        if (history.length === 1) {
+          history.pushState(null, null, location.href);
+          pushedState = true;
+        }
+      } else {
+        document.addEventListener('mouseout', function(e) {
+          if (!e.toElement && !e.relatedTarget && e.clientY < 10 && !hasShown) {
+            showLightbox();
+          }
+        });
+      }
+    })();
+  </script>
+
+  <!-- FAQ Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What to do if you lost your iPhone?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If you lost your iPhone, immediately go to icloud.com/find or open the Find My app on another Apple device. Sign in with your Apple ID, select your missing iPhone, and check its location. Activate Lost Mode to lock the device and display your contact information. Change your Apple ID password immediately to sign out the device from iCloud."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How to find a lost Android phone?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "To find a lost Android phone, go to google.com/android/find or open the Find My Device app on another phone. Sign in with your Google account, select your missing device, and view its location. Use Secure Device to lock it remotely and add a lock screen message. Change your Google account password immediately to protect your data."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I track my phone if it's turned off?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, both iPhone and Android show the last known location even if the phone is turned off. When the device reconnects to the internet or regains power, Find My (iPhone) or Find My Device (Android) will update with the new location automatically."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Should I erase my lost phone remotely?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Only erase your phone remotely if you believe it was stolen and won't be recovered, or if it's showing suspicious movement. Once erased, you cannot track the device anymore. Use this as a last resort after activating Lost Mode or Secure Device."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I protect my accounts after losing my phone?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Immediately change your Apple ID or Google account password, your email password, and banking passwords. Enable two-factor authentication on all important accounts. Contact your carrier to add a port freeze to prevent SIM swapping attacks."
+        }
+      }
+    ]
+  }
+  </script>
 
 </body>
 </html>
