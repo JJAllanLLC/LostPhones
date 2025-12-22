@@ -237,18 +237,20 @@
         if (e.target === overlay) hideLightbox();
       });
       
-      document.addEventListener('mouseout', function(e) {
-        if (isMobile()) return; // disable mouseout on mobile
-        if (e.clientY < 10 && !localStorage.getItem('exitShown')) {
-          showLightbox();
-        }
-      });
-
-      // Optional: add back-button detection for mobile (if you want exit intent there)
-      if (isMobile()) {
+      if (!isMobile()) {
+        // Desktop: mouse leave trigger
+        document.addEventListener('mouseout', function(e) {
+          if (e.clientY < 10 && !localStorage.getItem('exitShown')) {
+            document.getElementById('exitIntentOverlay').style.display = 'flex';
+            localStorage.setItem('exitShown', 'true');
+          }
+        });
+      } else {
+        // Mobile: pagehide for back/close
         window.onpagehide = function() {
           if (!localStorage.getItem('exitShown')) {
-            showLightbox();
+            document.getElementById('exitIntentOverlay').style.display = 'flex';
+            localStorage.setItem('exitShown', 'true');
           }
         };
       }
