@@ -89,9 +89,9 @@
 
       <a href="index.html" style="margin:0 15px; color:#333; text-decoration:none;">Home</a>
 
-      <a href="#start" style="margin:0 15px; color:#333; text-decoration:none;">Start</a>
+      <a href="#start" style="margin:0 15px; color:#333; text-decoration:none;" onclick="localStorage.setItem('exitShown', 'true');">Start</a>
 
-      <a href="#guide" style="margin:0 15px; color:#333; text-decoration:none;">Guide</a>
+      <a href="#guide" style="margin:0 15px; color:#333; text-decoration:none;" onclick="localStorage.setItem('exitShown', 'true');">Guide</a>
 
       <a href="blog/index.html" style="margin:0 15px; color:#333; text-decoration:none;">Blog</a>
 
@@ -128,21 +128,24 @@
   </div>
 
   <script>
+    function isMobile() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    }
+
     (function() {
       'use strict';
-      if (sessionStorage.getItem('exitIntentShown')) return;
+      if (localStorage.getItem('exitShown')) return;
       
       var overlay = document.getElementById('exitIntentOverlay');
       var btnNo = document.getElementById('exitIntentNo');
       var hasShown = false;
-      var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
       function showLightbox() {
         if (hasShown) return;
         hasShown = true;
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
-        sessionStorage.setItem('exitIntentShown', 'true');
+        localStorage.setItem('exitShown', 'true');
       }
       
       function hideLightbox() {
@@ -155,28 +158,20 @@
         if (e.target === overlay) hideLightbox();
       });
       
-      if (isMobile) {
-        var initialHistoryLength = window.history.length;
-        var pushedState = false;
-        
-        window.addEventListener('popstate', function() {
-          if (!hasShown && !pushedState) {
-            showLightbox();
-            history.pushState(null, null, location.href);
-            pushedState = true;
-          }
-        });
-        
-        if (history.length === 1) {
-          history.pushState(null, null, location.href);
-          pushedState = true;
+      document.addEventListener('mouseout', function(e) {
+        if (isMobile()) return; // disable mouseout on mobile
+        if (e.clientY < 10 && !localStorage.getItem('exitShown')) {
+          showLightbox();
         }
-      } else {
-        document.addEventListener('mouseout', function(e) {
-          if (!e.toElement && !e.relatedTarget && e.clientY < 10 && !hasShown) {
+      });
+
+      // Optional: add back-button detection for mobile (if you want exit intent there)
+      if (isMobile()) {
+        window.onpagehide = function() {
+          if (!localStorage.getItem('exitShown')) {
             showLightbox();
           }
-        });
+        };
       }
     })();
   </script>
