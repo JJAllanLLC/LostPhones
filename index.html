@@ -70,10 +70,24 @@
   <div class="main-content">
   <!-- Hero Section -->
   <section id="home" class="hero">
-    <video class="hero-video" autoplay loop muted playsinline>
+    <video class="hero-video" autoplay muted playsinline>
       <source src="main_background.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
+    <script>
+      const video = document.querySelector('video'); // adjust selector if needed
+      let playCount = 0;
+
+      video.addEventListener('ended', function() {
+        playCount++;
+        if (playCount < 3) {
+          video.play();
+        } else {
+          video.pause();
+          // optional: fade out or hide if desired
+        }
+      });
+    </script>
     <div class="hero-content">
       <h2 class="hero-title">Lost your phone? The hard part's over — you found us.</h2>
       <a href="#start" class="start-button" onclick="localStorage.setItem('exitShown', 'true');">Start Here</a>
