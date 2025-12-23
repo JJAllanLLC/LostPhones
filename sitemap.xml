@@ -2,38 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://lostphones.com/</loc>
-    <lastmod>2025-01-01</lastmod>
+    <lastmod>2025-12-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://lostphones.com/about.html</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://lostphones.com/blog/index.html</loc>
+    <lastmod>2025-12-22</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lostphones.com/blog1.html</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://lostphones.com/blog/lost-phone-at-concert-2026.html</loc>
+    <lastmod>2025-12-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://lostphones.com/privacy.html</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://lostphones.com/terms.html</loc>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://lostphones.com/success.html</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://lostphones.com/blog/lost-phone-in-hotel-room-2026.html</loc>
+    <lastmod>2025-12-22</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.7</priority>
   </url>
 </urlset>
