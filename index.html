@@ -41,6 +41,84 @@
   <style>
     html,body{height:100%;margin:0}body{display:flex;flex-direction:column;min-height:100vh}
     footer{margin-top:auto;background:#e9ecef;padding:40px 20px}
+    
+    /* Testimonial Carousel Styles */
+    .testimonial-carousel {
+      position: relative;
+      min-height: 120px;
+      margin: 2rem 0;
+      padding: 1.5rem 1rem;
+    }
+    
+    .testimonial-item {
+      position: absolute;
+      top: 1.5rem;
+      left: 1rem;
+      right: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 2s ease-in-out;
+      text-align: center;
+    }
+    
+    .testimonial-item.active {
+      opacity: 1;
+      pointer-events: auto;
+      position: relative;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+    
+    .testimonial-quote {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #555;
+      font-style: italic;
+      margin-bottom: 0.75rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .testimonial-attribution {
+      font-size: 0.9rem;
+      color: #666;
+      font-weight: bold;
+      font-style: normal;
+    }
+    
+    @media (max-width: 768px) {
+      .testimonial-carousel {
+        min-height: 90px;
+        margin: 1.5rem 0;
+        padding: 1.25rem 0.75rem;
+      }
+      
+      .testimonial-quote {
+        font-size: 1rem;
+      }
+      
+      .testimonial-attribution {
+        font-size: 0.85rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .testimonial-carousel {
+        min-height: 80px;
+        margin: 1.25rem 0;
+        padding: 1rem 0.5rem;
+      }
+      
+      .testimonial-quote {
+        font-size: 0.95rem;
+      }
+      
+      .testimonial-attribution {
+        font-size: 0.8rem;
+      }
+    }
   </style>
   <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
@@ -113,6 +191,50 @@
     
     <div class="pdf-promo top">
       <p>Get a printable PDF with all 10 steps, direct links, safety warnings, and critical must-do actions not shown on the site — all designed to protect your data, your accounts, and your identity.</p>
+      
+      <div class="testimonial-carousel" id="testimonialCarouselTop">
+        <div class="testimonial-item active">
+          <p class="testimonial-quote">"The extra templates were a lifesaver when my phone vanished on vacation. Total peace of mind."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Lost my iPhone at a concert. This kit's advanced steps got me back in control fast."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Forgot my phone in a hotel room and freaked out. The printable checklist calmed me right down and kept everything safe."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Simple and clear. Helped secure my data before anything bad happened."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"The critical warnings not on the free site saved me. So glad I grabbed the full kit."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Turned a stressful airport loss into quick recovery. Thank you for the detailed guide."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Picked this up after the free checklist. Best decision for total protection."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Phone stolen on transit. This PDF had the must-do actions I needed right away."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Calm and thorough. Made a scary situation manageable."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Wish I'd had this sooner when my phone went missing at a festival. Complete game-changer."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+      </div>
+      
       <p><a href="https://buy.stripe.com/aFa9ANe54avO5q5bMO1sQ03" class="btn-primary" onclick="gtag('event', 'purchase_intent', {'value': 8.95, 'currency': 'USD', 'button_location': 'homepage'});">
   Get the Full Recovery Kit – Instant PDF
 </a></p>
@@ -775,6 +897,50 @@
     
     <div class="pdf-promo bottom">
       <p>Download the complete PDF guide, including unpublished critical steps and extra security checks.</p>
+      
+      <div class="testimonial-carousel" id="testimonialCarouselBottom">
+        <div class="testimonial-item active">
+          <p class="testimonial-quote">"The extra templates were a lifesaver when my phone vanished on vacation. Total peace of mind."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Lost my iPhone at a concert. This kit's advanced steps got me back in control fast."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Forgot my phone in a hotel room and freaked out. The printable checklist calmed me right down and kept everything safe."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Simple and clear. Helped secure my data before anything bad happened."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"The critical warnings not on the free site saved me. So glad I grabbed the full kit."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Turned a stressful airport loss into quick recovery. Thank you for the detailed guide."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Picked this up after the free checklist. Best decision for total protection."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Phone stolen on transit. This PDF had the must-do actions I needed right away."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Calm and thorough. Made a scary situation manageable."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+        <div class="testimonial-item">
+          <p class="testimonial-quote">"Wish I'd had this sooner when my phone went missing at a festival. Complete game-changer."</p>
+          <p class="testimonial-attribution">— A grateful user</p>
+        </div>
+      </div>
+      
       <p><a href="https://buy.stripe.com/aFa9ANe54avO5q5bMO1sQ03" class="btn-primary" onclick="gtag('event', 'purchase_intent', {'value': 8.95, 'currency': 'USD', 'button_location': 'homepage'});">
   Get the Full Recovery Kit – Instant PDF
 </a></p>
@@ -881,6 +1047,39 @@
           }
         };
       }
+    })();
+  </script>
+
+  <!-- Testimonial Carousel Script -->
+  <script>
+    (function() {
+      function initCarousel(carouselId) {
+        const carousel = document.getElementById(carouselId);
+        if (!carousel) return;
+        
+        const items = carousel.querySelectorAll('.testimonial-item');
+        if (items.length === 0) return;
+        
+        let currentIndex = 0;
+        
+        function rotate() {
+          // Remove active class from current item
+          items[currentIndex].classList.remove('active');
+          
+          // Move to next item
+          currentIndex = (currentIndex + 1) % items.length;
+          
+          // Add active class to new item
+          items[currentIndex].classList.add('active');
+        }
+        
+        // Start rotation every 8 seconds
+        setInterval(rotate, 8000);
+      }
+      
+      // Initialize both carousels
+      initCarousel('testimonialCarouselTop');
+      initCarousel('testimonialCarouselBottom');
     })();
   </script>
 
