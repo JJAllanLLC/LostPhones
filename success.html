@@ -88,5 +88,21 @@
   }
 </script>
 
+<script>
+  gtag('event', 'purchase', {
+    transaction_id: new Date().getTime().toString(), // unique ID (or pull from URL param if available)
+    value: 4.95,
+    currency: 'USD',
+    items: [
+      {
+        item_id: 'recovery_kit_pdf',
+        item_name: 'Full Recovery Kit PDF',
+        price: 4.95,
+        quantity: 1
+      }
+    ]
+  });
+</script>
+
 </body>
 </html>
