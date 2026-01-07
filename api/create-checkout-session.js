@@ -24,12 +24,12 @@ export default async function handler(req, res) {
 
       res.status(200).json({ id: session.id });
     } catch (err) {
-      console.error(err);
+      console.error('Stripe error:', err);
       res.status(500).json({ error: 'Failed to create checkout session' });
     }
   } else {
     res.setHeader('Allow', 'POST');
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).end('Method Not Allowed');
   }
 }
 

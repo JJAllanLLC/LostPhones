@@ -521,8 +521,8 @@
           lines.forEach(line => {
             const parts = line.split(',');
             if (parts.length >= 3) {
-              const tac = parts[0].padStart(8, '0').substring(0, 8);
-              tacDatabase[tac] = `${parts[1]} ${parts[2]}`.trim();
+              const tac = parts[0].padStart(8, '0');
+              tacDatabase[tac] = `${parts[1].trim()} ${parts[2].trim()}`;
             }
           });
         }
@@ -546,7 +546,7 @@
     // Look up device info from TAC
     function lookupDevice(tac) {
       // Zero-pad TAC to 8 digits
-      const paddedTac = tac.padStart(8, '0').substring(0, 8);
+      const paddedTac = tac.padStart(8, '0');
       
       if (tacDatabase && tacDatabase[paddedTac]) {
         return { displayName: tacDatabase[paddedTac] };
@@ -672,7 +672,7 @@
         const { id } = await response.json();
         await stripe.redirectToCheckout({ sessionId: id });
       } catch (error) {
-        alert('Something went wrong – please try again.');
+        alert('Something went wrong – please try again later.');
         button.disabled = false;
         button.textContent = originalText;
       }
