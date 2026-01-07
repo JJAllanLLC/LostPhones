@@ -228,6 +228,88 @@
       transform: none;
     }
     
+    .split-cards-section {
+      margin-top: 3rem;
+      padding: 0;
+    }
+    
+    .split-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      max-width: 100%;
+    }
+    
+    @media (min-width: 1024px) {
+      .split-cards-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+    }
+    
+    .split-card {
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .split-card-blue {
+      background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 100%);
+    }
+    
+    .split-card-green {
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    }
+    
+    .split-card h3 {
+      color: #0277bd;
+      font-size: 1.5rem;
+      margin: 0;
+      line-height: 1.3;
+    }
+    
+    .split-card p {
+      color: #546e7a;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin: 0;
+      flex-grow: 1;
+    }
+    
+    .btn-verify-now {
+      background: #0277bd;
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 8px rgba(2, 119, 189, 0.2);
+      align-self: flex-end;
+      margin-top: auto;
+    }
+    
+    .btn-verify-now:hover {
+      background: #01579b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(2, 119, 189, 0.3);
+    }
+    
+    .btn-verify-now:active {
+      transform: translateY(0);
+    }
+    
+    .btn-verify-now:disabled {
+      background: #81d4fa;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
     .error-message {
       background: #ffebee;
       border: 2px solid #ef5350;
@@ -285,6 +367,23 @@
       
       .checkout-section {
         padding: 1.5rem 1rem;
+      }
+      
+      .split-card {
+        padding: 2rem 1.5rem;
+      }
+      
+      .split-card h3 {
+        font-size: 1.3rem;
+      }
+      
+      .split-card p {
+        font-size: 1rem;
+      }
+      
+      .btn-verify-now {
+        width: 100%;
+        align-self: stretch;
       }
     }
   </style>
@@ -347,6 +446,26 @@
           <button class="btn-checkout" id="checkoutBtn" disabled>
             Get Full Verification Report – Only $0.99
           </button>
+        </div>
+        
+        <div class="split-cards-section">
+          <div class="split-cards-grid">
+            <div class="split-card split-card-blue">
+              <h3>Lost or Stolen Phone?</h3>
+              <p>Quickly check if your device has been reported lost/stolen or blacklisted.</p>
+              <button class="btn-verify-now" id="verifyLostBtn" disabled>
+                Verify Now →
+              </button>
+            </div>
+            
+            <div class="split-card split-card-green">
+              <h3>Buying a Used Phone?</h3>
+              <p>Avoid scams — verify it's not blacklisted or stolen before you buy.</p>
+              <button class="btn-verify-now" id="verifyBuyBtn" disabled>
+                Verify Now →
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -470,10 +589,14 @@
           resultText.textContent = `Detected: ${model}`;
           resultBox.classList.add('show');
           checkoutBtn.disabled = false;
+          document.getElementById('verifyLostBtn').disabled = false;
+          document.getElementById('verifyBuyBtn').disabled = false;
         } else {
           resultText.textContent = 'Device detected, but model information requires full verification.';
           resultBox.classList.add('show');
           checkoutBtn.disabled = false;
+          document.getElementById('verifyLostBtn').disabled = false;
+          document.getElementById('verifyBuyBtn').disabled = false;
         }
         
         checkFreeBtn.disabled = false;
@@ -481,16 +604,24 @@
       }, 500);
     });
     
-    // Checkout button handler
-    document.getElementById('checkoutBtn').addEventListener('click', async function() {
+    // Shared checkout handler function
+    async function handleCheckout() {
       if (!currentImei) {
         alert('Please check your IMEI first.');
         return;
       }
       
       const checkoutBtn = document.getElementById('checkoutBtn');
+      const verifyLostBtn = document.getElementById('verifyLostBtn');
+      const verifyBuyBtn = document.getElementById('verifyBuyBtn');
+      
+      // Disable all checkout buttons
       checkoutBtn.disabled = true;
+      verifyLostBtn.disabled = true;
+      verifyBuyBtn.disabled = true;
       checkoutBtn.textContent = 'Processing...';
+      verifyLostBtn.textContent = 'Processing...';
+      verifyBuyBtn.textContent = 'Processing...';
       
       try {
         // Call the API endpoint
@@ -528,9 +659,20 @@
         console.error('Checkout error:', error);
         alert('Unable to start checkout. Please try again.');
         checkoutBtn.disabled = false;
+        verifyLostBtn.disabled = false;
+        verifyBuyBtn.disabled = false;
         checkoutBtn.textContent = 'Get Full Verification Report – Only $0.99';
+        verifyLostBtn.textContent = 'Verify Now →';
+        verifyBuyBtn.textContent = 'Verify Now →';
       }
-    });
+    }
+    
+    // Checkout button handler
+    document.getElementById('checkoutBtn').addEventListener('click', handleCheckout);
+    
+    // Verify buttons handlers
+    document.getElementById('verifyLostBtn').addEventListener('click', handleCheckout);
+    document.getElementById('verifyBuyBtn').addEventListener('click', handleCheckout);
   </script>
 </body>
 </html>

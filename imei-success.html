@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KQTTP3KMKN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KQTTP3KMKN');
+  </script>
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "uivo0q97p5");
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generating Your IMEI Report – LostPhones.com</title>
+  <meta name="description" content="Your IMEI report is being generated. Please wait while we process your verification request.">
+  
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Generating Your IMEI Report – LostPhones.com">
+  <meta property="og:description" content="Your IMEI report is being generated. Please wait while we process your verification request.">
+  <meta property="og:image" content="https://lostphones.com/assets/cover.jpg">
+  <meta property="og:url" content="https://lostphones.com/imei-success.html">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Generating Your IMEI Report – LostPhones.com">
+  <meta name="twitter:description" content="Your IMEI report is being generated. Please wait while we process your verification request.">
+  <meta name="twitter:image" content="https://lostphones.com/assets/cover.jpg">
+  <link rel="canonical" href="https://lostphones.com/imei-success.html">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .imei-success-section {
+      padding: 8rem 2rem 4rem;
+      min-height: calc(100vh - 120px);
+      background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 50%, #81d4fa 100%);
+    }
+    
+    .imei-success-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 123, 255, 0.15);
+      text-align: center;
+    }
+    
+    .imei-success-container h1 {
+      font-size: 2.5rem;
+      color: #0277bd;
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+    }
+    
+    .imei-success-container p {
+      font-size: 1.2rem;
+      color: #546e7a;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #e3f2fd;
+      border-top: 4px solid #0277bd;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .wait-note {
+      color: #607d8b;
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-top: 2rem;
+    }
+    
+    .wait-note a {
+      color: #0277bd;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .wait-note a:hover {
+      text-decoration: underline;
+    }
+    
+    .results-placeholder {
+      margin-top: 3rem;
+      padding-top: 3rem;
+      border-top: 2px solid #e0e0e0;
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .imei-success-section {
+        padding: 6rem 1.5rem 3rem;
+      }
+      
+      .imei-success-container {
+        padding: 2rem 1.5rem;
+      }
+      
+      .imei-success-container h1 {
+        font-size: 2rem;
+      }
+      
+      .imei-success-container p {
+        font-size: 1.1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .imei-success-container {
+        padding: 1.5rem 1rem;
+      }
+      
+      .imei-success-container h1 {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="blog-header">
+    <h1>LostPhones.com</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="index.html#start">Start</a></li>
+        <li><a href="index.html#guide">Guide</a></li>
+        <li><a href="blog/index.html">Blog</a></li>
+        <li><a href="imei-check.html">IMEI Check</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="main-content">
+    <section class="imei-success-section">
+      <div class="imei-success-container">
+        <h1>Thank you — we're generating your full IMEI report</h1>
+        <p>This usually takes 10-15 seconds. Please do not close this page.</p>
+        
+        <div class="spinner"></div>
+        
+        <p class="wait-note">
+          While you wait, feel free to review our <a href="/">free recovery checklist →</a>
+        </p>
+        
+        <!-- Placeholder for future results -->
+        <div class="results-placeholder" id="resultsPlaceholder">
+          <!-- Results will be displayed here -->
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer style="background:#e9ecef; padding:60px 20px; text-align:center; border-top:5px solid #007bff; margin-top:120px; font-family:Arial, sans-serif;">
+    <div style="max-width:1200px; margin:0 auto;">
+      <div style="margin-bottom:20px;">
+        <a href="index.html" style="margin:0 15px; color:#333; text-decoration:none;">Home</a>
+        <a href="index.html#start" style="margin:0 15px; color:#333; text-decoration:none;">Start</a>
+        <a href="index.html#guide" style="margin:0 15px; color:#333; text-decoration:none;">Guide</a>
+        <a href="blog/index.html" style="margin:0 15px; color:#333; text-decoration:none;">Blog</a>
+        <a href="imei-check.html" style="margin:0 15px; color:#333; text-decoration:none;">IMEI Check</a>
+        <a href="about.html" style="margin:0 15px; color:#333; text-decoration:none;">About</a>
+      </div>
+      <div style="margin-bottom:20px;">
+        <a href="privacy.html" style="margin:0 15px; color:#333; text-decoration:none;">Privacy Policy</a>
+        <a href="terms.html" style="margin:0 15px; color:#333; text-decoration:none;">Terms of Service</a>
+      </div>
+      <div style="color:#555; font-size:0.9rem; margin-top:20px;">Questions? Email <a href="mailto:lostphones.help@gmail.com" style="color:#007bff; text-decoration:none;">lostphones.help@gmail.com</a></div>
+      <div style="color:#555; font-size:0.9rem; margin-top:30px;">© 2025 LostPhones.com</div>
+    </div>
+  </footer>
+
+</body>
+</html>
+
