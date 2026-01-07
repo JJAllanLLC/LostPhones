@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KQTTP3KMKN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KQTTP3KMKN');
+  </script>
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "uivo0q97p5");
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free & Premium IMEI Check: Blacklist, Lost Mode & More | LostPhones.com</title>
+  <meta name="description" content="Quickly check if your lost phone is blacklisted or in Lost Mode, or verify a used phone is safe. Free basic check + full report for $0.99.">
+  
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Free & Premium IMEI Check: Blacklist, Lost Mode & More | LostPhones.com">
+  <meta property="og:description" content="Quickly check if your lost phone is blacklisted or in Lost Mode, or verify a used phone is safe. Free basic check + full report for $0.99.">
+  <meta property="og:image" content="https://lostphones.com/assets/cover.jpg">
+  <meta property="og:url" content="https://lostphones.com/imei-check.html">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Free & Premium IMEI Check: Blacklist, Lost Mode & More | LostPhones.com">
+  <meta name="twitter:description" content="Quickly check if your lost phone is blacklisted or in Lost Mode, or verify a used phone is safe. Free basic check + full report for $0.99.">
+  <meta name="twitter:image" content="https://lostphones.com/assets/cover.jpg">
+  <link rel="canonical" href="https://lostphones.com/imei-check.html">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    html,body{height:100%;margin:0}body{display:flex;flex-direction:column;min-height:100vh}
+    footer{margin-top:auto;background:#e9ecef;padding:40px 20px}
+    
+    .imei-page {
+      padding-top: 140px;
+      padding-bottom: 4rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #f8f9fa;
+    }
+    
+    .imei-hero {
+      text-align: center;
+      padding: 3rem 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    .imei-hero h1 {
+      font-size: 2.5rem;
+      color: #007bff;
+      margin-bottom: 1.5rem;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+    
+    .imei-check-section {
+      max-width: 700px;
+      margin: 0 auto 3rem;
+      padding: 2.5rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+    
+    .imei-input-wrapper {
+      margin-bottom: 1.5rem;
+    }
+    
+    .imei-input {
+      width: 100%;
+      max-width: 500px;
+      padding: 1.2rem 1.5rem;
+      font-size: 1.2rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .imei-input:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+    
+    .imei-input::placeholder {
+      color: #999;
+    }
+    
+    .check-button {
+      display: inline-block;
+      background: #007bff;
+      color: white;
+      padding: 1.2rem 3rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-decoration: none;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      font-family: Arial, sans-serif;
+    }
+    
+    .check-button:hover {
+      background: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .check-button:active {
+      transform: translateY(0);
+    }
+    
+    .check-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .result-box {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 8px;
+      display: none;
+      text-align: left;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    
+    .result-box.show {
+      display: block;
+    }
+    
+    .result-box.success {
+      background: #e7f5e7;
+      border: 2px solid #4caf50;
+      color: #2e7d32;
+    }
+    
+    .result-box.info {
+      background: #e7f3ff;
+      border: 2px solid #007bff;
+      color: #0056b3;
+    }
+    
+    .result-box.error {
+      background: #ffe7e7;
+      border: 2px solid #f44336;
+      color: #c62828;
+    }
+    
+    .result-box strong {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+    
+    .upsell-section {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 2.5rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+    
+    .upsell-section h2 {
+      font-size: 1.8rem;
+      color: #007bff;
+      margin-bottom: 1rem;
+    }
+    
+    .upsell-section p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+    
+    .upsell-list {
+      text-align: left;
+      max-width: 600px;
+      margin: 2rem auto;
+      list-style: none;
+      padding: 0;
+    }
+    
+    .upsell-list li {
+      padding: 0.75rem 0;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #333;
+      padding-left: 2rem;
+      position: relative;
+    }
+    
+    .upsell-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #4caf50;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+    
+    .premium-button {
+      display: inline-block;
+      background: #007bff;
+      color: white;
+      padding: 1.3rem 3rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-decoration: none;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      font-family: Arial, sans-serif;
+      margin: 1.5rem 0;
+    }
+    
+    .premium-button:hover {
+      background: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .premium-button:active {
+      transform: translateY(0);
+    }
+    
+    .affiliate-disclosure {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 1rem;
+      font-style: italic;
+    }
+    
+    .explanatory-sections {
+      max-width: 1000px;
+      margin: 3rem auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      padding: 0 2rem;
+    }
+    
+    .explanatory-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    .explanatory-box h2 {
+      font-size: 1.6rem;
+      color: #007bff;
+      margin-bottom: 1rem;
+    }
+    
+    .explanatory-box p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    
+    .explanatory-box a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    .explanatory-box a:hover {
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .imei-hero h1 {
+        font-size: 2rem;
+      }
+      
+      .imei-check-section,
+      .upsell-section {
+        padding: 2rem 1.5rem;
+      }
+      
+      .explanatory-sections {
+        grid-template-columns: 1fr;
+        padding: 0 1.5rem;
+      }
+      
+      .imei-input {
+        font-size: 1.1rem;
+        padding: 1rem 1.2rem;
+      }
+      
+      .check-button,
+      .premium-button {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        width: 100%;
+        max-width: 400px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .imei-page {
+        padding-top: 120px;
+      }
+      
+      .imei-hero {
+        padding: 2rem 1rem;
+      }
+      
+      .imei-hero h1 {
+        font-size: 1.7rem;
+      }
+      
+      .imei-check-section,
+      .upsell-section {
+        padding: 1.5rem 1rem;
+      }
+      
+      .upsell-section h2 {
+        font-size: 1.5rem;
+      }
+      
+      .explanatory-box h2 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
+  <link rel="shortcut icon" href="/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#2c7be5">
+  <meta name="msapplication-TileColor" content="#2c7be5">
+  <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+
+  <header class="blog-header">
+    <h1>LostPhones.com</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html#home" onclick="localStorage.setItem('exitShown', 'true');">Home</a></li>
+        <li><a href="index.html#start" onclick="localStorage.setItem('exitShown', 'true');">Start</a></li>
+        <li><a href="index.html#guide" onclick="localStorage.setItem('exitShown', 'true');">Guide</a></li>
+        <li><a href="blog/index.html">Blog</a></li>
+        <li><a href="imei-check.html">IMEI Check</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="main-content">
+    <section class="imei-page">
+      <!-- Hero Section -->
+      <div class="imei-hero">
+        <h1>Take a Deep Breath – Check Your Phone's Status in Seconds</h1>
+      </div>
+
+      <!-- Free IMEI Check Section -->
+      <div class="imei-check-section">
+        <div class="imei-input-wrapper">
+          <input 
+            type="text" 
+            id="imei-input" 
+            class="imei-input" 
+            placeholder="Enter your 15-digit IMEI here"
+            maxlength="15"
+            pattern="[0-9]*"
+            inputmode="numeric"
+          >
+        </div>
+        <button id="check-button" class="check-button">Check IMEI for Free</button>
+        
+        <div id="result-box" class="result-box"></div>
+      </div>
+
+      <!-- Upsell Section -->
+      <div class="upsell-section" id="upsell-section" style="display: none;">
+        <h2>Great first step! Now get complete peace of mind with our premium verification report.</h2>
+        <ul class="upsell-list">
+          <li>Global blacklist status (lost/stolen reports for iPhone & Android)</li>
+          <li>iPhone Lost Mode / Find My iPhone status</li>
+          <li>Model, serial, warranty, carrier, and activation details</li>
+          <li>Clear next steps if anything concerning shows up</li>
+        </ul>
+        <button id="premium-button" class="premium-button">Get Full Verification Report – Only $0.99 Instant</button>
+        <p class="affiliate-disclosure">LostPhones.com partners with leading IMEI databases to deliver this detailed report for just $0.99. (Affiliate disclosure: Helps keep our free resources available.)</p>
+      </div>
+
+      <!-- Explanatory Sections -->
+      <div class="explanatory-sections">
+        <div class="explanatory-box">
+          <h2>Verify Your Lost iPhone is Properly Marked</h2>
+          <p>You've already taken the smart step of enabling Lost Mode. Now trust but verify – confirm major carrier and global databases have registered your phone as lost/stolen. This helps prevent anyone from using or selling it.</p>
+          <p><a href="#premium-button">Get your full verification report →</a></p>
+        </div>
+        <div class="explanatory-box">
+          <h2>Avoid Buying a Blacklisted Phone</h2>
+          <p>Before purchasing a used phone, make sure it's not reported lost or stolen worldwide. A blacklisted IMEI can mean the device will never connect to networks again – essentially a very expensive paperweight.</p>
+          <p><a href="#premium-button">Verify before you buy →</a></p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- NEXT STEP: Create imei-success.html and a serverless function (Vercel/Netlify) that:
+   - Verifies Stripe session
+   - Retrieves IMEI from session/metadata
+   - Calls imei.org API twice (Apple Advanced Check + GSMA Blacklist) using apikey tWkh1r3K3IWlxgTiXkJGVSyTIyT1hih8aZ1RJxuKQQ4I2PIBbl6DVVlQ0KoI
+   - Combines and displays formatted report with green/red indicators -->
+
+<footer style="background:#e9ecef; padding:60px 20px; text-align:center; border-top:5px solid #007bff; margin-top:120px; font-family:Arial, sans-serif;">
+
+  <div style="max-width:1200px; margin:0 auto;">
+
+    <div style="margin-bottom:20px;">
+
+      <a href="index.html" style="margin:0 15px; color:#333; text-decoration:none;">Home</a>
+
+      <a href="index.html#start" style="margin:0 15px; color:#333; text-decoration:none;" onclick="localStorage.setItem('exitShown', 'true');">Start</a>
+
+      <a href="index.html#guide" style="margin:0 15px; color:#333; text-decoration:none;" onclick="localStorage.setItem('exitShown', 'true');">Guide</a>
+
+      <a href="blog/index.html" style="margin:0 15px; color:#333; text-decoration:none;">Blog</a>
+
+      <a href="imei-check.html" style="margin:0 15px; color:#333; text-decoration:none;">IMEI Check</a>
+
+      <a href="about.html" style="margin:0 15px; color:#333; text-decoration:none;">About</a>
+
+    </div>
+
+    <div style="margin-bottom:20px;">
+
+      <a href="privacy.html" style="margin:0 15px; color:#333; text-decoration:none;">Privacy Policy</a>
+
+      <a href="terms.html" style="margin:0 15px; color:#333; text-decoration:none;">Terms of Service</a>
+
+    </div>
+
+    <div style="color:#555; font-size:0.9rem; margin-top:20px;">Questions? Email <a href="mailto:lostphones.help@gmail.com" style="color:#007bff; text-decoration:none;">lostphones.help@gmail.com</a></div>
+
+    <div style="color:#555; font-size:0.9rem; margin-top:30px;">© 2025 LostPhones.com</div>
+
+  </div>
+
+</footer>
+
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    const stripe = Stripe('pk_live_51SbsOl8ls8aiAA7kuszgdQjxyV0MHYWUPNa70s7OHcDwkYi2b26WDEf5Bi8oGBLhKa4zFsrOp2fZDZLtFqc8e3wF002Jx5YtF4');
+
+    // Luhn algorithm for IMEI validation
+    function luhnCheck(imei) {
+      if (imei.length !== 15) return false;
+      
+      let sum = 0;
+      for (let i = 0; i < 14; i++) {
+        let digit = parseInt(imei[i]);
+        if (i % 2 === 1) {
+          digit *= 2;
+          if (digit > 9) {
+            digit -= 9;
+          }
+        }
+        sum += digit;
+      }
+      
+      const checkDigit = (10 - (sum % 10)) % 10;
+      return checkDigit === parseInt(imei[14]);
+    }
+
+    // Cache for TAC database
+    let tacDatabase = null;
+    let tacDatabaseLoading = false;
+
+    // Fetch TAC database with caching
+    async function fetchTACDatabase() {
+      if (tacDatabase) {
+        return tacDatabase;
+      }
+      
+      if (tacDatabaseLoading) {
+        // Wait for existing fetch to complete
+        while (tacDatabaseLoading) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        return tacDatabase;
+      }
+      
+      tacDatabaseLoading = true;
+      try {
+        const response = await fetch('https://raw.githubusercontent.com/musalbas/imei-tac-db/master/tacdb.json');
+        if (response.ok) {
+          tacDatabase = await response.json();
+        }
+      } catch (error) {
+        console.error('Error fetching TAC database:', error);
+      } finally {
+        tacDatabaseLoading = false;
+      }
+      
+      return tacDatabase;
+    }
+
+    // Look up device info from TAC
+    function lookupDevice(tac) {
+      if (!tacDatabase || !tacDatabase[tac]) {
+        return null;
+      }
+      return tacDatabase[tac];
+    }
+
+    // Display result
+    function showResult(type, message) {
+      const resultBox = document.getElementById('result-box');
+      resultBox.className = 'result-box show ' + type;
+      resultBox.innerHTML = '<strong>' + (type === 'success' ? '✓' : type === 'error' ? '⚠' : 'ℹ') + '</strong>' + message;
+    }
+
+    // Handle IMEI check
+    document.getElementById('check-button').addEventListener('click', async function() {
+      const input = document.getElementById('imei-input');
+      const imei = input.value.trim().replace(/\s/g, '');
+      const button = this;
+      const upsellSection = document.getElementById('upsell-section');
+      
+      // Reset
+      document.getElementById('result-box').classList.remove('show');
+      upsellSection.style.display = 'none';
+      
+      // Validate length
+      if (imei.length !== 15) {
+        showResult('error', 'Please enter a valid 15-digit IMEI and try again.');
+        return;
+      }
+      
+      // Validate numeric
+      if (!/^\d{15}$/.test(imei)) {
+        showResult('error', 'Please enter a valid 15-digit IMEI and try again.');
+        return;
+      }
+      
+      // Validate Luhn
+      if (!luhnCheck(imei)) {
+        showResult('error', 'Please enter a valid 15-digit IMEI and try again.');
+        return;
+      }
+      
+      // Disable button and show loading
+      button.disabled = true;
+      button.textContent = 'Checking...';
+      
+      try {
+        // Fetch TAC database
+        await fetchTACDatabase();
+        
+        // Extract TAC (first 8 digits)
+        const tac = imei.substring(0, 8);
+        const deviceInfo = lookupDevice(tac);
+        
+        if (deviceInfo) {
+          const brand = deviceInfo.brand || 'Unknown';
+          const model = deviceInfo.model || 'Unknown';
+          showResult('success', `Valid IMEI – Detected: ${brand} ${model}`);
+        } else {
+          showResult('info', 'Model not found in public database – that\'s okay, proceed to full check.');
+        }
+        
+        // Show upsell section
+        upsellSection.style.display = 'block';
+        upsellSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+      } catch (error) {
+        console.error('Error checking IMEI:', error);
+        showResult('info', 'Model not found in public database – that\'s okay, proceed to full check.');
+        upsellSection.style.display = 'block';
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Check IMEI for Free';
+      }
+    });
+
+    // Allow Enter key to trigger check
+    document.getElementById('imei-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('check-button').click();
+      }
+    });
+
+    // Stripe checkout
+    document.getElementById('premium-button').addEventListener('click', function() {
+      const imei = document.getElementById('imei-input').value.trim().replace(/\s/g, '');
+      if (imei.length !== 15) {
+        alert('Please enter a valid 15-digit IMEI first');
+        return;
+      }
+      
+      // Validate Luhn
+      if (!luhnCheck(imei)) {
+        alert('Please enter a valid 15-digit IMEI first');
+        return;
+      }
+      
+      sessionStorage.setItem('userImei', imei);
+
+      stripe.redirectToCheckout({
+        lineItems: [{ price: 'price_1Sn0fE8ls8aiAA7kc4M6F09C', quantity: 1 }],
+        mode: 'payment',
+        successUrl: window.location.origin + '/imei-success.html?session_id={CHECKOUT_SESSION_ID}',
+        cancelUrl: window.location.href,
+      });
+    });
+  </script>
+
+</body>
+</html>
+
