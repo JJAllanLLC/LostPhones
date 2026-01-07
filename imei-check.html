@@ -512,7 +512,7 @@
       
       tacDatabaseLoading = true;
       try {
-        const response = await fetch('https://raw.githubusercontent.com/VTSTech/IMEIDB/master/IMEIDB.csv');
+        const response = await fetch('https://raw.githubusercontent.com/VTSTech/IMEIDB/master/imeidb.csv');
         if (response.ok) {
           const csvText = await response.text();
           const lines = csvText.split('\n');
@@ -522,6 +522,11 @@
           for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
             if (!line) continue;
+            
+            // Skip header row if it exists
+            if (i === 0 && (line.toLowerCase().includes('tac') || line.toLowerCase().includes('manufacturer'))) {
+              continue;
+            }
             
             // Parse CSV line (handle quoted fields)
             const parts = [];
@@ -541,6 +546,7 @@
             }
             parts.push(current.trim());
             
+            // Assume columns: TAC,Manufacturer,Model,...
             if (parts.length >= 3) {
               const tac = parts[0].padStart(8, '0').substring(0, 8); // Zero-pad to 8 digits
               const manufacturer = parts[1] || '';
@@ -684,6 +690,7 @@
       }
       
       const button = this;
+      const originalText = button.textContent;
       button.disabled = true;
       button.textContent = 'Processing...';
       
@@ -701,10 +708,9 @@
         const { id } = await response.json();
         await stripe.redirectToCheckout({ sessionId: id });
       } catch (error) {
-        console.error('Error:', error);
-        alert('Something went wrong. Please try again.');
+        alert('Something went wrong – please try again.');
         button.disabled = false;
-        button.textContent = 'Get Full Verification Report – Only $0.99 Instant';
+        button.textContent = originalText;
       }
     });
   </script>
