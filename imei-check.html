@@ -38,6 +38,7 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://js.stripe.com/v3/"></script>
   <style>
+    html{scroll-behavior:smooth}
     html,body{height:100%;margin:0}body{display:flex;flex-direction:column;min-height:100vh}
     footer{margin-top:auto;background:#e9ecef;padding:40px 20px}
     
@@ -291,6 +292,18 @@
       text-decoration: underline;
     }
     
+    .calm-link {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    
+    .calm-link:hover {
+      color: #0056b3;
+      text-decoration: underline;
+    }
+    
     @media (max-width: 768px) {
       .imei-hero h1 {
         font-size: 2rem;
@@ -399,7 +412,7 @@
       </div>
 
       <!-- Upsell Section -->
-      <div class="upsell-section" id="upsell-section" style="display: none;">
+      <div class="upsell-section" id="premium-report" style="display: none;">
         <h2>Great first step! Now get complete peace of mind with our premium verification report.</h2>
         <ul class="upsell-list">
           <li>Global blacklist status (lost/stolen reports for iPhone & Android)</li>
@@ -416,12 +429,12 @@
         <div class="explanatory-box">
           <h2>Verify Your Lost iPhone is Properly Marked</h2>
           <p>You've already taken the smart step of enabling Lost Mode. Now trust but verify – confirm major carrier and global databases have registered your phone as lost/stolen. This helps prevent anyone from using or selling it.</p>
-          <p><a href="#premium-button">Get your full verification report →</a></p>
+          <p><a href="#premium-report" class="calm-link">Get your full verification report →</a></p>
         </div>
         <div class="explanatory-box">
           <h2>Avoid Buying a Blacklisted Phone</h2>
           <p>Before purchasing a used phone, make sure it's not reported lost or stolen worldwide. A blacklisted IMEI can mean the device will never connect to networks again – essentially a very expensive paperweight.</p>
-          <p><a href="#premium-button">Verify before you buy →</a></p>
+          <p><a href="#premium-report" class="calm-link">Verify before you buy →</a></p>
         </div>
       </div>
     </section>
@@ -573,7 +586,7 @@
       const input = document.getElementById('imei-input');
       const imei = input.value.trim().replace(/\s/g, '');
       const button = this;
-      const upsellSection = document.getElementById('upsell-section');
+      const upsellSection = document.getElementById('premium-report');
       
       // Reset
       document.getElementById('result-box').classList.remove('show');
