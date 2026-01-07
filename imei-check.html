@@ -668,8 +668,10 @@
     });
 
     // Stripe checkout
-    document.getElementById('premium-button').addEventListener('click', function() {
+    document.getElementById('premium-button').addEventListener('click', async function() {
       const imei = document.getElementById('imei-input').value.trim().replace(/\s/g, '');
+      
+      // Validate IMEI length === 15
       if (imei.length !== 15) {
         alert('Please enter a valid 15-digit IMEI first');
         return;
@@ -681,14 +683,29 @@
         return;
       }
       
-      sessionStorage.setItem('userImei', imei);
-
-      stripe.redirectToCheckout({
-        lineItems: [{ price: 'price_1Sn0fE8ls8aiAA7kc4M6F09C', quantity: 1 }],
-        mode: 'payment',
-        successUrl: window.location.origin + '/imei-success.html?session_id={CHECKOUT_SESSION_ID}',
-        cancelUrl: window.location.href,
-      });
+      const button = this;
+      button.disabled = true;
+      button.textContent = 'Processing...';
+      
+      try {
+        const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imei: imei })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create checkout session');
+        }
+        
+        const { id } = await response.json();
+        await stripe.redirectToCheckout({ sessionId: id });
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Something went wrong. Please try again.');
+        button.disabled = false;
+        button.textContent = 'Get Full Verification Report – Only $0.99 Instant';
+      }
     });
   </script>
 
