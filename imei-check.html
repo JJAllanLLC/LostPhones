@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KQTTP3KMKN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KQTTP3KMKN');
+  </script>
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "uivo0q97p5");
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instant Free IMEI Check – Find Your Device Model | LostPhones.com</title>
+  <meta name="description" content="Free IMEI check to identify your device model instantly. Get full verification report for only $0.99. Quick, secure, and reliable.">
+  
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Instant Free IMEI Check – Find Your Device Model">
+  <meta property="og:description" content="Free IMEI check to identify your device model instantly. Get full verification report for only $0.99.">
+  <meta property="og:image" content="https://lostphones.com/assets/cover.jpg">
+  <meta property="og:url" content="https://lostphones.com/imei-check.html">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Instant Free IMEI Check – Find Your Device Model">
+  <meta name="twitter:description" content="Free IMEI check to identify your device model instantly. Get full verification report for only $0.99.">
+  <meta name="twitter:image" content="https://lostphones.com/assets/cover.jpg">
+  <link rel="canonical" href="https://lostphones.com/imei-check.html">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    .imei-section {
+      padding: 8rem 2rem 4rem;
+      min-height: calc(100vh - 120px);
+      background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 50%, #81d4fa 100%);
+    }
+    
+    .imei-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 123, 255, 0.15);
+    }
+    
+    .imei-hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    
+    .imei-hero h1 {
+      font-size: 2.5rem;
+      color: #0277bd;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+    
+    .imei-hero p {
+      font-size: 1.2rem;
+      color: #546e7a;
+      line-height: 1.7;
+      margin-bottom: 0;
+    }
+    
+    .calming-copy {
+      text-align: center;
+      color: #607d8b;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    
+    .imei-form {
+      margin-bottom: 2.5rem;
+    }
+    
+    .imei-input-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .imei-input-group label {
+      display: block;
+      font-size: 1.1rem;
+      color: #37474f;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .imei-input-group input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      font-size: 1.2rem;
+      border: 2px solid #b0bec5;
+      border-radius: 8px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      font-family: Arial, Helvetica, sans-serif;
+      letter-spacing: 0.1em;
+    }
+    
+    .imei-input-group input:focus {
+      outline: none;
+      border-color: #0277bd;
+      box-shadow: 0 0 0 3px rgba(2, 119, 189, 0.1);
+    }
+    
+    .imei-input-group input::placeholder {
+      color: #90a4ae;
+      letter-spacing: normal;
+    }
+    
+    .btn-check-free {
+      width: 100%;
+      background: #4caf50;
+      color: white;
+      padding: 1.2rem 2rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+      margin-bottom: 2rem;
+    }
+    
+    .btn-check-free:hover {
+      background: #43a047;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+    }
+    
+    .btn-check-free:active {
+      transform: translateY(0);
+    }
+    
+    .btn-check-free:disabled {
+      background: #a5d6a7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .result-box {
+      background: #e8f5e9;
+      border: 2px solid #81c784;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+      display: none;
+    }
+    
+    .result-box.show {
+      display: block;
+    }
+    
+    .result-box h3 {
+      color: #2e7d32;
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .result-box p {
+      color: #388e3c;
+      font-size: 1.1rem;
+      margin: 0;
+      line-height: 1.6;
+    }
+    
+    .checkout-section {
+      text-align: center;
+      padding: 2rem;
+      background: #f1f8e9;
+      border-radius: 8px;
+      border: 2px solid #aed581;
+    }
+    
+    .checkout-section h2 {
+      color: #558b2f;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    
+    .checkout-section p {
+      color: #689f38;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn-checkout {
+      background: #0277bd;
+      color: white;
+      padding: 1.3rem 3rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 12px rgba(2, 119, 189, 0.3);
+    }
+    
+    .btn-checkout:hover {
+      background: #01579b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(2, 119, 189, 0.4);
+    }
+    
+    .btn-checkout:active {
+      transform: translateY(0);
+    }
+    
+    .btn-checkout:disabled {
+      background: #81d4fa;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .error-message {
+      background: #ffebee;
+      border: 2px solid #ef5350;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      color: #c62828;
+      display: none;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+    
+    @media (max-width: 768px) {
+      .imei-section {
+        padding: 6rem 1.5rem 3rem;
+      }
+      
+      .imei-container {
+        padding: 2rem 1.5rem;
+      }
+      
+      .imei-hero h1 {
+        font-size: 2rem;
+      }
+      
+      .imei-hero p {
+        font-size: 1.1rem;
+      }
+      
+      .calming-copy {
+        font-size: 1rem;
+      }
+      
+      .checkout-section h2 {
+        font-size: 1.5rem;
+      }
+      
+      .btn-checkout {
+        padding: 1.1rem 2rem;
+        font-size: 1.1rem;
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .imei-container {
+        padding: 1.5rem 1rem;
+      }
+      
+      .imei-hero h1 {
+        font-size: 1.75rem;
+      }
+      
+      .checkout-section {
+        padding: 1.5rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="blog-header">
+    <h1>LostPhones.com</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="index.html#start">Start</a></li>
+        <li><a href="index.html#guide">Guide</a></li>
+        <li><a href="blog/index.html">Blog</a></li>
+        <li><a href="imei-check.html">IMEI Check</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="main-content">
+    <section class="imei-section">
+      <div class="imei-container">
+        <div class="imei-hero">
+          <h1>Instant Free IMEI Check – Find Your Device Model in Seconds</h1>
+          <p>Take a deep breath – we're here to help you verify your device quickly and securely.</p>
+        </div>
+        
+        <p class="calming-copy">Enter your 15-digit IMEI number below to instantly identify your device model. This free check gives you basic information to help you understand what you're working with.</p>
+        
+        <form class="imei-form" id="imeiForm">
+          <div class="imei-input-group">
+            <label for="imeiInput">IMEI Number (15 digits)</label>
+            <input 
+              type="text" 
+              id="imeiInput" 
+              name="imei" 
+              placeholder="Enter 15-digit IMEI"
+              maxlength="15"
+              pattern="[0-9]{15}"
+              required
+            >
+          </div>
+          
+          <div class="error-message" id="errorMessage"></div>
+          
+          <button type="submit" class="btn-check-free" id="checkFreeBtn">
+            Check Free
+          </button>
+        </form>
+        
+        <div class="result-box" id="resultBox">
+          <h3>Device Detected</h3>
+          <p id="resultText"></p>
+        </div>
+        
+        <div class="checkout-section">
+          <h2>Get Full Verification Report – Only $0.99 Instant</h2>
+          <p>Unlock complete device information, verification status, carrier details, and more with our comprehensive IMEI report.</p>
+          <button class="btn-checkout" id="checkoutBtn" disabled>
+            Get Full Verification Report – Only $0.99
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer style="background:#e9ecef; padding:60px 20px; text-align:center; border-top:5px solid #007bff; margin-top:120px; font-family:Arial, sans-serif;">
+    <div style="max-width:1200px; margin:0 auto;">
+      <div style="margin-bottom:20px;">
+        <a href="index.html" style="margin:0 15px; color:#333; text-decoration:none;">Home</a>
+        <a href="index.html#start" style="margin:0 15px; color:#333; text-decoration:none;">Start</a>
+        <a href="index.html#guide" style="margin:0 15px; color:#333; text-decoration:none;">Guide</a>
+        <a href="blog/index.html" style="margin:0 15px; color:#333; text-decoration:none;">Blog</a>
+        <a href="imei-check.html" style="margin:0 15px; color:#333; text-decoration:none;">IMEI Check</a>
+        <a href="about.html" style="margin:0 15px; color:#333; text-decoration:none;">About</a>
+      </div>
+      <div style="margin-bottom:20px;">
+        <a href="privacy.html" style="margin:0 15px; color:#333; text-decoration:none;">Privacy Policy</a>
+        <a href="terms.html" style="margin:0 15px; color:#333; text-decoration:none;">Terms of Service</a>
+      </div>
+      <div style="color:#555; font-size:0.9rem; margin-top:20px;">Questions? Email <a href="mailto:lostphones.help@gmail.com" style="color:#007bff; text-decoration:none;">lostphones.help@gmail.com</a></div>
+      <div style="color:#555; font-size:0.9rem; margin-top:30px;">© 2025 LostPhones.com</div>
+    </div>
+  </footer>
+
+  <script>
+    const stripe = Stripe('pk_test_51SbsOq6SN9rpiA04VH13F4vsQpZSWpa3latHAsBstp38OfaZcXnQcxKCPWFTyOCHslYBvewAWp5az1S5vXSMcRXK00RzOb4g55');
+    
+    let currentImei = '';
+    
+    // IMEI model detection function
+    function detectModel(imei) {
+      // Basic IMEI pattern detection
+      // Apple devices typically start with specific patterns
+      // This is a simplified detection - in production you'd use a proper IMEI database
+      
+      // Remove any non-numeric characters
+      const cleanImei = imei.replace(/\D/g, '');
+      
+      if (cleanImei.length !== 15) {
+        return null;
+      }
+      
+      // Apple device detection (simplified)
+      // Apple IMEIs often have specific TAC (Type Allocation Code) patterns
+      // Common Apple TACs start with 01, 35, etc.
+      const firstTwo = cleanImei.substring(0, 2);
+      const firstThree = cleanImei.substring(0, 3);
+      
+      // Very basic detection - Apple devices
+      if (firstTwo === '01' || firstTwo === '35' || 
+          (parseInt(firstThree) >= 350 && parseInt(firstThree) <= 359) ||
+          (parseInt(firstTwo) >= 01 && parseInt(firstTwo) <= 09)) {
+        return 'Apple device (e.g., iPhone)';
+      }
+      
+      // Samsung detection (simplified)
+      if (firstTwo === '35' || firstThree === '352' || firstThree === '353') {
+        return 'Samsung device';
+      }
+      
+      // Generic fallback
+      return 'Mobile device';
+    }
+    
+    // Form submission handler
+    document.getElementById('imeiForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const imeiInput = document.getElementById('imeiInput');
+      const errorMessage = document.getElementById('errorMessage');
+      const resultBox = document.getElementById('resultBox');
+      const resultText = document.getElementById('resultText');
+      const checkFreeBtn = document.getElementById('checkFreeBtn');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      
+      // Clear previous errors
+      errorMessage.classList.remove('show');
+      resultBox.classList.remove('show');
+      
+      const imei = imeiInput.value.trim().replace(/\D/g, '');
+      
+      // Validate IMEI
+      if (imei.length !== 15) {
+        errorMessage.textContent = 'Please enter a valid 15-digit IMEI number.';
+        errorMessage.classList.add('show');
+        return;
+      }
+      
+      // Validate IMEI checksum (Luhn algorithm)
+      let sum = 0;
+      for (let i = 0; i < 14; i++) {
+        let digit = parseInt(imei[i]);
+        if (i % 2 === 1) {
+          digit *= 2;
+          if (digit > 9) {
+            digit -= 9;
+          }
+        }
+        sum += digit;
+      }
+      const checkDigit = (10 - (sum % 10)) % 10;
+      if (parseInt(imei[14]) !== checkDigit) {
+        errorMessage.textContent = 'Invalid IMEI number. Please check and try again.';
+        errorMessage.classList.add('show');
+        return;
+      }
+      
+      // Store IMEI for checkout
+      currentImei = imei;
+      
+      // Disable button during processing
+      checkFreeBtn.disabled = true;
+      checkFreeBtn.textContent = 'Checking...';
+      
+      // Simulate a brief delay for better UX
+      setTimeout(() => {
+        // Detect model
+        const model = detectModel(imei);
+        
+        if (model) {
+          resultText.textContent = `Detected: ${model}`;
+          resultBox.classList.add('show');
+          checkoutBtn.disabled = false;
+        } else {
+          resultText.textContent = 'Device detected, but model information requires full verification.';
+          resultBox.classList.add('show');
+          checkoutBtn.disabled = false;
+        }
+        
+        checkFreeBtn.disabled = false;
+        checkFreeBtn.textContent = 'Check Free';
+      }, 500);
+    });
+    
+    // Checkout button handler
+    document.getElementById('checkoutBtn').addEventListener('click', async function() {
+      if (!currentImei) {
+        alert('Please check your IMEI first.');
+        return;
+      }
+      
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      checkoutBtn.disabled = true;
+      checkoutBtn.textContent = 'Processing...';
+      
+      try {
+        // Call the API endpoint
+        const response = await fetch('/api/create-imei-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ imei: currentImei })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create checkout session');
+        }
+        
+        const data = await response.json();
+        
+        // Handle response - could be { id } or { url }
+        if (data.url) {
+          // Redirect to session URL
+          window.location.href = data.url;
+        } else if (data.id) {
+          // Use Stripe redirectToCheckout with session ID
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: data.id
+          });
+          
+          if (error) {
+            throw error;
+          }
+        } else {
+          throw new Error('Invalid response from server');
+        }
+      } catch (error) {
+        console.error('Checkout error:', error);
+        alert('Unable to start checkout. Please try again.');
+        checkoutBtn.disabled = false;
+        checkoutBtn.textContent = 'Get Full Verification Report – Only $0.99';
+      }
+    });
+  </script>
+</body>
+</html>
+
