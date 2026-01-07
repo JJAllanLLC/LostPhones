@@ -2,7 +2,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export const config = {
   api: {
-    bodyParser: true, // Enable JSON body parsing
+    bodyParser: true,
   },
 };
 
@@ -19,15 +19,17 @@ export default async function handler(req, res) {
         mode: 'payment',
         success_url: 'https://lostphones.com/imei-success.html?session_id={CHECKOUT_SESSION_ID}',
         cancel_url: 'https://lostphones.com/imei-check',
-        metadata: { imei } // For later report delivery
+        metadata: { imei },
       });
 
       res.status(200).json({ id: session.id });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      console.error(err);
+      res.status(500).json({ error: 'Failed to create checkout session' });
     }
   } else {
-    res.status(405).end();
+    res.setHeader('Allow', 'POST');
+    res.status(405).json({ error: 'Method not allowed' });
   }
 }
 
