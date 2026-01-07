@@ -41,7 +41,7 @@
     .imei-section {
       padding: 8rem 2rem 4rem;
       min-height: calc(100vh - 120px);
-      background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 50%, #81d4fa 100%);
+      background: #f8f9fa;
     }
     
     .imei-container {
@@ -49,8 +49,9 @@
       margin: 0 auto;
       background: white;
       padding: 3rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 123, 255, 0.15);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e0e0e0;
     }
     
     .imei-hero {
@@ -60,21 +61,21 @@
     
     .imei-hero h1 {
       font-size: 2.5rem;
-      color: #0277bd;
+      color: #333;
       margin-bottom: 1rem;
       line-height: 1.3;
     }
     
     .imei-hero p {
       font-size: 1.2rem;
-      color: #546e7a;
+      color: #666;
       line-height: 1.7;
       margin-bottom: 0;
     }
     
     .calming-copy {
       text-align: center;
-      color: #607d8b;
+      color: #555;
       font-size: 1.1rem;
       line-height: 1.7;
       margin-bottom: 2rem;
@@ -92,7 +93,7 @@
     .imei-input-group label {
       display: block;
       font-size: 1.1rem;
-      color: #37474f;
+      color: #333;
       margin-bottom: 0.75rem;
       font-weight: 600;
     }
@@ -110,8 +111,8 @@
     
     .imei-input-group input:focus {
       outline: none;
-      border-color: #0277bd;
-      box-shadow: 0 0 0 3px rgba(2, 119, 189, 0.1);
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
     
     .imei-input-group input::placeholder {
@@ -121,7 +122,7 @@
     
     .btn-check-free {
       width: 100%;
-      background: #4caf50;
+      background: #3b82f6;
       color: white;
       padding: 1.2rem 2rem;
       font-size: 1.2rem;
@@ -130,14 +131,14 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.3s ease, transform 0.2s ease;
-      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
       margin-bottom: 2rem;
     }
     
     .btn-check-free:hover {
-      background: #43a047;
+      background: #2563eb;
       transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
     
     .btn-check-free:active {
@@ -145,14 +146,14 @@
     }
     
     .btn-check-free:disabled {
-      background: #a5d6a7;
+      background: #93c5fd;
       cursor: not-allowed;
       transform: none;
     }
     
     .result-box {
-      background: #e8f5e9;
-      border: 2px solid #81c784;
+      background: #f0f9ff;
+      border: 2px solid #93c5fd;
       border-radius: 8px;
       padding: 1.5rem;
       margin-bottom: 2.5rem;
@@ -164,13 +165,13 @@
     }
     
     .result-box h3 {
-      color: #2e7d32;
+      color: #1e40af;
       font-size: 1.3rem;
       margin-bottom: 0.75rem;
     }
     
     .result-box p {
-      color: #388e3c;
+      color: #1e3a8a;
       font-size: 1.1rem;
       margin: 0;
       line-height: 1.6;
@@ -179,26 +180,26 @@
     .checkout-section {
       text-align: center;
       padding: 2rem;
-      background: #f1f8e9;
+      background: white;
       border-radius: 8px;
-      border: 2px solid #aed581;
+      border: 1px solid #e0e0e0;
     }
     
     .checkout-section h2 {
-      color: #558b2f;
+      color: #333;
       font-size: 1.8rem;
       margin-bottom: 1rem;
     }
     
     .checkout-section p {
-      color: #689f38;
+      color: #666;
       font-size: 1.1rem;
       line-height: 1.7;
       margin-bottom: 1.5rem;
     }
     
     .btn-checkout {
-      background: #0277bd;
+      background: #3b82f6;
       color: white;
       padding: 1.3rem 3rem;
       font-size: 1.3rem;
@@ -209,13 +210,13 @@
       text-decoration: none;
       display: inline-block;
       transition: background 0.3s ease, transform 0.2s ease;
-      box-shadow: 0 4px 12px rgba(2, 119, 189, 0.3);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
     
     .btn-checkout:hover {
-      background: #01579b;
+      background: #2563eb;
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(2, 119, 189, 0.4);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
     
     .btn-checkout:active {
@@ -223,7 +224,7 @@
     }
     
     .btn-checkout:disabled {
-      background: #81d4fa;
+      background: #93c5fd;
       cursor: not-allowed;
       transform: none;
     }
@@ -249,30 +250,31 @@
     
     .split-card {
       padding: 2.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e0e0e0;
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
     }
     
     .split-card-blue {
-      background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 100%);
+      background: #fafafa;
     }
     
     .split-card-green {
-      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      background: #fafafa;
     }
     
     .split-card h3 {
-      color: #0277bd;
+      color: #333;
       font-size: 1.5rem;
       margin: 0;
       line-height: 1.3;
     }
     
     .split-card p {
-      color: #546e7a;
+      color: #666;
       font-size: 1.1rem;
       line-height: 1.7;
       margin: 0;
@@ -280,7 +282,7 @@
     }
     
     .btn-verify-now {
-      background: #0277bd;
+      background: #3b82f6;
       color: white;
       padding: 1rem 2rem;
       font-size: 1.1rem;
@@ -289,15 +291,15 @@
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.3s ease, transform 0.2s ease;
-      box-shadow: 0 4px 8px rgba(2, 119, 189, 0.2);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
       align-self: flex-end;
       margin-top: auto;
     }
     
     .btn-verify-now:hover {
-      background: #01579b;
+      background: #2563eb;
       transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(2, 119, 189, 0.3);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
     
     .btn-verify-now:active {
@@ -305,7 +307,7 @@
     }
     
     .btn-verify-now:disabled {
-      background: #81d4fa;
+      background: #93c5fd;
       cursor: not-allowed;
       transform: none;
     }
