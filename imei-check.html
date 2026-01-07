@@ -669,8 +669,8 @@
           throw new Error('Failed to create checkout session');
         }
         
-        const { id } = await response.json();
-        await stripe.redirectToCheckout({ sessionId: id });
+        const data = await response.json();
+        await stripe.redirectToCheckout({ sessionId: data.id });
       } catch (error) {
         alert('Something went wrong – please try again later.');
         button.disabled = false;
