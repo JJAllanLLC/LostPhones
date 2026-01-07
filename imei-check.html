@@ -650,6 +650,18 @@
       }
     });
 
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
     // Stripe checkout
     document.getElementById('premium-button').addEventListener('click', async function() {
       const imei = document.getElementById('imei-input').value.trim().replace(/\s/g, '');
