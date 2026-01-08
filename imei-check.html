@@ -348,12 +348,7 @@
       border-radius: 8px;
       padding: 1.75rem 2rem;
       margin-bottom: 2.5rem;
-      display: none;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-    
-    .step-banner.show {
-      display: block;
     }
     
     .step-banner-content {
@@ -486,6 +481,13 @@
           </button>
         </form>
         
+        <div class="step-banner" id="stepBanner">
+          <div class="step-banner-content">
+            <strong>Step 1:</strong> Enter your IMEI and click "Check Free" — it takes 2 seconds and instantly confirms your device. ✓<br>
+            <strong>Step 2:</strong> Unlock your full verification report for only $0.99 <span class="step-banner-arrow">↓</span>
+          </div>
+        </div>
+        
         <div class="result-box" id="resultBox">
           <div class="result-box-content">
             <div class="result-icon">✓</div>
@@ -493,13 +495,6 @@
               <h3 id="resultTitle"></h3>
               <p id="resultText"></p>
             </div>
-          </div>
-        </div>
-        
-        <div class="step-banner" id="stepBanner">
-          <div class="step-banner-content">
-            <strong>Step 1:</strong> Enter your IMEI and click "Check Free" — it takes 2 seconds and instantly confirms your device. ✓<br>
-            <strong>Step 2:</strong> Unlock your full verification report for only $0.99 <span class="step-banner-arrow">↓</span>
           </div>
         </div>
         
@@ -619,7 +614,6 @@
       // Clear previous errors and results
       errorMessage.classList.remove('show');
       resultBox.classList.remove('show');
-      document.getElementById('stepBanner').classList.remove('show');
       
       const imei = imeiInput.value.trim().replace(/\D/g, '');
       
@@ -648,13 +642,11 @@
           resultTitle.textContent = 'Apple Device Detected';
           resultText.textContent = `Great — this is an Apple ${modelName}. You're in the right place.`;
           resultBox.classList.add('show');
-          document.getElementById('stepBanner').classList.add('show');
         } else {
           // Non-Apple device or unknown
           resultTitle.textContent = 'Device Detected';
           resultText.textContent = 'Device detected, but model information requires full verification.';
           resultBox.classList.add('show');
-          document.getElementById('stepBanner').classList.add('show');
         }
         
         checkFreeBtn.disabled = false;
