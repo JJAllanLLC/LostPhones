@@ -2,7 +2,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const IMEI_API_KEY = 'tWkh1r3K3IWlxgTiXkJGVSyTIyT1hih8aZ1RJxuKQQ4I2PIBbl6DVVlQ0KoI';
 const SERVICE_APPLE_ADVANCED = 171;
-const SERVICE_GSMA_BLACKLIST = 30;
 
 // Submit an order to imei.org API
 async function submitOrder(imei, serviceId) {
@@ -143,11 +142,12 @@ async function submitAndPollOrder(imei, serviceId) {
   }
 }
 
-// Parse Apple Advanced report for FMI and iCloud Lost status
+// Parse Apple Advanced report for FMI, iCloud Lost status, and blacklist
 function parseAppleAdvanced(data) {
   const report = {
     fmi: null,
     icloudLost: null,
+    blacklisted: false,
     clean: true,
     raw: data
   };
@@ -188,45 +188,10 @@ function parseAppleAdvanced(data) {
     }
   }
 
-  // Check response text for keywords if structured fields not found
-  if (dataStr.includes('lost mode') && 
-      (dataStr.includes('on') || dataStr.includes('active') || dataStr.includes('enabled'))) {
-    report.icloudLost = true;
-    report.clean = false;
-  }
-  
-  if (dataStr.includes('find my') && 
-      (dataStr.includes('on') || dataStr.includes('enabled') || dataStr.includes('yes'))) {
-    if (report.fmi === null) {
-      report.fmi = 'ON';
-    }
-  }
-
-  // If Lost Mode is active, device is not clean
-  if (report.icloudLost === true) {
-    report.clean = false;
-  }
-
-  console.log('Parsed Apple report:', JSON.stringify(report, null, 2));
-  return report;
-}
-
-// Parse GSMA Blacklist report
-function parseGSMABlacklist(data) {
-  const report = {
-    blacklisted: false,
-    clean: true,
-    raw: data
-  };
-
-  // Convert data to string for searching
-  const dataStr = JSON.stringify(data).toLowerCase();
-  const dataObj = typeof data === 'object' ? data : {};
-
-  // Look for blacklist status
+  // Look for blacklist status (included in Apple Advanced Check)
   const blacklistStatus = dataObj.STATUS || dataObj.BLACKLIST_STATUS || dataObj.BLACKLIST || 
                          dataObj.GSMA_STATUS || dataObj['Blacklist Status'] || dataObj.blacklist ||
-                         dataObj.blacklisted || dataObj.status;
+                         dataObj.blacklisted || dataObj.gsma_status || dataObj.gsma_blacklist;
   
   if (blacklistStatus !== undefined && blacklistStatus !== null) {
     const statusLower = String(blacklistStatus).toLowerCase();
@@ -243,7 +208,21 @@ function parseGSMABlacklist(data) {
     }
   }
 
-  // Check response text for keywords
+  // Check response text for keywords if structured fields not found
+  if (dataStr.includes('lost mode') && 
+      (dataStr.includes('on') || dataStr.includes('active') || dataStr.includes('enabled'))) {
+    report.icloudLost = true;
+    report.clean = false;
+  }
+  
+  if (dataStr.includes('find my') && 
+      (dataStr.includes('on') || dataStr.includes('enabled') || dataStr.includes('yes'))) {
+    if (report.fmi === null) {
+      report.fmi = 'ON';
+    }
+  }
+
+  // Check for blacklist in response text
   if (dataStr.includes('blacklist') && 
       (dataStr.includes('yes') || dataStr.includes('true') || 
        dataStr.includes('blocked') || dataStr.includes('stolen') ||
@@ -251,18 +230,16 @@ function parseGSMABlacklist(data) {
     report.blacklisted = true;
     report.clean = false;
   }
-  
-  if (dataStr.includes('clean') || dataStr.includes('not blacklist') ||
-      (dataStr.includes('blacklist') && (dataStr.includes('no') || dataStr.includes('false')))) {
-    if (!report.blacklisted) {
-      // Already set to false, but confirm clean
-      report.clean = true;
-    }
+
+  // If Lost Mode is active or blacklisted, device is not clean
+  if (report.icloudLost === true || report.blacklisted === true) {
+    report.clean = false;
   }
 
-  console.log('Parsed GSMA report:', JSON.stringify(report, null, 2));
+  console.log('Parsed Apple Advanced report:', JSON.stringify(report, null, 2));
   return report;
 }
+
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -298,40 +275,30 @@ export default async function handler(req, res) {
 
     console.log('IMEI from session:', imei);
 
-    // Submit and poll both orders in parallel
-    const [appleAdvancedResult, gsmaBlacklistResult] = await Promise.allSettled([
-      submitAndPollOrder(imei, SERVICE_APPLE_ADVANCED),
-      submitAndPollOrder(imei, SERVICE_GSMA_BLACKLIST)
-    ]);
-
-    // Parse results
-    const appleReport = appleAdvancedResult.status === 'fulfilled' 
-      ? parseAppleAdvanced(appleAdvancedResult.value)
-      : { 
-          fmi: null, 
-          icloudLost: null, 
-          clean: true, 
-          error: appleAdvancedResult.reason?.message || 'Unknown error',
-          raw: null
-        };
-
-    const gsmaReport = gsmaBlacklistResult.status === 'fulfilled'
-      ? parseGSMABlacklist(gsmaBlacklistResult.value)
-      : { 
-          blacklisted: false, 
-          clean: true, 
-          error: gsmaBlacklistResult.reason?.message || 'Unknown error',
-          raw: null
-        };
+    // Submit and poll single order (Apple Advanced Check includes everything)
+    let appleReport;
+    try {
+      const appleAdvancedResult = await submitAndPollOrder(imei, SERVICE_APPLE_ADVANCED);
+      appleReport = parseAppleAdvanced(appleAdvancedResult);
+    } catch (error) {
+      console.error('Error submitting/polling Apple Advanced Check:', error);
+      appleReport = {
+        fmi: null,
+        icloudLost: null,
+        blacklisted: false,
+        clean: true,
+        error: error.message || 'Unknown error',
+        raw: null
+      };
+    }
 
     // Log parsed results
     console.log('=== Final Parsed Results ===');
-    console.log('Apple:', JSON.stringify(appleReport, null, 2));
-    console.log('GSMA:', JSON.stringify(gsmaReport, null, 2));
+    console.log('Apple Advanced:', JSON.stringify(appleReport, null, 2));
 
     // Determine overall status
-    const hasIssue = !appleReport.clean || !gsmaReport.clean;
-    const hasError = appleReport.error || gsmaReport.error;
+    const hasIssue = !appleReport.clean;
+    const hasError = appleReport.error;
 
     // Generate plain-English summary
     let summary = '';
@@ -344,7 +311,7 @@ export default async function handler(req, res) {
       if (appleReport.icloudLost) {
         issues.push('reported lost via iCloud/Lost Mode');
       }
-      if (gsmaReport.blacklisted) {
+      if (appleReport.blacklisted) {
         issues.push('blacklisted');
       }
       summary = `Your device has been flagged: ${issues.join(' and ')}. Please contact support for assistance.`;
@@ -364,9 +331,9 @@ export default async function handler(req, res) {
         error: appleReport.error || null
       },
       gsma: {
-        blacklisted: gsmaReport.blacklisted,
-        clean: gsmaReport.clean,
-        error: gsmaReport.error || null
+        blacklisted: appleReport.blacklisted,
+        clean: !appleReport.blacklisted,
+        error: null
       },
       overallClean: !hasIssue && !hasError,
       summary: summary
