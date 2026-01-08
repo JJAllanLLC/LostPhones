@@ -249,11 +249,6 @@
       transform: translateY(0);
     }
     
-    .btn-checkout:disabled {
-      background: #93c5fd;
-      cursor: not-allowed;
-      transform: none;
-    }
     
     .split-cards-section {
       margin-top: 3rem;
@@ -332,11 +327,6 @@
       transform: translateY(0);
     }
     
-    .btn-verify-now:disabled {
-      background: #93c5fd;
-      cursor: not-allowed;
-      transform: none;
-    }
     
     .error-message {
       background: #ffebee;
@@ -476,7 +466,7 @@
         <div class="checkout-section">
           <h2>Get Full Verification Report – Only $0.99 Instant</h2>
           <p>Unlock complete device information, verification status, carrier details, and more with our comprehensive IMEI report.</p>
-          <button class="btn-checkout" id="checkoutBtn" disabled>
+          <button class="btn-checkout" id="checkoutBtn">
             Get Full Verification Report – Only $0.99
           </button>
         </div>
@@ -486,7 +476,7 @@
             <div class="split-card split-card-blue">
               <h3>Lost or Stolen Phone?</h3>
               <p>Quickly check if your device has been reported lost/stolen or blacklisted.</p>
-              <button class="btn-verify-now" id="verifyLostBtn" disabled>
+              <button class="btn-verify-now" id="verifyLostBtn">
                 Verify Now →
               </button>
             </div>
@@ -494,7 +484,7 @@
             <div class="split-card split-card-green">
               <h3>Buying a Used Phone?</h3>
               <p>Avoid scams — verify it's not blacklisted or stolen before you buy.</p>
-              <button class="btn-verify-now" id="verifyBuyBtn" disabled>
+              <button class="btn-verify-now" id="verifyBuyBtn">
                 Verify Now →
               </button>
             </div>
@@ -617,21 +607,11 @@
           resultTitle.textContent = 'Apple Device Detected';
           resultText.textContent = `Great — this is an Apple ${modelName}. You're in the right place.`;
           resultBox.classList.add('show');
-          
-          // Enable checkout buttons
-          checkoutBtn.disabled = false;
-          document.getElementById('verifyLostBtn').disabled = false;
-          document.getElementById('verifyBuyBtn').disabled = false;
         } else {
           // Non-Apple device or unknown
           resultTitle.textContent = 'Device Detected';
           resultText.textContent = 'Device detected, but model information requires full verification.';
           resultBox.classList.add('show');
-          
-          // Still enable checkout buttons
-          checkoutBtn.disabled = false;
-          document.getElementById('verifyLostBtn').disabled = false;
-          document.getElementById('verifyBuyBtn').disabled = false;
         }
         
         checkFreeBtn.disabled = false;
