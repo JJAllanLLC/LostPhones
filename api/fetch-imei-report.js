@@ -1,68 +1,119 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const DHRU_API_URL = 'https://api-client.imei.org/api/dhru';
-const DHRU_API_KEY = 'tWkh1r3K3IWlxgTiXkJGVSyTIyT1hih8aZ1RJxuKQQ4I2PIBbl6DVVlQ0KoI';
+const IMEI_API_KEY = 'tWkh1r3K3IWlxgTiXkJGVSyTIyT1hih8aZ1RJxuKQQ4I2PIBbl6DVVlQ0KoI';
 const SERVICE_APPLE_ADVANCED = 171;
 const SERVICE_GSMA_BLACKLIST = 30;
 
-// Poll for DHRU order completion
-async function pollDHRUOrder(reference, maxAttempts = 30, delayMs = 2000) {
-  console.log(`Starting to poll for order reference: ${reference} (max ${maxAttempts} attempts)`);
+// Submit an order to imei.org API
+async function submitOrder(imei, serviceId) {
+  const url = `https://api-client.imei.org/api/submit?apikey=${IMEI_API_KEY}&service_id=${serviceId}&input=${encodeURIComponent(imei)}&dontWait=1`;
+  
+  console.log(`=== Submitting order for service ${serviceId} ===`);
+  console.log('URL:', url);
+  console.log('IMEI:', imei);
+  
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    console.log('Submit response status:', response.status, response.statusText);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Submit error response:', errorText);
+      throw new Error(`Failed to submit order: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log('Submit response data:', JSON.stringify(data, null, 2));
+    
+    // Extract orderId from response
+    const orderId = data.id || data.orderId || data.order_id || data.ID || data.ORDERID;
+    
+    if (!orderId) {
+      console.error('No orderId in response:', data);
+      throw new Error('No order ID returned from API');
+    }
+    
+    console.log('Order submitted successfully. Order ID:', orderId);
+    return orderId;
+  } catch (error) {
+    console.error(`Error submitting order (Service ${serviceId}):`, error);
+    throw error;
+  }
+}
+
+// Poll for order completion
+async function pollOrder(orderId, maxAttempts = 30, delayMs = 2000) {
+  const url = `https://api-client.imei.org/api/track?apikey=${IMEI_API_KEY}&id=${orderId}`;
+  
+  console.log(`=== Polling order ${orderId} ===`);
+  console.log('Poll URL:', url);
+  console.log(`Max attempts: ${maxAttempts}, Delay: ${delayMs}ms`);
   
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
-      const pollRequestBody = {
-        ACTION: 'REFERENCES',
-        APIKEY: DHRU_API_KEY,
-        REFERENCE: reference
-      };
-
       if (attempt === 0) {
-        console.log('=== DHRU REFERENCES Request ===');
-        console.log('URL:', DHRU_API_URL);
-        console.log('Method: POST');
-        console.log('Headers:', { 'Content-Type': 'application/json' });
-        console.log('Body:', JSON.stringify(pollRequestBody, null, 2));
+        console.log('Starting poll attempt 1...');
+      } else if (attempt % 5 === 0) {
+        console.log(`Poll attempt ${attempt + 1}/${maxAttempts}...`);
       }
 
-      const response = await fetch(DHRU_API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(pollRequestBody)
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
       });
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`Poll attempt ${attempt + 1} failed:`, response.status, errorText);
-        throw new Error(`DHRU API error: ${response.status} - ${errorText}`);
+        // Continue polling on non-200 responses (might be temporary)
+        if (attempt < maxAttempts - 1) {
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+          continue;
+        }
+        throw new Error(`Poll failed: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
       
       if (attempt === 0 || attempt % 5 === 0) {
-        console.log(`Poll attempt ${attempt + 1}/${maxAttempts} - Status:`, data.STATUS);
+        console.log(`Poll attempt ${attempt + 1} response:`, JSON.stringify(data, null, 2));
       }
       
       // Check if order is complete
-      if (data.STATUS === 'SUCCESS' || data.STATUS === 'COMPLETED') {
-        console.log('Order completed successfully on attempt', attempt + 1);
+      const status = data.status || data.STATUS || data.state || data.STATE;
+      const statusLower = String(status || '').toLowerCase();
+      
+      if (statusLower === 'completed' || statusLower === 'success' || statusLower === 'done' || 
+          statusLower === 'finished' || data.completed || data.success) {
+        console.log(`Order ${orderId} completed successfully on attempt ${attempt + 1}`);
         console.log('Final poll response:', JSON.stringify(data, null, 2));
         return data;
       }
       
       // If still processing, wait and retry
-      if (data.STATUS === 'PROCESSING' || data.STATUS === 'PENDING') {
+      if (statusLower === 'processing' || statusLower === 'pending' || statusLower === 'in_progress' ||
+          statusLower === 'queued' || statusLower === 'waiting') {
         await new Promise(resolve => setTimeout(resolve, delayMs));
         continue;
       }
       
       // If failed or error
-      if (data.STATUS === 'FAILED' || data.STATUS === 'ERROR') {
-        console.error('Order failed with status:', data.STATUS, data.MESSAGE);
-        throw new Error(data.MESSAGE || 'Order failed');
+      if (statusLower === 'failed' || statusLower === 'error' || statusLower === 'cancelled') {
+        const errorMsg = data.message || data.error || data.MESSAGE || 'Order failed';
+        console.error(`Order ${orderId} failed with status:`, status, errorMsg);
+        throw new Error(errorMsg);
       }
 
-      // Default: wait and retry
+      // Default: wait and retry (unknown status)
+      console.log(`Unknown status "${status}", retrying...`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
     } catch (error) {
       // On last attempt, throw the error
@@ -75,68 +126,18 @@ async function pollDHRUOrder(reference, maxAttempts = 30, delayMs = 2000) {
     }
   }
   
-  console.error('Polling timeout after', maxAttempts, 'attempts');
+  console.error(`Polling timeout for order ${orderId} after ${maxAttempts} attempts`);
   throw new Error('Order polling timeout');
 }
 
-// Place a DHRU order and wait for completion
-async function placeAndPollDHRUOrder(imei, serviceId) {
+// Submit order and poll for completion
+async function submitAndPollOrder(imei, serviceId) {
   try {
-    // Build request body with exact DHRU format
-    const requestBody = {
-      ACTION: 'PLACEORDER',
-      APIKEY: DHRU_API_KEY,
-      SERVICE: serviceId,
-      IMEI: imei
-    };
-
-    // Log full request details
-    console.log('=== DHRU PLACEORDER Request ===');
-    console.log('URL:', DHRU_API_URL);
-    console.log('Method: POST');
-    console.log('Headers:', { 'Content-Type': 'application/json' });
-    console.log('Body:', JSON.stringify(requestBody, null, 2));
-
-    // Place order
-    const placeOrderResponse = await fetch(DHRU_API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody)
-    });
-
-    // Log response status
-    console.log('=== DHRU PLACEORDER Response ===');
-    console.log('Status:', placeOrderResponse.status, placeOrderResponse.statusText);
-    console.log('Headers:', Object.fromEntries(placeOrderResponse.headers.entries()));
-
-    if (!placeOrderResponse.ok) {
-      const errorText = await placeOrderResponse.text();
-      console.log('Error Response Body:', errorText);
-      throw new Error(`Failed to place order: ${placeOrderResponse.status} - ${errorText}`);
-    }
-
-    const placeOrderData = await placeOrderResponse.json();
-    console.log('Response Body:', JSON.stringify(placeOrderData, null, 2));
-    
-    if (placeOrderData.ERROR) {
-      console.error('DHRU API Error:', placeOrderData.ERROR, placeOrderData.MESSAGE);
-      throw new Error(placeOrderData.MESSAGE || 'Failed to place order');
-    }
-
-    const reference = placeOrderData.REFERENCE || placeOrderData.ORDERID;
-    if (!reference) {
-      console.error('No reference in response:', placeOrderData);
-      throw new Error('No reference returned from order placement');
-    }
-
-    console.log('Order placed successfully. Reference:', reference);
-
-    // Poll for completion
-    const result = await pollDHRUOrder(reference);
-    console.log('Order completed. Final result:', JSON.stringify(result, null, 2));
+    const orderId = await submitOrder(imei, serviceId);
+    const result = await pollOrder(orderId);
     return result;
   } catch (error) {
-    console.error(`DHRU order error (Service ${serviceId}, IMEI: ${imei}):`, error);
+    console.error(`Order error (Service ${serviceId}, IMEI: ${imei}):`, error);
     console.error('Error stack:', error.stack);
     throw error;
   }
@@ -147,30 +148,39 @@ function parseAppleAdvanced(data) {
   const report = {
     fmi: null,
     icloudLost: null,
-    clean: true
+    clean: true,
+    raw: data
   };
 
+  // Convert data to string for searching
+  const dataStr = JSON.stringify(data).toLowerCase();
+  const dataObj = typeof data === 'object' ? data : {};
+
   // Look for FMI status (Find My iPhone)
-  const fmiStatus = data.FMI || data.FIND_MY || data['Find My'] || 
-                    data.FMI_STATUS || data.FIND_MY_IPHONE;
+  const fmiStatus = dataObj.FMI || dataObj.FIND_MY || dataObj['Find My'] || 
+                    dataObj.FMI_STATUS || dataObj.FIND_MY_IPHONE || dataObj.fmi ||
+                    dataObj.findMy || dataObj.find_my;
   
-  if (fmiStatus) {
+  if (fmiStatus !== undefined && fmiStatus !== null) {
     const fmiLower = String(fmiStatus).toLowerCase();
-    if (fmiLower.includes('on') || fmiLower === 'enabled' || fmiLower === 'yes' || fmiLower === '1') {
+    if (fmiLower.includes('on') || fmiLower === 'enabled' || fmiLower === 'yes' || 
+        fmiLower === '1' || fmiLower === 'true') {
       report.fmi = 'ON';
-    } else if (fmiLower.includes('off') || fmiLower === 'disabled' || fmiLower === 'no' || fmiLower === '0') {
+    } else if (fmiLower.includes('off') || fmiLower === 'disabled' || 
+               fmiLower === 'no' || fmiLower === '0' || fmiLower === 'false') {
       report.fmi = 'OFF';
     }
   }
 
   // Look for Lost Mode / iCloud Lost status
-  const lostMode = data.LOST_MODE || data.LOST || data.ICLOUD_LOST || 
-                   data['Lost Mode'] || data.ICLOUD_LOST_MODE;
+  const lostMode = dataObj.LOST_MODE || dataObj.LOST || dataObj.ICLOUD_LOST || 
+                   dataObj['Lost Mode'] || dataObj.ICLOUD_LOST_MODE || dataObj.lostMode ||
+                   dataObj.lost_mode || dataObj.icloudLost || dataObj.icloud_lost;
   
-  if (lostMode) {
+  if (lostMode !== undefined && lostMode !== null) {
     const lostLower = String(lostMode).toLowerCase();
     if (lostLower.includes('on') || lostLower === 'enabled' || lostLower === 'yes' || 
-        lostLower.includes('active') || lostLower === '1') {
+        lostLower.includes('active') || lostLower === '1' || lostLower === 'true') {
       report.icloudLost = true;
       report.clean = false;
     } else {
@@ -179,13 +189,25 @@ function parseAppleAdvanced(data) {
   }
 
   // Check response text for keywords if structured fields not found
-  const responseText = JSON.stringify(data).toLowerCase();
-  if (responseText.includes('lost mode') && 
-      (responseText.includes('on') || responseText.includes('active') || responseText.includes('enabled'))) {
+  if (dataStr.includes('lost mode') && 
+      (dataStr.includes('on') || dataStr.includes('active') || dataStr.includes('enabled'))) {
     report.icloudLost = true;
     report.clean = false;
   }
+  
+  if (dataStr.includes('find my') && 
+      (dataStr.includes('on') || dataStr.includes('enabled') || dataStr.includes('yes'))) {
+    if (report.fmi === null) {
+      report.fmi = 'ON';
+    }
+  }
 
+  // If Lost Mode is active, device is not clean
+  if (report.icloudLost === true) {
+    report.clean = false;
+  }
+
+  console.log('Parsed Apple report:', JSON.stringify(report, null, 2));
   return report;
 }
 
@@ -193,35 +215,52 @@ function parseAppleAdvanced(data) {
 function parseGSMABlacklist(data) {
   const report = {
     blacklisted: false,
-    clean: true
+    clean: true,
+    raw: data
   };
 
+  // Convert data to string for searching
+  const dataStr = JSON.stringify(data).toLowerCase();
+  const dataObj = typeof data === 'object' ? data : {};
+
   // Look for blacklist status
-  const blacklistStatus = data.STATUS || data.BLACKLIST_STATUS || data.BLACKLIST || 
-                         data.GSMA_STATUS || data['Blacklist Status'];
+  const blacklistStatus = dataObj.STATUS || dataObj.BLACKLIST_STATUS || dataObj.BLACKLIST || 
+                         dataObj.GSMA_STATUS || dataObj['Blacklist Status'] || dataObj.blacklist ||
+                         dataObj.blacklisted || dataObj.status;
   
-  if (blacklistStatus) {
+  if (blacklistStatus !== undefined && blacklistStatus !== null) {
     const statusLower = String(blacklistStatus).toLowerCase();
     if (statusLower.includes('blacklist') || statusLower.includes('blocked') || 
         statusLower.includes('barred') || statusLower.includes('stolen') || 
-        statusLower.includes('lost')) {
+        statusLower.includes('lost') || statusLower.includes('yes') ||
+        statusLower === 'true' || statusLower === '1') {
       report.blacklisted = true;
       report.clean = false;
     } else if (statusLower.includes('clean') || statusLower.includes('whitelist') || 
-               statusLower.includes('clear') || statusLower.includes('active')) {
+               statusLower.includes('clear') || statusLower.includes('active') ||
+               statusLower.includes('no') || statusLower === 'false' || statusLower === '0') {
       report.blacklisted = false;
     }
   }
 
   // Check response text for keywords
-  const responseText = JSON.stringify(data).toLowerCase();
-  if (responseText.includes('blacklist') && 
-      (responseText.includes('yes') || responseText.includes('true') || 
-       responseText.includes('blocked') || responseText.includes('stolen'))) {
+  if (dataStr.includes('blacklist') && 
+      (dataStr.includes('yes') || dataStr.includes('true') || 
+       dataStr.includes('blocked') || dataStr.includes('stolen') ||
+       dataStr.includes('barred'))) {
     report.blacklisted = true;
     report.clean = false;
   }
+  
+  if (dataStr.includes('clean') || dataStr.includes('not blacklist') ||
+      (dataStr.includes('blacklist') && (dataStr.includes('no') || dataStr.includes('false')))) {
+    if (!report.blacklisted) {
+      // Already set to false, but confirm clean
+      report.clean = true;
+    }
+  }
 
+  console.log('Parsed GSMA report:', JSON.stringify(report, null, 2));
   return report;
 }
 
@@ -238,10 +277,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'session_id is required' });
     }
 
+    console.log('=== Fetching IMEI Report ===');
+    console.log('Session ID:', session_id);
+
     // Retrieve Stripe session
     const session = await stripe.checkout.sessions.retrieve(session_id);
 
     if (!session) {
+      console.error('Session not found:', session_id);
       return res.status(404).json({ error: 'Session not found' });
     }
 
@@ -249,23 +292,42 @@ export default async function handler(req, res) {
     const imei = session.metadata?.imei;
 
     if (!imei) {
+      console.error('IMEI not found in session metadata:', session.metadata);
       return res.status(400).json({ error: 'IMEI not found in session metadata' });
     }
 
-    // Place both DHRU orders in parallel
+    console.log('IMEI from session:', imei);
+
+    // Submit and poll both orders in parallel
     const [appleAdvancedResult, gsmaBlacklistResult] = await Promise.allSettled([
-      placeAndPollDHRUOrder(imei, SERVICE_APPLE_ADVANCED),
-      placeAndPollDHRUOrder(imei, SERVICE_GSMA_BLACKLIST)
+      submitAndPollOrder(imei, SERVICE_APPLE_ADVANCED),
+      submitAndPollOrder(imei, SERVICE_GSMA_BLACKLIST)
     ]);
 
     // Parse results
     const appleReport = appleAdvancedResult.status === 'fulfilled' 
       ? parseAppleAdvanced(appleAdvancedResult.value)
-      : { fmi: null, icloudLost: null, clean: true, error: appleAdvancedResult.reason?.message };
+      : { 
+          fmi: null, 
+          icloudLost: null, 
+          clean: true, 
+          error: appleAdvancedResult.reason?.message || 'Unknown error',
+          raw: null
+        };
 
     const gsmaReport = gsmaBlacklistResult.status === 'fulfilled'
       ? parseGSMABlacklist(gsmaBlacklistResult.value)
-      : { blacklisted: false, clean: true, error: gsmaBlacklistResult.reason?.message };
+      : { 
+          blacklisted: false, 
+          clean: true, 
+          error: gsmaBlacklistResult.reason?.message || 'Unknown error',
+          raw: null
+        };
+
+    // Log parsed results
+    console.log('=== Final Parsed Results ===');
+    console.log('Apple:', JSON.stringify(appleReport, null, 2));
+    console.log('GSMA:', JSON.stringify(gsmaReport, null, 2));
 
     // Determine overall status
     const hasIssue = !appleReport.clean || !gsmaReport.clean;
@@ -288,6 +350,9 @@ export default async function handler(req, res) {
       summary = `Your device has been flagged: ${issues.join(' and ')}. Please contact support for assistance.`;
     }
 
+    console.log('Summary:', summary);
+    console.log('Overall clean:', !hasIssue && !hasError);
+
     // Return structured response
     return res.status(200).json({
       success: true,
@@ -309,10 +374,10 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Error fetching IMEI report:', error);
+    console.error('Error stack:', error.stack);
     return res.status(500).json({ 
       error: 'Failed to fetch IMEI report',
       message: error.message 
     });
   }
 }
-
