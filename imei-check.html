@@ -610,8 +610,12 @@
     
     // Shared checkout handler function
     async function handleCheckout() {
-      if (!currentImei) {
-        alert('Please check your IMEI first.');
+      // Read IMEI directly from input field
+      const imeiInput = document.getElementById('imeiInput');
+      const imei = imeiInput.value.trim().replace(/\D/g, '');
+      
+      if (!imei || imei.length !== 15) {
+        alert('Please enter and check your IMEI first.');
         return;
       }
       
@@ -634,7 +638,7 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ imei: currentImei })
+          body: JSON.stringify({ imei: imei })
         });
         
         if (!response.ok) {
