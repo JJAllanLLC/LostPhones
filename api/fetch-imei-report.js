@@ -7,26 +7,46 @@ const SERVICE_GSMA_BLACKLIST = 30;
 
 // Poll for DHRU order completion
 async function pollDHRUOrder(reference, maxAttempts = 30, delayMs = 2000) {
+  console.log(`Starting to poll for order reference: ${reference} (max ${maxAttempts} attempts)`);
+  
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
+      const pollRequestBody = {
+        ACTION: 'REFERENCES',
+        APIKEY: DHRU_API_KEY,
+        REFERENCE: reference
+      };
+
+      if (attempt === 0) {
+        console.log('=== DHRU REFERENCES Request ===');
+        console.log('URL:', DHRU_API_URL);
+        console.log('Method: POST');
+        console.log('Headers:', { 'Content-Type': 'application/json' });
+        console.log('Body:', JSON.stringify(pollRequestBody, null, 2));
+      }
+
       const response = await fetch(DHRU_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ACTION: 'REFERENCES',
-          APIKEY: DHRU_API_KEY,
-          REFERENCE: reference
-        })
+        body: JSON.stringify(pollRequestBody)
       });
 
       if (!response.ok) {
-        throw new Error(`DHRU API error: ${response.status}`);
+        const errorText = await response.text();
+        console.error(`Poll attempt ${attempt + 1} failed:`, response.status, errorText);
+        throw new Error(`DHRU API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
       
+      if (attempt === 0 || attempt % 5 === 0) {
+        console.log(`Poll attempt ${attempt + 1}/${maxAttempts} - Status:`, data.STATUS);
+      }
+      
       // Check if order is complete
       if (data.STATUS === 'SUCCESS' || data.STATUS === 'COMPLETED') {
+        console.log('Order completed successfully on attempt', attempt + 1);
+        console.log('Final poll response:', JSON.stringify(data, null, 2));
         return data;
       }
       
@@ -38,6 +58,7 @@ async function pollDHRUOrder(reference, maxAttempts = 30, delayMs = 2000) {
       
       // If failed or error
       if (data.STATUS === 'FAILED' || data.STATUS === 'ERROR') {
+        console.error('Order failed with status:', data.STATUS, data.MESSAGE);
         throw new Error(data.MESSAGE || 'Order failed');
       }
 
@@ -46,6 +67,7 @@ async function pollDHRUOrder(reference, maxAttempts = 30, delayMs = 2000) {
     } catch (error) {
       // On last attempt, throw the error
       if (attempt === maxAttempts - 1) {
+        console.error('Polling failed after all attempts:', error);
         throw error;
       }
       // Otherwise wait and retry
@@ -53,44 +75,69 @@ async function pollDHRUOrder(reference, maxAttempts = 30, delayMs = 2000) {
     }
   }
   
+  console.error('Polling timeout after', maxAttempts, 'attempts');
   throw new Error('Order polling timeout');
 }
 
 // Place a DHRU order and wait for completion
 async function placeAndPollDHRUOrder(imei, serviceId) {
   try {
+    // Build request body with exact DHRU format
+    const requestBody = {
+      ACTION: 'PLACEORDER',
+      APIKEY: DHRU_API_KEY,
+      SERVICE: serviceId,
+      IMEI: imei
+    };
+
+    // Log full request details
+    console.log('=== DHRU PLACEORDER Request ===');
+    console.log('URL:', DHRU_API_URL);
+    console.log('Method: POST');
+    console.log('Headers:', { 'Content-Type': 'application/json' });
+    console.log('Body:', JSON.stringify(requestBody, null, 2));
+
     // Place order
     const placeOrderResponse = await fetch(DHRU_API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ACTION: 'PLACEORDER',
-        APIKEY: DHRU_API_KEY,
-        SERVICE: serviceId,
-        IMEI: imei
-      })
+      body: JSON.stringify(requestBody)
     });
 
+    // Log response status
+    console.log('=== DHRU PLACEORDER Response ===');
+    console.log('Status:', placeOrderResponse.status, placeOrderResponse.statusText);
+    console.log('Headers:', Object.fromEntries(placeOrderResponse.headers.entries()));
+
     if (!placeOrderResponse.ok) {
-      throw new Error(`Failed to place order: ${placeOrderResponse.status}`);
+      const errorText = await placeOrderResponse.text();
+      console.log('Error Response Body:', errorText);
+      throw new Error(`Failed to place order: ${placeOrderResponse.status} - ${errorText}`);
     }
 
     const placeOrderData = await placeOrderResponse.json();
+    console.log('Response Body:', JSON.stringify(placeOrderData, null, 2));
     
     if (placeOrderData.ERROR) {
+      console.error('DHRU API Error:', placeOrderData.ERROR, placeOrderData.MESSAGE);
       throw new Error(placeOrderData.MESSAGE || 'Failed to place order');
     }
 
     const reference = placeOrderData.REFERENCE || placeOrderData.ORDERID;
     if (!reference) {
+      console.error('No reference in response:', placeOrderData);
       throw new Error('No reference returned from order placement');
     }
 
+    console.log('Order placed successfully. Reference:', reference);
+
     // Poll for completion
     const result = await pollDHRUOrder(reference);
+    console.log('Order completed. Final result:', JSON.stringify(result, null, 2));
     return result;
   } catch (error) {
-    console.error(`DHRU order error (Service ${serviceId}):`, error);
+    console.error(`DHRU order error (Service ${serviceId}, IMEI: ${imei}):`, error);
+    console.error('Error stack:', error.stack);
     throw error;
   }
 }
