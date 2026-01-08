@@ -19,20 +19,20 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generating Your IMEI Report – LostPhones.com</title>
-  <meta name="description" content="Your IMEI report is being generated. Please wait while we process your verification request.">
+  <title>Thank You — Generating Your IMEI Report | LostPhones.com</title>
+  <meta name="description" content="Your full IMEI report is being generated. Please wait while we process your verification request.">
   
   <!-- Open Graph / Social -->
-  <meta property="og:title" content="Generating Your IMEI Report – LostPhones.com">
-  <meta property="og:description" content="Your IMEI report is being generated. Please wait while we process your verification request.">
+  <meta property="og:title" content="Thank You — Generating Your IMEI Report">
+  <meta property="og:description" content="Your full IMEI report is being generated. Please wait while we process your verification request.">
   <meta property="og:image" content="https://lostphones.com/assets/cover.jpg">
   <meta property="og:url" content="https://lostphones.com/imei-success.html">
   <meta property="og:type" content="website">
   
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Generating Your IMEI Report – LostPhones.com">
-  <meta name="twitter:description" content="Your IMEI report is being generated. Please wait while we process your verification request.">
+  <meta name="twitter:title" content="Thank You — Generating Your IMEI Report">
+  <meta name="twitter:description" content="Your full IMEI report is being generated. Please wait while we process your verification request.">
   <meta name="twitter:image" content="https://lostphones.com/assets/cover.jpg">
   <link rel="canonical" href="https://lostphones.com/imei-success.html">
   <link rel="stylesheet" href="style.css">
@@ -40,7 +40,7 @@
     .imei-success-section {
       padding: 8rem 2rem 4rem;
       min-height: calc(100vh - 120px);
-      background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 50%, #81d4fa 100%);
+      background: #f8f9fa;
     }
     
     .imei-success-container {
@@ -48,30 +48,43 @@
       margin: 0 auto;
       background: white;
       padding: 3rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 123, 255, 0.15);
-      text-align: center;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e0e0e0;
     }
     
-    .imei-success-container h1 {
+    .imei-success-hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    
+    .imei-success-hero h1 {
       font-size: 2.5rem;
-      color: #0277bd;
-      margin-bottom: 1.5rem;
+      color: #333;
+      margin-bottom: 1rem;
       line-height: 1.3;
     }
     
-    .imei-success-container p {
-      font-size: 1.2rem;
-      color: #546e7a;
+    .imei-success-hero p {
+      font-size: 1.25rem;
+      color: #666;
       line-height: 1.7;
       margin-bottom: 2rem;
+    }
+    
+    .loading-state {
+      display: block;
+    }
+    
+    .loading-state.hidden {
+      display: none;
     }
     
     .spinner {
       width: 50px;
       height: 50px;
       border: 4px solid #e3f2fd;
-      border-top: 4px solid #0277bd;
+      border-top: 4px solid #3b82f6;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin: 2rem auto;
@@ -82,28 +95,179 @@
       100% { transform: rotate(360deg); }
     }
     
-    .wait-note {
-      color: #607d8b;
-      font-size: 1rem;
+    .results-state {
+      display: none;
+    }
+    
+    .results-state.show {
+      display: block;
+    }
+    
+    .results-summary {
+      text-align: center;
+      padding: 2rem;
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    
+    .results-summary h2 {
+      font-size: 1.8rem;
+      color: #1e40af;
+      margin-bottom: 1rem;
+    }
+    
+    .results-summary p {
+      font-size: 1.2rem;
+      color: #1e3a8a;
       line-height: 1.7;
+      margin: 0;
+    }
+    
+    .results-summary.clean {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+    
+    .results-summary.clean h2 {
+      color: #166534;
+    }
+    
+    .results-summary.clean p {
+      color: #15803d;
+    }
+    
+    .results-summary.issue {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+    
+    .results-summary.issue h2 {
+      color: #991b1b;
+    }
+    
+    .results-summary.issue p {
+      color: #dc2626;
+    }
+    
+    .result-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    @media (min-width: 768px) {
+      .result-cards {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    .result-card {
+      padding: 2rem;
+      border-radius: 8px;
+      border: 2px solid;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    .result-card.clean {
+      background: #f0fdf4;
+      border-color: #22c55e;
+    }
+    
+    .result-card.issue {
+      background: #fef2f2;
+      border-color: #ef4444;
+    }
+    
+    .result-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    
+    .result-card.clean h3 {
+      color: #166534;
+    }
+    
+    .result-card.issue h3 {
+      color: #991b1b;
+    }
+    
+    .result-card-status {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    
+    .result-card.clean .result-card-status {
+      color: #15803d;
+    }
+    
+    .result-card.issue .result-card-status {
+      color: #dc2626;
+    }
+    
+    .result-card-details {
+      font-size: 1.1rem;
+      color: #666;
+      line-height: 1.6;
+      margin-top: 1rem;
+    }
+    
+    .result-card.clean .result-card-details {
+      color: #166534;
+    }
+    
+    .result-card.issue .result-card-details {
+      color: #991b1b;
+    }
+    
+    .next-steps {
+      text-align: center;
+      padding: 2rem;
       margin-top: 2rem;
     }
     
-    .wait-note a {
-      color: #0277bd;
+    .next-steps a {
+      color: #3b82f6;
       text-decoration: none;
+      font-size: 1.2rem;
       font-weight: 600;
+      transition: color 0.3s ease;
     }
     
-    .wait-note a:hover {
+    .next-steps a:hover {
+      color: #2563eb;
       text-decoration: underline;
     }
     
-    .results-placeholder {
-      margin-top: 3rem;
-      padding-top: 3rem;
-      border-top: 2px solid #e0e0e0;
+    .error-state {
       display: none;
+      text-align: center;
+      padding: 2rem;
+      background: #fef2f2;
+      border: 2px solid #ef4444;
+      border-radius: 8px;
+      margin-top: 2rem;
+    }
+    
+    .error-state.show {
+      display: block;
+    }
+    
+    .error-state h2 {
+      color: #991b1b;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .error-state p {
+      color: #dc2626;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin-bottom: 1rem;
     }
     
     @media (max-width: 768px) {
@@ -115,11 +279,19 @@
         padding: 2rem 1.5rem;
       }
       
-      .imei-success-container h1 {
+      .imei-success-hero h1 {
         font-size: 2rem;
       }
       
-      .imei-success-container p {
+      .imei-success-hero p {
+        font-size: 1.1rem;
+      }
+      
+      .results-summary h2 {
+        font-size: 1.5rem;
+      }
+      
+      .results-summary p {
         font-size: 1.1rem;
       }
     }
@@ -129,8 +301,20 @@
         padding: 1.5rem 1rem;
       }
       
-      .imei-success-container h1 {
+      .imei-success-hero h1 {
         font-size: 1.75rem;
+      }
+      
+      .result-card {
+        padding: 1.5rem;
+      }
+      
+      .result-card h3 {
+        font-size: 1.3rem;
+      }
+      
+      .result-card-status {
+        font-size: 1.1rem;
       }
     }
   </style>
@@ -154,19 +338,52 @@
   <div class="main-content">
     <section class="imei-success-section">
       <div class="imei-success-container">
-        <h1>Thank you — we're generating your full IMEI report</h1>
-        <p>This usually takes 10-15 seconds. Please do not close this page.</p>
         
-        <div class="spinner"></div>
-        
-        <p class="wait-note">
-          While you wait, feel free to review our <a href="/">free recovery checklist →</a>
-        </p>
-        
-        <!-- Placeholder for future results -->
-        <div class="results-placeholder" id="resultsPlaceholder">
-          <!-- Results will be displayed here -->
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState">
+          <div class="imei-success-hero">
+            <h1>Thank you — generating your full IMEI report</h1>
+            <p>This takes 20-60 seconds. Please do not close this page.</p>
+          </div>
+          
+          <div class="spinner"></div>
         </div>
+        
+        <!-- Results State -->
+        <div class="results-state" id="resultsState">
+          <div class="results-summary" id="resultsSummary">
+            <h2>Report Complete</h2>
+            <p id="summaryText">Loading your report...</p>
+          </div>
+          
+          <div class="result-cards">
+            <div class="result-card" id="appleCard">
+              <h3>Apple Lost/Found My iPhone Status</h3>
+              <div class="result-card-status" id="appleStatus">Checking...</div>
+              <div class="result-card-details" id="appleDetails"></div>
+            </div>
+            
+            <div class="result-card" id="gsmaCard">
+              <h3>GSMA Blacklist Status</h3>
+              <div class="result-card-status" id="gsmaStatus">Checking...</div>
+              <div class="result-card-details" id="gsmaDetails"></div>
+            </div>
+          </div>
+          
+          <div class="next-steps">
+            <a href="/">Return to our free recovery checklist →</a>
+          </div>
+        </div>
+        
+        <!-- Error State -->
+        <div class="error-state" id="errorState">
+          <h2>Unable to Generate Report</h2>
+          <p id="errorMessage">We encountered an issue while generating your report. Please try again or contact support if the problem persists.</p>
+          <p style="margin-top: 1rem;">
+            <a href="/" style="color: #3b82f6; text-decoration: underline;">Return to our free recovery checklist →</a>
+          </p>
+        </div>
+        
       </div>
     </section>
   </div>
@@ -190,6 +407,132 @@
     </div>
   </footer>
 
+  <script>
+    // Get session_id from URL query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    
+    // DOM elements
+    const loadingState = document.getElementById('loadingState');
+    const resultsState = document.getElementById('resultsState');
+    const errorState = document.getElementById('errorState');
+    const resultsSummary = document.getElementById('resultsSummary');
+    const summaryText = document.getElementById('summaryText');
+    const appleCard = document.getElementById('appleCard');
+    const appleStatus = document.getElementById('appleStatus');
+    const appleDetails = document.getElementById('appleDetails');
+    const gsmaCard = document.getElementById('gsmaCard');
+    const gsmaStatus = document.getElementById('gsmaStatus');
+    const gsmaDetails = document.getElementById('gsmaDetails');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    // Fetch IMEI report
+    async function fetchIMEIReport() {
+      if (!sessionId) {
+        showError('Session ID not found. Please return to the checkout page and try again.');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/api/fetch-imei-report?session_id=${encodeURIComponent(sessionId)}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+          throw new Error(errorData.error || `Server error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to generate report');
+        }
+        
+        // Display results
+        displayResults(data);
+        
+      } catch (error) {
+        console.error('Error fetching IMEI report:', error);
+        showError(error.message || 'We encountered an issue while generating your report. Please try again or contact support if the problem persists.');
+      }
+    }
+    
+    // Display results
+    function displayResults(data) {
+      // Hide loading state, show results
+      loadingState.classList.add('hidden');
+      resultsState.classList.add('show');
+      
+      // Update summary
+      summaryText.textContent = data.summary || 'Your report is ready.';
+      
+      // Determine if overall clean or has issues
+      const isClean = data.overallClean;
+      if (isClean) {
+        resultsSummary.classList.add('clean');
+        resultsSummary.classList.remove('issue');
+      } else {
+        resultsSummary.classList.add('issue');
+        resultsSummary.classList.remove('clean');
+      }
+      
+      // Update Apple card
+      const appleClean = data.apple?.clean && !data.apple?.error;
+      const appleHasLost = data.apple?.icloudLost === true;
+      
+      if (data.apple?.error) {
+        appleCard.classList.remove('clean', 'issue');
+        appleStatus.textContent = 'Error';
+        appleDetails.textContent = 'Unable to retrieve Apple status. Please try again later.';
+      } else if (appleHasLost) {
+        appleCard.classList.add('issue');
+        appleCard.classList.remove('clean');
+        appleStatus.textContent = '⚠️ Reported Lost';
+        appleDetails.textContent = 'This device has been reported lost or stolen via iCloud Lost Mode.';
+      } else {
+        appleCard.classList.add('clean');
+        appleCard.classList.remove('issue');
+        const fmiStatus = data.apple?.fmi || 'Unknown';
+        appleStatus.textContent = fmiStatus === 'ON' ? '✓ Find My Enabled' : '✓ No Issues Detected';
+        appleDetails.textContent = fmiStatus === 'ON' 
+          ? 'Find My iPhone is enabled. No lost mode detected.'
+          : 'No lost or stolen reports found for this device.';
+      }
+      
+      // Update GSMA card
+      const gsmaClean = data.gsma?.clean && !data.gsma?.error;
+      const gsmaBlacklisted = data.gsma?.blacklisted === true;
+      
+      if (data.gsma?.error) {
+        gsmaCard.classList.remove('clean', 'issue');
+        gsmaStatus.textContent = 'Error';
+        gsmaDetails.textContent = 'Unable to retrieve blacklist status. Please try again later.';
+      } else if (gsmaBlacklisted) {
+        gsmaCard.classList.add('issue');
+        gsmaCard.classList.remove('clean');
+        gsmaStatus.textContent = '⚠️ Blacklisted';
+        gsmaDetails.textContent = 'This device has been reported to the GSMA blacklist database.';
+      } else {
+        gsmaCard.classList.add('clean');
+        gsmaCard.classList.remove('issue');
+        gsmaStatus.textContent = '✓ Clean';
+        gsmaDetails.textContent = 'This device is not blacklisted and can be activated on any carrier.';
+      }
+    }
+    
+    // Show error state
+    function showError(message) {
+      loadingState.classList.add('hidden');
+      resultsState.classList.remove('show');
+      errorState.classList.add('show');
+      errorMessage.textContent = message;
+    }
+    
+    // Fetch report on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fetchIMEIReport);
+    } else {
+      fetchIMEIReport();
+    }
+  </script>
 </body>
 </html>
-
