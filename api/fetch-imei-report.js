@@ -274,6 +274,7 @@ export default async function handler(req, res) {
     }
 
     console.log('IMEI from session:', imei);
+    console.log(`Using service_id: 171 for IMEI: ${imei}`);
 
     // Submit and poll single order (Apple Advanced Check includes everything)
     let appleReport;
