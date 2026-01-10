@@ -81,15 +81,27 @@ async function pollOrder(orderId, maxAttempts = 90, delayMs = 2000) {
       // Check if order is complete
       const status = data.status || data.STATUS || data.state || data.STATE;
       const statusLower = String(status || '').toLowerCase();
+      const statusUpper = String(status || '').toUpperCase();
       
       // Add debug logs for every attempt
-      console.log('Polling attempt ' + (attempt + 1) + ' of ' + maxAttempts + ' - status: ' + status);
-      console.log('Full poll response: ' + JSON.stringify(data));
+      console.log('Poll attempt ' + attempt + ' - raw status: ' + status);
+      console.log('Poll response data: ' + JSON.stringify(data));
       
-      if (statusLower === 'completed' || statusLower === 'success' || statusLower === 'done' || 
-          statusLower === 'finished' || data.completed || data.success) {
+      // Expanded completed status detection: "Done", "done", "Success", "success", "Completed", "completed", "Finished", "finished", "1", "true"
+      const isCompleted = statusLower === 'completed' || statusLower === 'success' || 
+                         statusLower === 'done' || statusLower === 'finished' ||
+                         statusUpper === 'DONE' || statusUpper === 'SUCCESS' || 
+                         statusUpper === 'COMPLETED' || statusUpper === 'FINISHED' ||
+                         status === '1' || status === 1 || statusLower === 'true' ||
+                         data.completed === true || data.success === true ||
+                         data.completed === 1 || data.success === 1 ||
+                         String(data.completed || '').toLowerCase() === 'true' ||
+                         String(data.success || '').toLowerCase() === 'true';
+      
+      if (isCompleted) {
         console.log(`Order ${orderId} completed successfully on attempt ${attempt + 1}`);
         console.log('Final poll response:', JSON.stringify(data, null, 2));
+        // Immediately return the result data (no further polling)
         return data;
       }
       
