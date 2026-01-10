@@ -78,6 +78,15 @@ async function pollOrder(orderId, maxAttempts = 90, delayMs = 2000) {
 
       const data = await response.json();
       
+      // Check if order is complete with status 1 + response presence (imei.org complete format)
+      if (data.status === 1 && data.response && typeof data.response === 'object' && Object.keys(data.response).length > 0) {
+        console.log('Detected complete: status 1 with response data present');
+        console.log(`Order ${orderId} completed successfully on attempt ${attempt + 1}`);
+        console.log('Final poll response:', JSON.stringify(data, null, 2));
+        // Return the response data directly (contains the full report)
+        return data.response;
+      }
+      
       // Check if order is complete
       const status = data.status || data.STATUS || data.state || data.STATE;
       const statusLower = String(status || '').toLowerCase();
