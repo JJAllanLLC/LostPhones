@@ -4,12 +4,11 @@ const IMEI_API_KEY = 'tWkh1r3K3IWlxgTiXkJGVSyTIyT1hih8aZ1RJxuKQQ4I2PIBbl6DVVlQ0K
 const SERVICE_APPLE_ADVANCED = 171;
 
 // Submit an order to imei.org API
-async function submitOrder(imei, serviceId) {
-  const url = `https://api-client.imei.org/api/submit?apikey=${IMEI_API_KEY}&service_id=${serviceId}&input=${encodeURIComponent(imei)}&dontWait=1`;
+async function submitOrder(imei) {
+  const url = `https://api-client.imei.org/api/submit?apikey=${IMEI_API_KEY}&service_id=171&input=${encodeURIComponent(imei)}&dontWait=1`;
   
-  console.log(`=== Submitting order for service ${serviceId} ===`);
-  console.log('URL:', url);
-  console.log('IMEI:', imei);
+  console.log('Submitting to service_id: 171 for IMEI: ' + imei);
+  console.log('Full submit URL: ' + url);
   
   try {
     const response = await fetch(url, {
@@ -28,6 +27,7 @@ async function submitOrder(imei, serviceId) {
     }
 
     const data = await response.json();
+    console.log('API response: ' + JSON.stringify(data));
     console.log('Submit response data:', JSON.stringify(data, null, 2));
     
     // Extract orderId from response
@@ -41,7 +41,7 @@ async function submitOrder(imei, serviceId) {
     console.log('Order submitted successfully. Order ID:', orderId);
     return orderId;
   } catch (error) {
-    console.error(`Error submitting order (Service ${serviceId}):`, error);
+    console.error('Error submitting order (Service 171):', error);
     throw error;
   }
 }
@@ -130,13 +130,13 @@ async function pollOrder(orderId, maxAttempts = 30, delayMs = 2000) {
 }
 
 // Submit order and poll for completion
-async function submitAndPollOrder(imei, serviceId) {
+async function submitAndPollOrder(imei) {
   try {
-    const orderId = await submitOrder(imei, serviceId);
+    const orderId = await submitOrder(imei);
     const result = await pollOrder(orderId);
     return result;
   } catch (error) {
-    console.error(`Order error (Service ${serviceId}, IMEI: ${imei}):`, error);
+    console.error('Order error (Service 171, IMEI: ' + imei + '):', error);
     console.error('Error stack:', error.stack);
     throw error;
   }
@@ -274,12 +274,11 @@ export default async function handler(req, res) {
     }
 
     console.log('IMEI from session:', imei);
-    console.log(`Using service_id: 171 for IMEI: ${imei}`);
 
-    // Submit and poll single order (Apple Advanced Check includes everything)
+    // Submit and poll single order with service_id 171 (Apple Advanced Check includes everything)
     let appleReport;
     try {
-      const appleAdvancedResult = await submitAndPollOrder(imei, SERVICE_APPLE_ADVANCED);
+      const appleAdvancedResult = await submitAndPollOrder(imei);
       appleReport = parseAppleAdvanced(appleAdvancedResult);
     } catch (error) {
       console.error('Error submitting/polling Apple Advanced Check:', error);
