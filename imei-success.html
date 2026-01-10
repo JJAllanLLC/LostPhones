@@ -224,6 +224,87 @@
       color: #991b1b;
     }
     
+    .full-report-dropdown {
+      margin: 2rem 0;
+      display: none;
+    }
+    
+    .results-state.show .full-report-dropdown {
+      display: block;
+    }
+    
+    .full-report-toggle {
+      text-align: center;
+      padding: 0.75rem 0;
+      cursor: pointer;
+      user-select: none;
+      color: #666;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+    }
+    
+    .full-report-toggle:hover {
+      color: #333;
+    }
+    
+    .full-report-toggle::after {
+      content: ' ▼';
+      font-size: 0.8rem;
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+    
+    .full-report-toggle.expanded::after {
+      transform: rotate(180deg);
+    }
+    
+    @media (min-width: 768px) {
+      .full-report-toggle {
+        text-align: right;
+      }
+    }
+    
+    .full-report-content {
+      display: none;
+      margin-top: 1rem;
+      padding: 1.5rem;
+      background: #f5f5f5;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .full-report-content.show {
+      display: block;
+    }
+    
+    .full-report-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .full-report-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    
+    .full-report-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .full-report-list li strong {
+      color: #333;
+      font-weight: 600;
+      display: inline-block;
+      min-width: 140px;
+    }
+    
+    .full-report-list li span {
+      color: #555;
+    }
+    
     .next-steps {
       text-align: center;
       padding: 2rem;
@@ -316,6 +397,24 @@
       .result-card-status {
         font-size: 1.1rem;
       }
+      
+      .full-report-toggle {
+        font-size: 0.9rem;
+      }
+      
+      .full-report-content {
+        padding: 1rem;
+      }
+      
+      .full-report-list li {
+        font-size: 0.9rem;
+        padding: 0.4rem 0;
+      }
+      
+      .full-report-list li strong {
+        min-width: 100px;
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
@@ -374,6 +473,16 @@
             </div>
           </div>
           
+          <!-- Full Report Details Dropdown -->
+          <div class="full-report-dropdown">
+            <div class="full-report-toggle" id="fullReportToggle">View Full Report Details</div>
+            <div class="full-report-content" id="fullReportContent">
+              <ul class="full-report-list" id="fullReportList">
+                <!-- Details will be populated by JavaScript -->
+              </ul>
+            </div>
+          </div>
+          
           <div class="next-steps">
             <a href="/">Return to our free recovery checklist →</a>
           </div>
@@ -429,6 +538,9 @@
     const gsmaStatus = document.getElementById('gsmaStatus');
     const gsmaDetails = document.getElementById('gsmaDetails');
     const errorMessage = document.getElementById('errorMessage');
+    const fullReportToggle = document.getElementById('fullReportToggle');
+    const fullReportContent = document.getElementById('fullReportContent');
+    const fullReportList = document.getElementById('fullReportList');
     
     // Fetch IMEI report
     async function fetchIMEIReport() {
@@ -521,6 +633,95 @@
         gsmaStatus.textContent = '✓ Clean';
         gsmaDetails.textContent = 'This device is not blacklisted and can be activated on any carrier.';
       }
+      
+      // Populate full report details dropdown
+      populateFullReportDetails(data);
+    }
+    
+    // Populate full report details dropdown
+    function populateFullReportDetails(data) {
+      // Clear existing list
+      fullReportList.innerHTML = '';
+      
+      // Get details from apple.details
+      const details = data.apple?.details || {};
+      
+      // Field mapping: API key -> Display name
+      const fieldMap = {
+        'model': 'Model',
+        'device_model': 'Model',
+        'serial': 'Serial Number',
+        'serial_number': 'Serial Number',
+        'warranty': 'Warranty Status',
+        'warranty_status': 'Warranty Status',
+        'carrier': 'Carrier',
+        'carrier_name': 'Carrier',
+        'simlock': 'SIM Lock Status',
+        'sim_lock': 'SIM Lock Status',
+        'imei': 'IMEI',
+        'storage': 'Storage',
+        'capacity': 'Storage',
+        'color': 'Color',
+        'purchase_date': 'Estimated Purchase Date',
+        'activation_country': 'Last Activation Country',
+        'replaced': 'Replaced Device',
+        'network': 'Network',
+        'device_type': 'Device Type',
+        'brand': 'Brand',
+        'manufacturer': 'Manufacturer'
+      };
+      
+      // Add IMEI if available from root level
+      if (data.imei) {
+        const li = document.createElement('li');
+        li.innerHTML = '<strong>IMEI:</strong> <span>' + escapeHtml(data.imei) + '</span>';
+        fullReportList.appendChild(li);
+      }
+      
+      // Add all available detail fields
+      const addedFields = new Set();
+      Object.keys(details).forEach(key => {
+        const value = details[key];
+        if (value !== undefined && value !== null && value !== '' && !addedFields.has(key.toLowerCase())) {
+          const displayName = fieldMap[key.toLowerCase()] || formatFieldName(key);
+          const li = document.createElement('li');
+          li.innerHTML = '<strong>' + escapeHtml(displayName) + ':</strong> <span>' + escapeHtml(String(value)) + '</span>';
+          fullReportList.appendChild(li);
+          addedFields.add(key.toLowerCase());
+        }
+      });
+      
+      // If no details available, show message
+      if (fullReportList.children.length === 0) {
+        const li = document.createElement('li');
+        li.innerHTML = '<span style="color: #999; font-style: italic;">No additional details available for this device.</span>';
+        fullReportList.appendChild(li);
+      }
+    }
+    
+    // Format field name for display (convert snake_case or camelCase to Title Case)
+    function formatFieldName(key) {
+      return key
+        .replace(/_/g, ' ')
+        .replace(/([A-Z])/g, ' $1')
+        .toLowerCase()
+        .replace(/^\w/, c => c.toUpperCase())
+        .trim();
+    }
+    
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // Toggle dropdown
+    if (fullReportToggle) {
+      fullReportToggle.addEventListener('click', function() {
+        fullReportToggle.classList.toggle('expanded');
+        fullReportContent.classList.toggle('show');
+      });
     }
     
     // Show error state
