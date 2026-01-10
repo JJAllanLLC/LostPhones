@@ -47,7 +47,7 @@ async function submitOrder(imei) {
 }
 
 // Poll for order completion
-async function pollOrder(orderId, maxAttempts = 30, delayMs = 2000) {
+async function pollOrder(orderId, maxAttempts = 90, delayMs = 2000) {
   const url = `https://api-client.imei.org/api/track?apikey=${IMEI_API_KEY}&id=${orderId}`;
   
   console.log(`=== Polling order ${orderId} ===`);
@@ -56,12 +56,6 @@ async function pollOrder(orderId, maxAttempts = 30, delayMs = 2000) {
   
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
-      if (attempt === 0) {
-        console.log('Starting poll attempt 1...');
-      } else if (attempt % 5 === 0) {
-        console.log(`Poll attempt ${attempt + 1}/${maxAttempts}...`);
-      }
-
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -71,6 +65,8 @@ async function pollOrder(orderId, maxAttempts = 30, delayMs = 2000) {
 
       if (!response.ok) {
         const errorText = await response.text();
+        const status = 'ERROR';
+        console.log('Polling attempt ' + (attempt + 1) + ' of ' + maxAttempts + ' - status: ' + status);
         console.error(`Poll attempt ${attempt + 1} failed:`, response.status, errorText);
         // Continue polling on non-200 responses (might be temporary)
         if (attempt < maxAttempts - 1) {
@@ -82,13 +78,13 @@ async function pollOrder(orderId, maxAttempts = 30, delayMs = 2000) {
 
       const data = await response.json();
       
-      if (attempt === 0 || attempt % 5 === 0) {
-        console.log(`Poll attempt ${attempt + 1} response:`, JSON.stringify(data, null, 2));
-      }
-      
       // Check if order is complete
       const status = data.status || data.STATUS || data.state || data.STATE;
       const statusLower = String(status || '').toLowerCase();
+      
+      // Add debug logs for every attempt
+      console.log('Polling attempt ' + (attempt + 1) + ' of ' + maxAttempts + ' - status: ' + status);
+      console.log('Full poll response: ' + JSON.stringify(data));
       
       if (statusLower === 'completed' || statusLower === 'success' || statusLower === 'done' || 
           statusLower === 'finished' || data.completed || data.success) {
@@ -142,13 +138,16 @@ async function submitAndPollOrder(imei) {
   }
 }
 
-// Parse Apple Advanced report for FMI, iCloud Lost status, and blacklist
+// Parse Apple Advanced report for FMI, iCloud Lost status, blacklist, and all device details
 function parseAppleAdvanced(data) {
   const report = {
     fmi: null,
+    fmiStatus: null, // "Lost Mode Active" or "Clean" for display
     icloudLost: null,
     blacklisted: false,
+    blacklistStatus: null, // "BLACKLISTED" or "CLEAN" for display
     clean: true,
+    details: {}, // Additional device info (model, serial, warranty, carrier, simlock, etc.)
     raw: data
   };
 
@@ -156,54 +155,114 @@ function parseAppleAdvanced(data) {
   const dataStr = JSON.stringify(data).toLowerCase();
   const dataObj = typeof data === 'object' ? data : {};
 
+  // Extract additional device details
+  const fields = ['Model', 'MODEL', 'model', 'deviceModel', 'Device Model',
+                  'Serial', 'SERIAL', 'serial', 'serialNumber', 'Serial Number',
+                  'Warranty', 'WARRANTY', 'warranty', 'warrantyStatus', 'Warranty Status',
+                  'Carrier', 'CARRIER', 'carrier', 'carrierName', 'Carrier Name',
+                  'Simlock', 'SIMLOCK', 'simlock', 'simLock', 'Sim Lock', 'SIM_LOCK',
+                  'IMEI', 'imei',
+                  'Storage', 'STORAGE', 'storage', 'capacity',
+                  'Color', 'COLOR', 'color',
+                  'Purchase Date', 'purchaseDate', 'PURCHASE_DATE'];
+  
+  fields.forEach(field => {
+    const value = dataObj[field];
+    if (value !== undefined && value !== null && value !== '') {
+      const displayKey = field.toLowerCase().replace(/\s+/g, '_');
+      if (!report.details[displayKey]) {
+        report.details[displayKey] = String(value);
+      }
+    }
+  });
+
+  // Also check for nested objects and arrays
+  if (dataObj.data && typeof dataObj.data === 'object') {
+    Object.keys(dataObj.data).forEach(key => {
+      const value = dataObj.data[key];
+      if (value !== undefined && value !== null && value !== '') {
+        const displayKey = key.toLowerCase().replace(/\s+/g, '_');
+        if (!report.details[displayKey]) {
+          report.details[displayKey] = String(value);
+        }
+      }
+    });
+  }
+
   // Look for FMI status (Find My iPhone)
   const fmiStatus = dataObj.FMI || dataObj.FIND_MY || dataObj['Find My'] || 
                     dataObj.FMI_STATUS || dataObj.FIND_MY_IPHONE || dataObj.fmi ||
-                    dataObj.findMy || dataObj.find_my;
+                    dataObj.findMy || dataObj.find_my || dataObj.data?.FMI || dataObj.data?.FIND_MY;
   
   if (fmiStatus !== undefined && fmiStatus !== null) {
-    const fmiLower = String(fmiStatus).toLowerCase();
-    if (fmiLower.includes('on') || fmiLower === 'enabled' || fmiLower === 'yes' || 
-        fmiLower === '1' || fmiLower === 'true') {
+    const fmiLower = String(fmiStatus).toUpperCase();
+    if (fmiLower === 'ON' || fmiLower.includes('ON') || fmiLower === 'ENABLED' || 
+        fmiLower === 'YES' || fmiLower === '1' || fmiLower === 'TRUE') {
       report.fmi = 'ON';
-    } else if (fmiLower.includes('off') || fmiLower === 'disabled' || 
-               fmiLower === 'no' || fmiLower === '0' || fmiLower === 'false') {
+      // Check if Lost Mode is also active
+      const lostMode = dataObj.LOST_MODE || dataObj.LOST || dataObj.ICLOUD_LOST || 
+                       dataObj['Lost Mode'] || dataObj.ICLOUD_LOST_MODE || dataObj.data?.LOST_MODE;
+      if (lostMode !== undefined && lostMode !== null) {
+        const lostLower = String(lostMode).toUpperCase();
+        if (lostLower === 'ON' || lostLower.includes('ON') || lostLower === 'ACTIVE' || 
+            lostLower === 'ENABLED' || lostLower === 'YES' || lostLower === 'TRUE' || lostLower === '1') {
+          report.fmiStatus = 'Lost Mode Active'; // Red status
+          report.icloudLost = true;
+          report.clean = false;
+        } else {
+          report.fmiStatus = 'Clean'; // Green status
+          report.icloudLost = false;
+        }
+      } else {
+        report.fmiStatus = 'Clean'; // Green status
+        report.icloudLost = false;
+      }
+    } else if (fmiLower === 'OFF' || fmiLower.includes('OFF') || fmiLower === 'DISABLED' || 
+               fmiLower === 'NO' || fmiLower === '0' || fmiLower === 'FALSE') {
       report.fmi = 'OFF';
-    }
-  }
-
-  // Look for Lost Mode / iCloud Lost status
-  const lostMode = dataObj.LOST_MODE || dataObj.LOST || dataObj.ICLOUD_LOST || 
-                   dataObj['Lost Mode'] || dataObj.ICLOUD_LOST_MODE || dataObj.lostMode ||
-                   dataObj.lost_mode || dataObj.icloudLost || dataObj.icloud_lost;
-  
-  if (lostMode !== undefined && lostMode !== null) {
-    const lostLower = String(lostMode).toLowerCase();
-    if (lostLower.includes('on') || lostLower === 'enabled' || lostLower === 'yes' || 
-        lostLower.includes('active') || lostLower === '1' || lostLower === 'true') {
-      report.icloudLost = true;
-      report.clean = false;
-    } else {
+      report.fmiStatus = 'Clean'; // Green status
       report.icloudLost = false;
+    }
+  } else {
+    // Look for Lost Mode / iCloud Lost status directly
+    const lostMode = dataObj.LOST_MODE || dataObj.LOST || dataObj.ICLOUD_LOST || 
+                     dataObj['Lost Mode'] || dataObj.ICLOUD_LOST_MODE || dataObj.lostMode ||
+                     dataObj.lost_mode || dataObj.icloudLost || dataObj.icloud_lost ||
+                     dataObj.data?.LOST_MODE || dataObj.data?.ICLOUD_LOST;
+    
+    if (lostMode !== undefined && lostMode !== null) {
+      const lostLower = String(lostMode).toUpperCase();
+      if (lostLower === 'ON' || lostLower.includes('ON') || lostLower === 'ACTIVE' || 
+          lostLower === 'ENABLED' || lostLower === 'YES' || lostLower === 'TRUE' || lostLower === '1') {
+        report.fmiStatus = 'Lost Mode Active'; // Red status
+        report.icloudLost = true;
+        report.clean = false;
+      } else {
+        report.fmiStatus = 'Clean'; // Green status
+        report.icloudLost = false;
+      }
     }
   }
 
   // Look for blacklist status (included in Apple Advanced Check)
-  const blacklistStatus = dataObj.STATUS || dataObj.BLACKLIST_STATUS || dataObj.BLACKLIST || 
-                         dataObj.GSMA_STATUS || dataObj['Blacklist Status'] || dataObj.blacklist ||
-                         dataObj.blacklisted || dataObj.gsma_status || dataObj.gsma_blacklist;
+  const blacklistStatus = dataObj.BLACKLIST || dataObj.BLACKLIST_STATUS || dataObj.STATUS || 
+                         dataObj.GSMA_STATUS || dataObj['Blacklist Status'] || dataObj.Blacklist ||
+                         dataObj.blacklist || dataObj.blacklisted || dataObj.gsma_status || 
+                         dataObj.gsma_blacklist || dataObj.data?.BLACKLIST || dataObj.data?.BLACKLIST_STATUS;
   
   if (blacklistStatus !== undefined && blacklistStatus !== null) {
-    const statusLower = String(blacklistStatus).toLowerCase();
-    if (statusLower.includes('blacklist') || statusLower.includes('blocked') || 
-        statusLower.includes('barred') || statusLower.includes('stolen') || 
-        statusLower.includes('lost') || statusLower.includes('yes') ||
-        statusLower === 'true' || statusLower === '1') {
+    const statusUpper = String(blacklistStatus).toUpperCase();
+    if (statusUpper === 'BLACKLISTED' || statusUpper.includes('BLACKLIST') || 
+        statusUpper.includes('BLOCKED') || statusUpper.includes('BARRED') || 
+        statusUpper.includes('STOLEN') || statusUpper.includes('LOST') || 
+        statusUpper === 'YES' || statusUpper === 'TRUE' || statusUpper === '1') {
+      report.blacklistStatus = 'BLACKLISTED'; // Red status
       report.blacklisted = true;
       report.clean = false;
-    } else if (statusLower.includes('clean') || statusLower.includes('whitelist') || 
-               statusLower.includes('clear') || statusLower.includes('active') ||
-               statusLower.includes('no') || statusLower === 'false' || statusLower === '0') {
+    } else if (statusUpper === 'CLEAN' || statusUpper.includes('CLEAN') || 
+               statusUpper.includes('WHITELIST') || statusUpper.includes('CLEAR') ||
+               statusUpper === 'NO' || statusUpper === 'FALSE' || statusUpper === '0') {
+      report.blacklistStatus = 'CLEAN'; // Green status
       report.blacklisted = false;
     }
   }
@@ -211,6 +270,9 @@ function parseAppleAdvanced(data) {
   // Check response text for keywords if structured fields not found
   if (dataStr.includes('lost mode') && 
       (dataStr.includes('on') || dataStr.includes('active') || dataStr.includes('enabled'))) {
+    if (!report.fmiStatus) {
+      report.fmiStatus = 'Lost Mode Active'; // Red status
+    }
     report.icloudLost = true;
     report.clean = false;
   }
@@ -220,6 +282,9 @@ function parseAppleAdvanced(data) {
     if (report.fmi === null) {
       report.fmi = 'ON';
     }
+    if (!report.fmiStatus) {
+      report.fmiStatus = 'Clean'; // Green status
+    }
   }
 
   // Check for blacklist in response text
@@ -227,8 +292,22 @@ function parseAppleAdvanced(data) {
       (dataStr.includes('yes') || dataStr.includes('true') || 
        dataStr.includes('blocked') || dataStr.includes('stolen') ||
        dataStr.includes('barred'))) {
+    if (!report.blacklistStatus) {
+      report.blacklistStatus = 'BLACKLISTED'; // Red status
+    }
     report.blacklisted = true;
     report.clean = false;
+  }
+
+  // Set default statuses if not set
+  if (!report.fmiStatus && report.fmi === 'ON' && !report.icloudLost) {
+    report.fmiStatus = 'Clean'; // Green status
+  } else if (!report.fmiStatus && report.fmi === null) {
+    report.fmiStatus = null;
+  }
+
+  if (!report.blacklistStatus && !report.blacklisted) {
+    report.blacklistStatus = 'CLEAN'; // Green status
   }
 
   // If Lost Mode is active or blacklisted, device is not clean
@@ -326,12 +405,15 @@ export default async function handler(req, res) {
       imei: imei,
       apple: {
         fmi: appleReport.fmi,
+        fmiStatus: appleReport.fmiStatus, // "Lost Mode Active" or "Clean" for display
         icloudLost: appleReport.icloudLost,
         clean: appleReport.clean,
-        error: appleReport.error || null
+        error: appleReport.error || null,
+        details: appleReport.details || {} // Model, serial, warranty, carrier, simlock, etc.
       },
       gsma: {
         blacklisted: appleReport.blacklisted,
+        blacklistStatus: appleReport.blacklistStatus, // "BLACKLISTED" or "CLEAN" for display
         clean: !appleReport.blacklisted,
         error: null
       },
