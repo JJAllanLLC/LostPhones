@@ -1,13 +1,13 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const IMEI_API_KEY = 'tWkh1r3K3IWlxgTiXkJGVSyTIyT1hih8aZ1RJxuKQQ4I2PIBbl6DVVlQ0KoI';
-const SERVICE_APPLE_ADVANCED = 171;
+const SERVICE_APPLE_ADVANCED = 50;
 
 // Submit an order to imei.org API
 async function submitOrder(imei) {
-  const url = `https://api-client.imei.org/api/submit?apikey=${IMEI_API_KEY}&service_id=171&input=${encodeURIComponent(imei)}&dontWait=1`;
+  const url = `https://api-client.imei.org/api/submit?apikey=${IMEI_API_KEY}&service_id=50&input=${encodeURIComponent(imei)}&dontWait=1`;
   
-  console.log('Submitting to service_id: 171 for IMEI: ' + imei);
+  console.log('Submitting to service_id: 50 for IMEI: ' + imei);
   console.log('Full submit URL: ' + url);
   
   try {
@@ -41,7 +41,7 @@ async function submitOrder(imei) {
     console.log('Order submitted successfully. Order ID:', orderId);
     return orderId;
   } catch (error) {
-    console.error('Error submitting order (Service 171):', error);
+    console.error('Error submitting order (Service 50):', error);
     throw error;
   }
 }
@@ -136,7 +136,7 @@ async function submitAndPollOrder(imei) {
     const result = await pollOrder(orderId);
     return result;
   } catch (error) {
-    console.error('Order error (Service 171, IMEI: ' + imei + '):', error);
+    console.error('Order error (Service 50, IMEI: ' + imei + '):', error);
     console.error('Error stack:', error.stack);
     throw error;
   }
@@ -275,7 +275,7 @@ export default async function handler(req, res) {
 
     console.log('IMEI from session:', imei);
 
-    // Submit and poll single order with service_id 171 (Apple Advanced Check includes everything)
+    // Submit and poll single order with service_id 50 (Apple Advanced Check includes everything)
     let appleReport;
     try {
       const appleAdvancedResult = await submitAndPollOrder(imei);
