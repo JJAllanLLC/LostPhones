@@ -1,0 +1,285 @@
+SEO CHECKLIST FOR NEW CONTENT - LostPhones.com
+===============================================
+Reference this checklist when creating new pages, blog posts, or updating existing content.
+
+Last Updated: January 2026
+
+CRITICAL: HEADING STRUCTURE (H1 TAGS)
+--------------------------------------
+✅ REQUIREMENT: Only ONE <h1> tag per page (the main content headline)
+
+❌ NEVER DO THIS:
+- Using <h1> for the header logo/ site title (e.g., <h1>LostPhones.com</h1>)
+- Having multiple <h1> tags on a page (header logo + main headline)
+
+✅ CORRECT APPROACH:
+- Header logo: Use <div> with inline styles (NOT <h1>)
+  Example: <div style="font-size: 2.5rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); font-weight: bold;">LostPhones.com</div>
+- Main content: Use <h1> for the page's primary headline only
+  Example: <h1>What to Do If You Lost Your iPhone – Immediate Checklist 2025</h1>
+
+Pages with correct H1 structure:
+- index.html (uses H2 for hero title, no H1 in header - OK)
+- imei-check.html (header logo = div, main H1 only)
+- replacement-phone-guide.html (header logo = div, main H1 only)
+- contact.html (header logo = div, main H1 only)
+- about.html (header logo = div, main H1 only)
+- All blog posts (header logo = div, main H1 only)
+- blog/index.html (header logo = div, main H1 only)
+
+
+STRUCTURED DATA (SCHEMA MARKUP)
+--------------------------------
+
+1. HOMEPAGE (index.html)
+   ✅ REQUIRED: HowTo Schema (for 10-step checklist)
+   ✅ REQUIRED: FAQPage Schema (for common questions)
+   
+   Location: Before </head> tag
+   Format: JSON-LD script
+
+2. STEP-BY-STEP GUIDES
+   ✅ REQUIRED: HowTo Schema
+   
+   Pages that need HowTo:
+   - index.html (10-step checklist)
+   - replacement-phone-guide.html (5-step buying guide)
+   - Any new step-by-step guides
+   
+   Structure:
+   - @type: "HowTo"
+   - name: Descriptive title
+   - description: Brief description
+   - image: https://lostphones.com/assets/cover.jpg
+   - step: Array of HowToStep objects (position, name, text)
+
+3. BLOG POSTS (All posts in /blog/)
+   ✅ REQUIRED: Article Schema
+   ✅ OPTIONAL: FAQPage Schema (if the post has common questions)
+   
+   Location: Before </head> tag (or before FAQPage schema if both exist)
+   
+   Article Schema Structure:
+   {
+     "@context": "https://schema.org",
+     "@type": "Article",
+     "headline": "[Title from <title> tag, remove ' | LostPhones.com']",
+     "description": "[From meta description]",
+     "image": "https://lostphones.com/assets/cover.jpg",
+     "datePublished": "YYYY-MM-DD",
+     "dateModified": "YYYY-MM-DD",
+     "author": {
+       "@type": "Organization",
+       "name": "LostPhones.com"
+     },
+     "publisher": {
+       "@type": "Organization",
+       "name": "LostPhones.com",
+       "logo": {
+         "@type": "ImageObject",
+         "url": "https://lostphones.com/favicon/favicon-96x96.png"
+       }
+     }
+   }
+   
+   Dates:
+   - Extract from blog-date class or publish date
+   - Format: YYYY-MM-DD (e.g., "2026-01-05")
+   - Use same date for datePublished and dateModified (unless content was updated)
+
+4. FAQPage Schema (Optional but Recommended)
+   ✅ ADD IF: Page has common questions/answers
+   ✅ CURRENT PAGES WITH FAQPage:
+   - index.html
+   - Several blog posts (top-10-tips, phone-insurance, etc.)
+   
+   Structure: Array of Question/Answer pairs
+
+
+BASIC SEO REQUIREMENTS (All Pages)
+-----------------------------------
+
+✅ REQUIRED ELEMENTS:
+1. <title> tag
+   - Length: 50-60 characters (ideal)
+   - Format: "[Page Title] | LostPhones.com"
+   - Unique per page
+
+2. Meta Description
+   - Length: 120-160 characters
+   - Compelling, keyword-rich
+   - Unique per page
+   - Include call-to-action when appropriate
+
+3. Canonical Tag
+   - Format: <link rel="canonical" href="https://lostphones.com/[page].html" />
+   - Always use non-www (https://lostphones.com)
+   - Self-referencing (points to same page)
+
+4. Open Graph Tags (Social Sharing)
+   - og:title
+   - og:description
+   - og:image (use https://lostphones.com/assets/cover.jpg)
+   - og:url
+   - og:type ("website" or "article")
+
+5. Twitter Cards
+   - twitter:card (summary_large_image)
+   - twitter:title
+   - twitter:description
+   - twitter:image
+
+6. Favicons
+   - Already configured, no action needed
+   - Located in /favicon/ directory
+
+7. Viewport Meta Tag
+   - <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+HEADING HIERARCHY (All Pages)
+------------------------------
+✅ REQUIREMENT: Logical heading structure (H1 → H2 → H3)
+
+Rules:
+- Use ONE H1 per page (main content headline)
+- Use H2 for major sections
+- Use H3 for subsections
+- Don't skip levels (e.g., don't go H1 → H3 without H2)
+- Header logo is NOT a heading (use div)
+
+
+INTERNAL LINKING
+----------------
+✅ BEST PRACTICES:
+- Link to key pages from navigation
+- Add contextual internal links in content
+- Link to IMEI check tool when mentioning IMEI checks
+- Link to replacement guide from relevant pages
+- Link to blog posts from related content
+- Use descriptive anchor text (not "click here")
+
+
+IMAGE ALT TEXT
+--------------
+✅ REQUIREMENT: All images must have descriptive alt text
+
+Guidelines:
+- Descriptive and relevant
+- Include keywords naturally (e.g., "lost phone recovery checklist")
+- Keep concise (125 characters or less)
+- Don't start with "Image of..." or "Picture of..."
+
+
+CONTENT QUALITY
+---------------
+✅ REQUIREMENTS:
+- Unique, helpful content (no duplicate content)
+- Calming, reassuring tone (emergency-help focus)
+- Sufficient word count:
+  * Homepage: Extensive content (good)
+  * Blog posts: 1000+ words (ideal)
+  * Guides: Substantial content depth
+- Natural keyword usage (no keyword stuffing)
+- Clear calls-to-action
+
+
+AFFILIATE LINKS
+---------------
+✅ REQUIREMENTS:
+- Add rel="nofollow sponsored" or rel="nofollow" to affiliate links
+- Include disclosure text near affiliate links
+- Disclosure format: "As an [Affiliate Network] affiliate, LostPhones.com earns from qualifying purchases at no extra cost to you."
+- Make disclosure visible (smaller font, gray color OK)
+
+
+MOBILE-FRIENDLINESS
+-------------------
+✅ REQUIREMENTS (Already handled in style.css):
+- Responsive design (media queries)
+- Viewport meta tag present
+- Touch-friendly buttons/links
+- Readable text sizes
+
+
+VERIFICATION STEPS
+------------------
+Before publishing new content:
+
+1. ✅ Check HTML validation (W3C Validator)
+2. ✅ Verify only ONE H1 tag (use browser dev tools)
+3. ✅ Test structured data (Google Rich Results Test: https://search.google.com/test/rich-results)
+4. ✅ Verify schema JSON is valid (Schema.org Validator: https://validator.schema.org/)
+5. ✅ Check mobile-friendliness (Google Mobile-Friendly Test)
+6. ✅ Verify all links work (internal and external)
+7. ✅ Check images have alt text
+8. ✅ Review meta descriptions for length and clarity
+
+
+COMMON MISTAKES TO AVOID
+------------------------
+❌ Multiple H1 tags (header logo + main headline)
+❌ Missing schema markup on blog posts
+❌ Missing HowTo schema on step-by-step guides
+❌ Duplicate content (copying from other pages)
+❌ Missing alt text on images
+❌ Broken internal links
+❌ Missing canonical tags
+❌ Using www instead of non-www in URLs
+❌ Keyword stuffing
+❌ Missing affiliate disclosures
+
+
+FILES TO UPDATE WHEN ADDING NEW CONTENT
+----------------------------------------
+1. sitemap.xml - Add new URL with lastmod date
+2. Navigation menus (if needed)
+3. Internal links (link to new content from relevant pages)
+4. Blog index (if it's a blog post)
+
+
+REFERENCE EXAMPLES
+------------------
+✅ CORRECT H1 Structure Example:
+  <header class="blog-header">
+    <div style="font-size: 2.5rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); font-weight: bold;">LostPhones.com</div>
+    <nav>...</nav>
+  </header>
+  <article>
+    <h1>Main Content Headline Here</h1>
+    ...
+  </article>
+
+✅ CORRECT Schema Location:
+  <!-- Article Schema -->
+  <script type="application/ld+json">
+  { ... }
+  </script>
+  </head>
+
+✅ CORRECT Blog Post Structure:
+  1. Header with div (not h1) for logo
+  2. Main content with single H1
+  3. Article schema in <head>
+  4. Optional: FAQPage schema if applicable
+  5. Proper meta tags (title, description, canonical, OG, Twitter)
+  6. Image alt text
+  7. Internal links where relevant
+
+
+NOTES
+-----
+- All schema markup uses JSON-LD format (not microdata)
+- Always test schema with Google Rich Results Test before publishing
+- Keep schema JSON valid (proper escaping, no syntax errors)
+- Update lastmod dates in sitemap.xml when content changes
+- Maintain consistent formatting and style across all pages
+
+
+QUESTIONS?
+----------
+Refer to existing pages that follow these patterns:
+- imei-check.html (single H1, proper structure)
+- replacement-phone-guide.html (HowTo schema, single H1)
+- blog/lost-iphone-checklist-2025.html (Article schema, single H1)
+- index.html (HowTo + FAQPage schema, proper heading structure)
