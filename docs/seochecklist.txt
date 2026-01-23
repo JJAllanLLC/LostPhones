@@ -167,8 +167,25 @@ IMAGE ALT TEXT
 Guidelines:
 - Descriptive and relevant
 - Include keywords naturally (e.g., "lost phone recovery checklist")
-- Keep concise (125 characters or less)
+- Keep concise (80-100 characters max; avoid >100 chars)
 - Don't start with "Image of..." or "Picture of..."
+
+
+IMAGE OPTIMIZATION
+------------------
+✅ REQUIREMENTS:
+- Add loading="lazy" to all <img> tags (improves performance for large images)
+- Always include width and height attributes to reduce layout shift
+  * Use actual dimensions when known; otherwise use a safe placeholder (e.g., 800x450)
+- Do NOT change image src during SEO fixes unless requested
+
+
+EXTERNAL LINK SECURITY
+----------------------
+✅ REQUIREMENTS:
+- For external links (href to non-lostphones.com), add rel="noopener noreferrer"
+- If using target="_blank", rel="noopener noreferrer" is mandatory
+- Do NOT add rel to internal links
 
 
 CONTENT QUALITY
@@ -223,6 +240,10 @@ COMMON MISTAKES TO AVOID
 ❌ Missing HowTo schema on step-by-step guides
 ❌ Duplicate content (copying from other pages)
 ❌ Missing alt text on images
+❌ Alt text longer than 100 characters
+❌ Missing width/height attributes on images
+❌ Missing loading="lazy" on images
+❌ External links with target="_blank" missing rel="noopener noreferrer"
 ❌ Broken internal links
 ❌ Missing canonical tags
 ❌ Using www instead of non-www in URLs
