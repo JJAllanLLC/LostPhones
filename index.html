@@ -180,6 +180,40 @@
       <a href="#start" class="start-button" onclick="localStorage.setItem('exitShown', 'true');">Start Here</a>
     </div>
   </section>
+  
+  <section class="faq-section" style="max-width: 900px; margin: 0 auto 4rem; padding: 0 2rem;">
+    <h2 style="text-align:center; color:#007bff; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+    <details>
+      <summary>Can a thief use my locked iPhone?</summary>
+      <div class="panel">
+        <p>If Find My is on, Activation Lock prevents setup without your Apple ID. Lost Mode keeps your phone locked and your data protected, even if someone has the device.</p>
+      </div>
+    </details>
+    <details>
+      <summary>What if I didn’t enable Find My before losing it?</summary>
+      <div class="panel">
+        <p>You may not be able to track the phone, but you can still secure your accounts. Change Apple ID/Google passwords, contact your carrier, and block the IMEI to stop use on any network.</p>
+      </div>
+    </details>
+    <details>
+      <summary>How do I report a stolen phone’s IMEI?</summary>
+      <div class="panel">
+        <p>Call your carrier and ask them to block the IMEI. You can also find the IMEI on your original box or in your carrier account, and verify it on our IMEI check page.</p>
+      </div>
+    </details>
+    <details>
+      <summary>When should I file a police report?</summary>
+      <div class="panel">
+        <p>If theft is likely, file a report as soon as you can. It helps with insurance claims and creates a record if your phone is recovered.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Should I erase my lost phone?</summary>
+      <div class="panel">
+        <p>Erase as a last resort. It removes your data but stops tracking. If there’s still a chance to recover the device, keep Lost Mode on and wait for a location update.</p>
+      </div>
+    </details>
+  </section>
 
   <!-- Start Section -->
   <section id="start" class="start-section">
@@ -1094,79 +1128,92 @@
     })();
   </script>
 
+  <!-- Schema added 2026-01-20 for rich results -->
   <!-- HowTo Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    "name": "How to Find and Protect Your Lost Phone – 10-Step Checklist",
-    "description": "Step-by-step guide to locate, lock, and protect your lost iPhone or Android phone. Immediate actions to secure your data and recover your device.",
+    "name": "Step-by-Step Guide to Locate, Lock, and Secure a Lost or Stolen Phone",
+    "description": "Take a breath. You're in the right place. We'll walk you through everything step-by-step, calmly and clearly, so you can secure your data, locate your device, and protect your accounts.",
     "image": "https://lostphones.com/assets/cover.jpg",
     "estimatedCost": {
       "@type": "MonetaryAmount",
       "currency": "USD",
       "value": "0"
     },
+    "tool": [
+      {
+        "@type": "HowToTool",
+        "name": "Another phone or computer with internet access"
+      }
+    ],
+    "supply": [
+      {
+        "@type": "HowToSupply",
+        "name": "Apple ID or Google account login"
+      }
+    ],
     "step": [
       {
         "@type": "HowToStep",
         "position": 1,
         "name": "Secure your immediate safety",
-        "text": "Find My is the fastest way to locate a missing phone. Check icloud.com/find (iPhone) or google.com/android/find (Android) immediately. Sign in with your Apple ID or Google account and check the device location."
+        "text": "Find My is the fastest way to locate a missing phone. Whether you use iPhone or Android, check this first."
       },
       {
         "@type": "HowToStep",
         "position": 2,
         "name": "Lock your phone remotely (if possible)",
-        "text": "Play Sound to locate your phone nearby. Use Find My (iPhone) or Find My Device (Android) to force a loud alert, even if the phone is on silent or vibrate."
+        "text": "Sometimes your phone is closer than you think. Both iPhones and Android devices let you force a loud alert — even if the phone is on silent or vibrate."
       },
       {
         "@type": "HowToStep",
         "position": 3,
-        "name": "Activate Lost Mode or Secure Device",
-        "text": "Lock your phone remotely to keep your data safe. Activate Lost Mode (iPhone) or Secure Device (Android) to lock the device and display your contact information on the lock screen."
+        "name": "Do NOT call or text your lost phone yet",
+        "text": "Locking your phone remotely keeps your data safe and lets someone contact you without unlocking it. Both iPhone and Android have this feature."
       },
       {
         "@type": "HowToStep",
         "position": 4,
         "name": "Change your most important passwords NOW",
-        "text": "Change your Apple ID or Google Account password immediately. This instantly signs your phone out of iCloud or Google on the lost device. Also change your email password and banking passwords."
+        "text": "If you believe your phone was stolen or is in a place where you won't get it back, you can erase it remotely."
       },
       {
         "@type": "HowToStep",
         "position": 5,
         "name": "Suspend or wipe your phone line",
-        "text": "Call your carrier to suspend service and block the IMEI number. This prevents the phone from being used on any network, even with a new SIM card."
+        "text": "Your carrier can add an extra layer of protection while you work on recovering your phone."
       },
       {
         "@type": "HowToStep",
         "position": 6,
         "name": "Enable Lost Mode / Erase Device (only if needed)",
-        "text": "If your phone is stolen and won't be recovered, or showing suspicious movement, consider erasing it remotely. This is a last resort as you cannot track the device after erasing."
+        "text": "If your phone isn't showing up in Find My / Find My Device, or the location hasn't updated, here are the last checks you should do."
       },
       {
         "@type": "HowToStep",
         "position": 7,
         "name": "Alert your bank and freeze cards",
-        "text": "Contact your bank to alert them about the lost phone. Review recent transactions and consider freezing cards if needed. Enable two-factor authentication on all important accounts."
+        "text": "If someone has your phone, they don't just have a device — they have a doorway into your accounts."
       },
       {
         "@type": "HowToStep",
         "position": 8,
         "name": "File a police report",
-        "text": "If your phone was stolen, file a police report. This provides documentation for insurance claims and helps law enforcement track stolen devices."
+        "text": "Your phone number is the real prize."
       },
       {
         "@type": "HowToStep",
         "position": 9,
         "name": "Monitor accounts for 30 days",
-        "text": "Watch for scams. Never pay websites claiming to track your phone, only enter passwords at official Apple/Google sites, don't trust texts saying your phone was found, and never give verification codes to anyone."
+        "text": "When your phone is missing, scammers come crawling out of the woodwork."
       },
       {
         "@type": "HowToStep",
         "position": 10,
         "name": "If your phone is recovered",
-        "text": "Change passwords again, review devices logged into your account, contact your carrier to confirm protection, update emergency contact info, and enable security features on your next phone."
+        "text": "Your immediate crisis is handled. Now make sure it never turns into a nightmare again."
       }
     ]
   }
@@ -1180,42 +1227,42 @@
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "What to do if you lost your iPhone?",
+        "name": "Can a thief use my locked iPhone?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "If you lost your iPhone, immediately go to icloud.com/find or open the Find My app on another Apple device. Sign in with your Apple ID, select your missing iPhone, and check its location. Activate Lost Mode to lock the device and display your contact information. Change your Apple ID password immediately to sign out the device from iCloud."
+          "text": "If Find My is on, Activation Lock prevents setup without your Apple ID. Lost Mode keeps your phone locked and your data protected, even if someone has the device."
         }
       },
       {
         "@type": "Question",
-        "name": "How to find a lost Android phone?",
+        "name": "What if I didn’t enable Find My before losing it?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "To find a lost Android phone, go to google.com/android/find or open the Find My Device app on another phone. Sign in with your Google account, select your missing device, and view its location. Use Secure Device to lock it remotely and add a lock screen message. Change your Google account password immediately to protect your data."
+          "text": "You may not be able to track the phone, but you can still secure your accounts. Change Apple ID/Google passwords, contact your carrier, and block the IMEI to stop use on any network."
         }
       },
       {
         "@type": "Question",
-        "name": "Can I track my phone if it's turned off?",
+        "name": "How do I report a stolen phone’s IMEI?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes, both iPhone and Android show the last known location even if the phone is turned off. When the device reconnects to the internet or regains power, Find My (iPhone) or Find My Device (Android) will update with the new location automatically."
+          "text": "Call your carrier and ask them to block the IMEI. You can also find the IMEI on your original box or in your carrier account, and verify it on our IMEI check page."
         }
       },
       {
         "@type": "Question",
-        "name": "Should I erase my lost phone remotely?",
+        "name": "When should I file a police report?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Only erase your phone remotely if you believe it was stolen and won't be recovered, or if it's showing suspicious movement. Once erased, you cannot track the device anymore. Use this as a last resort after activating Lost Mode or Secure Device."
+          "text": "If theft is likely, file a report as soon as you can. It helps with insurance claims and creates a record if your phone is recovered."
         }
       },
       {
         "@type": "Question",
-        "name": "How do I protect my accounts after losing my phone?",
+        "name": "Should I erase my lost phone?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Immediately change your Apple ID or Google account password, your email password, and banking passwords. Enable two-factor authentication on all important accounts. Contact your carrier to add a port freeze to prevent SIM swapping attacks."
+          "text": "Erase as a last resort. It removes your data but stops tracking. If there’s still a chance to recover the device, keep Lost Mode on and wait for a location update."
         }
       }
     ]
