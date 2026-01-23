@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <title>LostPhones.com</title>
+  <rect width="100" height="100" rx="20" ry="20" fill="#2c7be5"/>
+  <path d="M32 28h36a4 4 0 0 1 4 4v36a4 4 0 0 1-4 4H32a4 4 0 0 1-4-4V32a4 4 0 0 1 4-4zm10 8a3 3 0 0 0-3 3v22a3 3 0 0 0 3 3h16a3 3 0 0 0 3-3V39a3 3 0 0 0-3-3H42z" fill="#ffffff"/>
+</svg>
