@@ -115,6 +115,7 @@ BASIC SEO REQUIREMENTS (All Pages)
    - Format: <link rel="canonical" href="https://lostphones.com/[page].html" />
    - Always use non-www (https://lostphones.com)
    - Self-referencing (points to same page)
+   - Root uses trailing slash: https://lostphones.com/
 
 4. Open Graph Tags (Social Sharing)
    - og:title
@@ -135,6 +136,13 @@ BASIC SEO REQUIREMENTS (All Pages)
 
 7. Viewport Meta Tag
    - <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+8. Security Headers (via vercel.json)
+   - X-Content-Type-Options: nosniff
+   - X-Frame-Options: DENY
+   - Referrer-Policy: strict-origin-when-cross-origin
+   - Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'
+   - Apply to all paths (source: "/(.*)")
 
 
 HEADING HIERARCHY (All Pages)
@@ -246,7 +254,9 @@ COMMON MISTAKES TO AVOID
 ❌ External links with target="_blank" missing rel="noopener noreferrer"
 ❌ Broken internal links
 ❌ Missing canonical tags
+❌ Canonical tag pointing to a different URL (not self-referencing)
 ❌ Using www instead of non-www in URLs
+❌ Missing security headers in vercel.json
 ❌ Keyword stuffing
 ❌ Missing affiliate disclosures
 
