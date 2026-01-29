@@ -40,7 +40,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; img-src 'self' data: https:; script-src 'self' https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms https://js.stripe.com https://va.vercel-scripts.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://www.clarity.ms https://c.clarity.ms https://www.bing.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com"
+          "value": "default-src 'self'; img-src 'self' data: https:; script-src 'self' https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms https://js.stripe.com https://va.vercel-scripts.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://www.clarity.ms https://c.clarity.ms https://b.clarity.ms https://www.bing.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com"
         }
       ]
     }
