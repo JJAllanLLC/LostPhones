@@ -1,22 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KQTTP3KMKN"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-KQTTP3KMKN');
-  </script>
-  <!-- Microsoft Clarity -->
-  <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "uivo0q97p5");
-  </script>
+  <!-- Staging isolation: production Google Analytics and Microsoft Clarity are disabled.
+       Do not send staging visits to production analytics. -->
+  <script>function gtag(){/* no-op: production analytics disabled in staging */}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instant Free IMEI Check | LostPhones.com</title>
@@ -550,7 +537,9 @@
   </footer>
 
   <script>
-    const stripe = Stripe('pk_live_51SbsOl8ls8aiAA7kuszgdQjxyV0MHYWUPNa70s7OHcDwkYi2b26WDEf5Bi8oGBLhKa4zFsrOp2fZDZLtFqc8e3wF002Jx5YtF4');
+    const stripe = {
+      redirectToCheckout: async () => ({ error: { message: "Checkout is disabled in staging" } })
+    };
     
     let currentImei = '';
     

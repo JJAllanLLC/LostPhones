@@ -2,7 +2,7 @@
   "name": "lost-phones",
   "version": "1.0.0",
   "scripts": {
-    "postbuild": "curl -s \"https://www.bing.com/indexnow?url=https://lostphones.com/&key=bf65ef02d749407499ec2070c1acbc23e\" > /dev/null && curl -s \"https://www.bing.com/indexnow?url=https://lostphones.com/start&key=bf65ef02d749407499ec2070c1acbc23e\" > /dev/null && curl -s \"https://www.bing.com/indexnow?url=https://lostphones.com/blog/index.html&key=bf65ef02d749407499ec2070c1acbc23e\" > /dev/null && curl -s \"https://www.bing.com/indexnow?url=https://lostphones.com/imei-check.html&key=bf65ef02d749407499ec2070c1acbc23e\" > /dev/null && curl -s \"https://www.bing.com/indexnow?url=https://lostphones.com/replacement-phone-guide.html&key=bf65ef02d749407499ec2070c1acbc23e\" > /dev/null"
+    "postbuild": "node scripts/indexnow.js"
   },
   "dependencies": {
     "stripe": "^16.2.0"

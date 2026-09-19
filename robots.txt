@@ -1,4 +1,6 @@
+# STAGING ONLY: this robots.txt MUST be removed or conditioned safely
+# before any future production launch.
+# Pair with vercel.json X-Robots-Tag: noindex, nofollow, noarchive
+# (also staging-only and mandatory to remove or condition before production).
 User-agent: *
-Allow: /
-
-Sitemap: https://lostphones.com/sitemap.xml
+Disallow: /

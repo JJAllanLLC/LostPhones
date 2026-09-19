@@ -1,15 +1,27 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const Stripe = require('stripe');
 
-const IMEI_API_KEY = 'tWkh1r3K3IWlxgTiXkJGVSyTIyT1hih8aZ1RJxuKQQ4I2PIBbl6DVVlQ0KoI';
 const SERVICE_APPLE_ADVANCED = 50;
+
+function isImeiProviderEnabled() {
+  return process.env.ENABLE_IMEI_PROVIDER === 'true' && Boolean(process.env.IMEI_API_KEY);
+}
+
+function getImeiApiKey() {
+  return process.env.IMEI_API_KEY;
+}
+
+function getStripeClient() {
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (!secretKey || secretKey.startsWith('sk_live_')) {
+    return null;
+  }
+  return Stripe(secretKey);
+}
 
 // Submit an order to imei.org API
 async function submitOrder(imei) {
-  const url = `https://api-client.imei.org/api/submit?apikey=${IMEI_API_KEY}&service_id=50&input=${encodeURIComponent(imei)}&dontWait=1`;
-  
-  console.log('Submitting to service_id: 50 for IMEI: ' + imei);
-  console.log('Full submit URL: ' + url);
-  
+  const url = `https://api-client.imei.org/api/submit?apikey=${getImeiApiKey()}&service_id=${SERVICE_APPLE_ADVANCED}&input=${encodeURIComponent(imei)}&dontWait=1`;
+
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -18,42 +30,31 @@ async function submitOrder(imei) {
       }
     });
 
-    console.log('Submit response status:', response.status, response.statusText);
-    
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Submit error response:', errorText);
-      throw new Error(`Failed to submit order: ${response.status} - ${errorText}`);
+      await response.text();
+      throw new Error(`Failed to submit order: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('API response: ' + JSON.stringify(data));
-    console.log('Submit response data:', JSON.stringify(data, null, 2));
-    
+
     // Extract orderId from response
     const orderId = data.id || data.orderId || data.order_id || data.ID || data.ORDERID;
-    
+
     if (!orderId) {
-      console.error('No orderId in response:', data);
       throw new Error('No order ID returned from API');
     }
-    
-    console.log('Order submitted successfully. Order ID:', orderId);
+
     return orderId;
   } catch (error) {
-    console.error('Error submitting order (Service 50):', error);
+    console.error('Error submitting IMEI order');
     throw error;
   }
 }
 
 // Poll for order completion
 async function pollOrder(orderId, maxAttempts = 90, delayMs = 2000) {
-  const url = `https://api-client.imei.org/api/track?apikey=${IMEI_API_KEY}&id=${orderId}`;
-  
-  console.log(`=== Polling order ${orderId} ===`);
-  console.log('Poll URL:', url);
-  console.log(`Max attempts: ${maxAttempts}, Delay: ${delayMs}ms`);
-  
+  const url = `https://api-client.imei.org/api/track?apikey=${getImeiApiKey()}&id=${encodeURIComponent(orderId)}`;
+
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
       const response = await fetch(url, {
@@ -64,37 +65,25 @@ async function pollOrder(orderId, maxAttempts = 90, delayMs = 2000) {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        const status = 'ERROR';
-        console.log('Polling attempt ' + (attempt + 1) + ' of ' + maxAttempts + ' - status: ' + status);
-        console.error(`Poll attempt ${attempt + 1} failed:`, response.status, errorText);
-        // Continue polling on non-200 responses (might be temporary)
+        await response.text();
         if (attempt < maxAttempts - 1) {
           await new Promise(resolve => setTimeout(resolve, delayMs));
           continue;
         }
-        throw new Error(`Poll failed: ${response.status} - ${errorText}`);
+        throw new Error(`Poll failed: ${response.status}`);
       }
 
       const data = await response.json();
-      
+
       // Check if order is complete with status 1 + response presence (imei.org complete format)
       if (data.status === 1 && data.response && typeof data.response === 'object' && Object.keys(data.response).length > 0) {
-        console.log('Detected complete: status 1 with response data present');
-        console.log(`Order ${orderId} completed successfully on attempt ${attempt + 1}`);
-        console.log('Final poll response:', JSON.stringify(data, null, 2));
-        // Return the response data directly (contains the full report)
         return data.response;
       }
-      
+
       // Check if order is complete
       const status = data.status || data.STATUS || data.state || data.STATE;
       const statusLower = String(status || '').toLowerCase();
       const statusUpper = String(status || '').toUpperCase();
-      
-      // Add debug logs for every attempt
-      console.log('Poll attempt ' + attempt + ' - raw status: ' + status);
-      console.log('Poll response data: ' + JSON.stringify(data));
       
       // Expanded completed status detection: "Done", "done", "Success", "success", "Completed", "completed", "Finished", "finished", "1", "true"
       const isCompleted = statusLower === 'completed' || statusLower === 'success' || 
@@ -108,9 +97,6 @@ async function pollOrder(orderId, maxAttempts = 90, delayMs = 2000) {
                          String(data.success || '').toLowerCase() === 'true';
       
       if (isCompleted) {
-        console.log(`Order ${orderId} completed successfully on attempt ${attempt + 1}`);
-        console.log('Final poll response:', JSON.stringify(data, null, 2));
-        // Immediately return the result data (no further polling)
         return data;
       }
       
@@ -124,25 +110,19 @@ async function pollOrder(orderId, maxAttempts = 90, delayMs = 2000) {
       // If failed or error
       if (statusLower === 'failed' || statusLower === 'error' || statusLower === 'cancelled') {
         const errorMsg = data.message || data.error || data.MESSAGE || 'Order failed';
-        console.error(`Order ${orderId} failed with status:`, status, errorMsg);
         throw new Error(errorMsg);
       }
 
-      // Default: wait and retry (unknown status)
-      console.log(`Unknown status "${status}", retrying...`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
     } catch (error) {
-      // On last attempt, throw the error
       if (attempt === maxAttempts - 1) {
-        console.error('Polling failed after all attempts:', error);
+        console.error('IMEI polling failed after all attempts');
         throw error;
       }
-      // Otherwise wait and retry
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
   }
-  
-  console.error(`Polling timeout for order ${orderId} after ${maxAttempts} attempts`);
+
   throw new Error('Order polling timeout');
 }
 
@@ -153,8 +133,7 @@ async function submitAndPollOrder(imei) {
     const result = await pollOrder(orderId);
     return result;
   } catch (error) {
-    console.error('Order error (Service 50, IMEI: ' + imei + '):', error);
-    console.error('Error stack:', error.stack);
+    console.error('IMEI order error');
     throw error;
   }
 }
@@ -168,8 +147,7 @@ function parseAppleAdvanced(data) {
     blacklisted: false,
     blacklistStatus: null, // "BLACKLISTED" or "CLEAN" for display
     clean: true,
-    details: {}, // Additional device info (model, serial, warranty, carrier, simlock, etc.)
-    raw: data
+    details: {} // Additional device info (model, serial, warranty, carrier, simlock, etc.)
   };
 
   // Convert data to string for searching
@@ -336,7 +314,6 @@ function parseAppleAdvanced(data) {
     report.clean = false;
   }
 
-  console.log('Parsed Apple Advanced report:', JSON.stringify(report, null, 2));
   return report;
 }
 
@@ -347,6 +324,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
+  if (!isImeiProviderEnabled()) {
+    return res.status(503).json({ error: 'IMEI report is currently unavailable' });
+  }
+
+  const stripe = getStripeClient();
+  if (!stripe) {
+    return res.status(503).json({ error: 'IMEI report is currently unavailable' });
+  }
+
   try {
     const { session_id } = req.query;
 
@@ -354,26 +340,19 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'session_id is required' });
     }
 
-    console.log('=== Fetching IMEI Report ===');
-    console.log('Session ID:', session_id);
-
     // Retrieve Stripe session
     const session = await stripe.checkout.sessions.retrieve(session_id);
 
     if (!session) {
-      console.error('Session not found:', session_id);
       return res.status(404).json({ error: 'Session not found' });
     }
 
-    // Get IMEI from metadata
+    // Get IMEI from metadata without logging it
     const imei = session.metadata?.imei;
 
     if (!imei) {
-      console.error('IMEI not found in session metadata:', session.metadata);
       return res.status(400).json({ error: 'IMEI not found in session metadata' });
     }
-
-    console.log('IMEI from session:', imei);
 
     // Submit and poll single order with service_id 50 (Apple Advanced Check includes everything)
     let appleReport;
@@ -381,20 +360,15 @@ export default async function handler(req, res) {
       const appleAdvancedResult = await submitAndPollOrder(imei);
       appleReport = parseAppleAdvanced(appleAdvancedResult);
     } catch (error) {
-      console.error('Error submitting/polling Apple Advanced Check:', error);
+      console.error('Error submitting/polling Apple Advanced Check');
       appleReport = {
         fmi: null,
         icloudLost: null,
         blacklisted: false,
         clean: true,
-        error: error.message || 'Unknown error',
-        raw: null
+        error: error.message || 'Unknown error'
       };
     }
-
-    // Log parsed results
-    console.log('=== Final Parsed Results ===');
-    console.log('Apple Advanced:', JSON.stringify(appleReport, null, 2));
 
     // Determine overall status
     const hasIssue = !appleReport.clean;
@@ -416,9 +390,6 @@ export default async function handler(req, res) {
       }
       summary = `Your device has been flagged: ${issues.join(' and ')}. Please contact support for assistance.`;
     }
-
-    console.log('Summary:', summary);
-    console.log('Overall clean:', !hasIssue && !hasError);
 
     // Return structured response
     return res.status(200).json({
@@ -443,11 +414,9 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Error fetching IMEI report:', error);
-    console.error('Error stack:', error.stack);
-    return res.status(500).json({ 
-      error: 'Failed to fetch IMEI report',
-      message: error.message 
+    console.error('Error fetching IMEI report');
+    return res.status(500).json({
+      error: 'Failed to fetch IMEI report'
     });
   }
 }
