@@ -5,7 +5,8 @@
     "postbuild": "node scripts/indexnow.js",
     "test": "node --test tests/recovery-logic.test.cjs tests/recovery-journeys.test.cjs tests/recovery-session-schema.test.cjs tests/recovery-session-api.test.cjs",
     "validate:phase2": "node scripts/validate-phase2.cjs",
-    "validate:phase3": "node scripts/validate-phase3.cjs"
+    "validate:phase3": "node scripts/validate-phase3.cjs",
+    "smoke:modules": "node scripts/smoke-modules.cjs"
   },
   "dependencies": {
     "@upstash/redis": "^1.38.4",

@@ -41,4 +41,5 @@ test('createState uses schema version 2 and allowed action statuses', () => {
   assert.equal(state.awaitingExternalReturnActionId, null);
   assert.ok(schema.ENUMS.actionStatus.includes('blocked'));
   assert.ok(schema.ENUMS.blockedReason.includes('unsafe_to_retrieve'));
+  assert.ok(schema.ENUMS.blockedReason.includes('could_not_secure_device'));
 });

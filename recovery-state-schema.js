@@ -76,6 +76,7 @@
       'waiting_for_provider',
       'needs_owner',
       'unsafe_to_retrieve',
+      'could_not_secure_device',
       null
     ]),
     stabilizationStatus: Object.freeze(['not_started', 'in_progress', 'stabilized', 'stabilized_with_blockers', null]),

@@ -207,6 +207,7 @@
     if (answers.recovered === 'yes' && answers.situation !== 'stolen' && !hasCompromiseSignal(state) && answers.verificationAccess !== 'no') {
       return false;
     }
+    const mark = markLostId(answers.platform);
     return answers.situation === 'stolen'
       || answers.situation === 'unsure'
       || answers.verificationAccess === 'no'
@@ -214,7 +215,8 @@
       || statusOf(state, 'apple-auth-fallback') === 'blocked'
       || statusOf(state, 'google-auth-fallback') === 'blocked'
       || statusOf(state, playSoundId(answers.platform) || 'apple-play-sound') === 'blocked'
-      || statusOf(state, locateId(answers.platform) || 'apple-locate-device') === 'blocked';
+      || statusOf(state, locateId(answers.platform) || 'apple-locate-device') === 'blocked'
+      || (mark && isBlocked(state, mark));
   }
 
   function needsFinancial(state) {
@@ -557,15 +559,12 @@
     }
 
     const assessed = assessStabilization(next);
-    if (assessed.status !== 'active') {
-      return completeView(assessed.state);
+    if (!isEraseAvailable(assessed.state) && isOpen(assessed.state, 'erase-device-decision') && statusOf(assessed.state, 'erase-device-decision') === 'pending') {
+      setNotApplicable(assessed.state, 'erase-device-decision');
     }
 
-    if (isEraseAvailable(assessed.state)) {
-      if (assessed.state.eraseAcknowledged !== true) return questionView(assessed.state, 'eraseAcknowledge');
-      if (isOpen(assessed.state, 'erase-device-decision')) return questionView(assessed.state, 'eraseConfirm');
-    } else if (isOpen(assessed.state, 'erase-device-decision') && statusOf(assessed.state, 'erase-device-decision') === 'pending') {
-      setNotApplicable(assessed.state, 'erase-device-decision');
+    if (assessed.status !== 'active') {
+      return completeView(assessed.state);
     }
 
     if (stillMissing(assessed.state) && isOpen(assessed.state, 'report-and-document') && !needsPrimaryAccount(assessed.state) && !needsMobileLine(assessed.state) && !needsFinancial(assessed.state)) {
@@ -573,6 +572,17 @@
     }
 
     return completeView(assessed.state);
+  }
+
+  function reviewErase(state) {
+    if (!state || typeof state !== 'object') {
+      return { ok: false, error: 'invalid-state', message: 'Recovery state is missing.' };
+    }
+    const next = clone(state);
+    if (!isEraseAvailable(next)) {
+      return evaluate(next);
+    }
+    return questionView(next, 'eraseAcknowledge');
   }
 
   function validateState(state) {
@@ -819,6 +829,14 @@
       if (outcomeId === 'marked') {
         answers.deviceSecured = 'yes';
         markAction(state, actionId, { status: 'completed', outcome: outcomeId, blockedReason: null });
+      } else if (outcomeId === 'could_not_mark') {
+        answers.deviceSecured = 'no';
+        markAction(state, actionId, {
+          status: 'blocked',
+          outcome: 'could_not_mark',
+          blockedReason: 'could_not_secure_device'
+        });
+        state.blockedReason = 'could_not_secure_device';
       } else {
         answers.deviceSecured = 'no';
         markAction(state, actionId, { status: 'completed', outcome: outcomeId, blockedReason: null });
@@ -988,6 +1006,7 @@
     startExternalAction,
     buildPlan,
     isEraseAvailable,
+    reviewErase,
     assessStabilization,
     clone
   };

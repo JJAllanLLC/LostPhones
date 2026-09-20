@@ -268,6 +268,9 @@ test('erase requires dual confirmation after reversible steps and risk', () => {
   assert.equal(view.type, 'complete');
   assert.equal(view.state.status, 'stabilized');
   assert.equal(logic.isEraseAvailable(view.state), true);
+  assert.equal(view.eraseAvailable, true);
+  view = logic.reviewErase(view.state);
+  assertQuestion(view, 'eraseAcknowledge');
   view = logic.answerQuestion(view.state, 'eraseAcknowledge', 'yes');
   assertQuestion(view, 'eraseConfirm');
   view = logic.answerQuestion(view.state, 'eraseConfirm', 'yes');
@@ -299,3 +302,105 @@ test('schema version 2 state model is present after triage', () => {
   assert.equal(view.state.actions['apple-locate-device'].status, 'pending');
   assert.equal(view.state.answers.safety, null);
 });
+
+function failedMarkJourney(platform) {
+  const locate = platform === 'iphone' ? 'apple-locate-device' : 'google-locate-device';
+  const mark = platform === 'iphone' ? 'apple-mark-lost' : 'google-mark-lost';
+  let view = triage('lost', platform, 'trusted');
+  view = logic.recordOutcome(view.state, locate, 'not_found');
+  view = logic.recordOutcome(view.state, mark, 'could_not_mark');
+  const record = view.state.actions[mark];
+  assert.equal(record.status, 'blocked');
+  assert.notEqual(record.status, 'completed');
+  assert.equal(record.outcome, 'could_not_mark');
+  assert.equal(record.blockedReason, 'could_not_secure_device');
+  assert.equal(view.state.answers.deviceSecured, 'no');
+  assert.match(content.BLOCKED_REASON_COPY.could_not_secure_device, /not complete/);
+  assertAction(view, 'protect-primary-account');
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  assertAction(view, 'protect-mobile-line');
+  assert.notEqual(view.state.status, 'stabilized');
+  view = logic.recordOutcome(view.state, 'protect-mobile-line', 'secured');
+  assert.equal(view.state.status, 'stabilized_with_blockers');
+  assert.notEqual(view.state.status, 'stabilized');
+  assert.equal(view.state.actions[mark].status, 'blocked');
+  return view;
+}
+
+test('failed iPhone mark-lost stays blocked and cannot fully stabilize', () => {
+  failedMarkJourney('iphone');
+});
+
+test('failed Android secure-device stays blocked and cannot fully stabilize', () => {
+  failedMarkJourney('android');
+});
+
+test('successful marked outcome still completes and can fully stabilize', () => {
+  let view = triage('stolen', 'iphone', 'trusted');
+  view = logic.answerQuestion(view.state, 'safety', 'safe');
+  view = logic.recordOutcome(view.state, 'apple-locate-device', 'not_found');
+  view = logic.recordOutcome(view.state, 'apple-mark-lost', 'marked');
+  assert.equal(view.state.actions['apple-mark-lost'].status, 'completed');
+  assert.equal(view.state.answers.deviceSecured, 'yes');
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  view = logic.recordOutcome(view.state, 'protect-mobile-line', 'secured');
+  view = logic.recordOutcome(view.state, 'protect-financial-accounts', 'secured');
+  assert.equal(view.state.status, 'stabilized');
+});
+
+test('qualifying stabilized stolen journey can review erase, and declining returns', () => {
+  let view = triage('stolen', 'iphone', 'trusted');
+  view = logic.answerQuestion(view.state, 'safety', 'safe');
+  view = logic.recordOutcome(view.state, 'apple-locate-device', 'not_found');
+  view = logic.recordOutcome(view.state, 'apple-mark-lost', 'marked');
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  view = logic.recordOutcome(view.state, 'protect-mobile-line', 'secured');
+  view = logic.recordOutcome(view.state, 'protect-financial-accounts', 'secured');
+  assert.equal(view.type, 'complete');
+  assert.equal(view.state.status, 'stabilized');
+  assert.equal(logic.isEraseAvailable(view.state), true);
+  view = logic.reviewErase(view.state);
+  assertQuestion(view, 'eraseAcknowledge');
+  view = logic.answerQuestion(view.state, 'eraseAcknowledge', 'no');
+  assert.equal(view.type, 'complete');
+  assert.equal(view.state.status, 'stabilized');
+  view = logic.reviewErase(view.state);
+  assertQuestion(view, 'eraseAcknowledge');
+  view = logic.answerQuestion(view.state, 'eraseAcknowledge', 'yes');
+  assertQuestion(view, 'eraseConfirm');
+  view = logic.answerQuestion(view.state, 'eraseConfirm', 'no');
+  assert.equal(view.type, 'complete');
+  assert.equal(view.state.status, 'stabilized');
+});
+
+test('offline or low-risk missing journeys cannot expose erase', () => {
+  let offline = triage('lost', 'iphone', 'trusted');
+  offline = logic.recordOutcome(offline.state, 'apple-locate-device', 'offline');
+  assert.equal(logic.isEraseAvailable(offline.state), false);
+  let review = logic.reviewErase(offline.state);
+  assert.notEqual(review.questionId, 'eraseAcknowledge');
+
+  let lowRisk = triage('lost', 'iphone', 'trusted');
+  lowRisk = logic.recordOutcome(lowRisk.state, 'apple-locate-device', 'not_found');
+  lowRisk = logic.recordOutcome(lowRisk.state, 'apple-mark-lost', 'marked');
+  lowRisk = logic.recordOutcome(lowRisk.state, 'protect-primary-account', 'secured');
+  assert.equal(logic.isEraseAvailable(lowRisk.state), false);
+  review = logic.reviewErase(lowRisk.state);
+  assert.notEqual(review.questionId, 'eraseAcknowledge');
+  assert.notEqual(lowRisk.state.status, 'active');
+});
+
+test('erase is not a stabilization prerequisite', () => {
+  let view = triage('stolen', 'android', 'trusted');
+  view = logic.answerQuestion(view.state, 'safety', 'safe');
+  view = logic.recordOutcome(view.state, 'google-locate-device', 'offline');
+  view = logic.recordOutcome(view.state, 'google-mark-lost', 'marked');
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  view = logic.recordOutcome(view.state, 'protect-mobile-line', 'secured');
+  view = logic.recordOutcome(view.state, 'protect-financial-accounts', 'secured');
+  assert.equal(view.state.status, 'stabilized');
+  assert.equal(view.type, 'complete');
+  assert.ok(view.state.actions['erase-device-decision'].status === 'pending' || view.state.actions['erase-device-decision'].status === 'not_applicable');
+  assert.equal(logic.isEraseAvailable(view.state), true);
+});
+

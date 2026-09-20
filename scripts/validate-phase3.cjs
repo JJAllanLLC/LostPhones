@@ -71,6 +71,12 @@ for (const actionId of requiredActions) {
 if (schema.SCHEMA_VERSION !== 2) {
   fail('Schema version must be 2.');
 }
+if (schema.ENUMS.blockedReason.indexOf('could_not_secure_device') === -1) {
+  fail('Schema must include could_not_secure_device.');
+}
+if (!content.BLOCKED_REASON_COPY.could_not_secure_device || !/not complete/.test(content.BLOCKED_REASON_COPY.could_not_secure_device)) {
+  fail('Blocked copy for could_not_secure_device is missing.');
+}
 
 const api = read('api/recovery-session.js');
 if (!api.includes('UPSTASH_REDIS_KV_REST_API_URL') || !api.includes('UPSTASH_REDIS_KV_REST_API_TOKEN')) {
@@ -100,8 +106,8 @@ const recoveryJs = read('recovery.js');
 if (/localStorage|sessionStorage|document\.cookie/.test(recoveryJs)) {
   fail('recovery.js must not call storage APIs; persistence belongs in the session client.');
 }
-if (!recoveryJs.includes('I’m back') && !read('recovery.html').includes('I’m back')) {
-  fail('Recovery UI must include I’m back — continue.');
+if (!recoveryJs.includes('Review erase option')) {
+  fail('Stabilized view must offer Review erase option when erase is available.');
 }
 
 const recoveryHtml = read('recovery.html');

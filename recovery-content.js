@@ -844,7 +844,8 @@
     cannot_access_carrier: 'The carrier could not be reached through its official app or site yet. The line-protection step stays visible and is not complete.',
     waiting_for_provider: 'You are waiting on Apple, Google, a carrier, or a bank. That blocked step stays in Next until it finishes.',
     needs_owner: 'Only the phone owner can finish this step. It stays visible and is not complete.',
-    unsafe_to_retrieve: 'Do not retrieve the phone from an unsafe place. Safety comes first, and this step is not complete.'
+    unsafe_to_retrieve: 'Do not retrieve the phone from an unsafe place. Safety comes first, and this step is not complete.',
+    could_not_secure_device: 'The phone could not be marked lost or locked. This security step is not complete.'
   });
 
   const PLAN_COPY = Object.freeze({

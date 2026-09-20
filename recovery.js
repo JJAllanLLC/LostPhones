@@ -312,6 +312,18 @@
       instruction.textContent = 'Use the plan below for leftover later work. Start over if this is a new incident.';
       caution.textContent = 'LostPhones still will not ask for passwords, codes, or account details.';
       awaiting.hidden = true;
+      const eraseStatus = state.actions['erase-device-decision'] && state.actions['erase-device-decision'].status;
+      if (logic.isEraseAvailable(state) && eraseStatus !== 'completed' && eraseStatus !== 'active') {
+        const eraseButton = document.createElement('button');
+        eraseButton.type = 'button';
+        eraseButton.className = 'btn btn-secondary';
+        eraseButton.id = 'review-erase';
+        eraseButton.textContent = 'Review erase option';
+        eraseButton.addEventListener('click', function () {
+          applyView(logic.reviewErase(state), true);
+        });
+        controls.appendChild(eraseButton);
+      }
       renderPrivacy(content.privacyGuidance[state.answers.currentDevice]);
       renderPlan();
       renderResume();
