@@ -2,6 +2,9 @@
   const logic = window.LostPhonesRecoveryLogic;
   const content = window.LostPhonesRecoveryContent;
   const session = window.LostPhonesRecoverySession;
+  const planCore = window.LostPhonesRecoveryPlanCore;
+  const planClient = window.LostPhonesRecoveryPlanClient;
+  const analytics = window.LostPhonesAnalytics;
   if (!logic || !content) {
     return;
   }
@@ -21,6 +24,7 @@
   let state = logic.createInitialState();
   let historyStack = ['orientation'];
   let showingOutcomes = false;
+  let offerTracked = false;
 
   const questionSteps = {
     situation: 'Step 1 of 3',
@@ -77,6 +81,40 @@
   function pushHistory(step) {
     if (historyStack[historyStack.length - 1] !== step) {
       historyStack.push(step);
+    }
+  }
+
+  function track(eventName, properties) {
+    if (analytics && typeof analytics.track === 'function') {
+      analytics.track(eventName, properties);
+    }
+  }
+
+  function hidePaidOffer() {
+    const panel = document.getElementById('paid-offer');
+    if (panel) panel.hidden = true;
+  }
+
+  function renderPaidOffer() {
+    const panel = document.getElementById('paid-offer');
+    if (!panel || !planCore) {
+      hidePaidOffer();
+      return;
+    }
+    if (!planCore.isPaidOfferEligible(state)) {
+      hidePaidOffer();
+      return;
+    }
+    if (!offerTracked) {
+      offerTracked = true;
+      track('recovery_stabilization_reached', { status: state.stabilizationStatus });
+      track('recovery_paid_offer_eligible', { status: state.stabilizationStatus });
+    }
+    if (planCore.shouldRenderOffer(state, planClient && planClient.isDismissed())) {
+      panel.hidden = false;
+      track('recovery_paid_offer_viewed', { status: state.stabilizationStatus });
+    } else {
+      hidePaidOffer();
     }
   }
 
@@ -327,6 +365,7 @@
       renderPrivacy(content.privacyGuidance[state.answers.currentDevice]);
       renderPlan();
       renderResume();
+      renderPaidOffer();
       showScreen('action');
       announce(title.textContent);
       return;
@@ -405,6 +444,7 @@
 
     renderPlan();
     renderResume();
+    hidePaidOffer();
     showScreen('action');
     announce(awaitingReturn ? 'Return to LostPhones when you are done in the official service.' : record.title);
   }
@@ -440,6 +480,7 @@
       document.getElementById('action-reason').textContent = 'LostPhones will not guess the next step from incomplete or invalid answers.';
       document.getElementById('action-instruction').textContent = 'Go back and choose one option on each screen.';
       document.getElementById('action-caution').textContent = 'No official recovery service was selected.';
+      hidePaidOffer();
       announce('The recovery answers are incomplete. No action was guessed.');
       return;
     }
@@ -475,6 +516,8 @@
       });
       document.getElementById('plan-panel').hidden = true;
       document.getElementById('resume-box').hidden = true;
+      hidePaidOffer();
+      offerTracked = false;
       showScreen('orientation');
       announce('Recovery started over. Answers cleared.');
     };
@@ -550,6 +593,49 @@
     }
   });
 
+  const keepPlan = document.getElementById('keep-recovery-plan');
+  if (keepPlan) {
+    keepPlan.addEventListener('click', function () {
+      const feedback = document.getElementById('paid-offer-feedback');
+      if (!planClient) {
+        if (feedback) {
+          feedback.hidden = false;
+          feedback.textContent = 'Checkout is unavailable right now. Your free plan is still here.';
+        }
+        return;
+      }
+      track('recovery_checkout_started', {
+        productId: analytics ? analytics.PRODUCT_ID : 'recovery-complete-plan',
+        value: analytics ? analytics.PRODUCT_VALUE : 8.95
+      });
+      planClient.startCheckout(state).then(function (result) {
+        if (result && result.ok && result.url) {
+          window.location.href = result.url;
+          return;
+        }
+        if (feedback) {
+          feedback.hidden = false;
+          feedback.textContent = 'Checkout is unavailable right now. Your free plan is still here.';
+        }
+      }).catch(function () {
+        if (feedback) {
+          feedback.hidden = false;
+          feedback.textContent = 'Checkout is unavailable right now. Your free plan is still here.';
+        }
+      });
+    });
+  }
+
+  const dismissPlan = document.getElementById('dismiss-recovery-plan');
+  if (dismissPlan) {
+    dismissPlan.addEventListener('click', function () {
+      if (planClient) planClient.dismissOffer();
+      hidePaidOffer();
+      track('recovery_paid_offer_dismissed', { status: state.stabilizationStatus });
+      announce('Continuing with the free recovery plan.');
+    });
+  }
+
   app.addEventListener('click', function (event) {
     const button = event.target.closest('[data-action]');
     if (!button) return;
@@ -563,6 +649,18 @@
 
   function boot() {
     showScreen('orientation');
+    if (planClient && /[?&]checkout=cancelled/.test(window.location.search || '')) {
+      const restored = planClient.restoreCheckoutState();
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+      if (restored) {
+        state = restored;
+        applyView(logic.evaluate(state), false);
+        announce('Checkout was cancelled. Your free recovery plan is still here.');
+        return;
+      }
+    }
     if (!session) return;
     const fragmentToken = session.consumeResumeFragment();
     const stored = fragmentToken || session.loadPersistedToken('trusted');

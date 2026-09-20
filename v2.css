@@ -221,6 +221,10 @@ main {
   text-align: left;
 }
 
+.secondary-path .btn {
+  margin-top: 0.25rem;
+}
+
 .panel {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -428,12 +432,25 @@ dialog::backdrop {
 
 .awaiting-banner,
 .resume-box,
-.plan-panel {
+.plan-panel,
+.paid-offer,
+.result-card,
+.recommendation-card {
   margin-top: 1.25rem;
   padding: 1rem;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--surface);
+}
+
+.paid-offer {
+  background: var(--trust-bg);
+}
+
+.disclosure {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
 }
 
 .awaiting-banner {

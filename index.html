@@ -21,6 +21,7 @@
         <ul class="nav-quiet">
           <li><a href="/" aria-current="page">Home</a></li>
           <li><a href="recovery.html">Recovery</a></li>
+          <li><a href="preparedness.html">Preparedness</a></li>
           <li><a href="about.html">About</a></li>
         </ul>
       </nav>
@@ -35,8 +36,8 @@
         <a class="btn btn-primary" href="recovery.html">Start My Recovery</a>
       </div>
       <div class="secondary-path">
-        <p>Not an emergency?</p>
-        <button type="button" id="coming-later-open">Protect yourself before it happens.</button>
+        <p>Not an emergency? Protect yourself before it happens.</p>
+        <a class="btn btn-secondary" href="preparedness.html">Build My Safety Plan</a>
       </div>
     </section>
 
@@ -68,25 +69,5 @@
     <p>© 2026 LostPhones. Operated by JJ ALLAN, LLC.</p>
   </footer>
 
-  <dialog id="coming-later" aria-labelledby="coming-later-title">
-    <h2 id="coming-later-title">Coming later</h2>
-    <p>Preparedness tools are not part of this emergency recovery guide yet.</p>
-    <form method="dialog">
-      <button class="btn btn-secondary" type="submit">Close</button>
-    </form>
-  </dialog>
-
-  <script>
-    (function () {
-      var dialog = document.getElementById('coming-later');
-      var openButton = document.getElementById('coming-later-open');
-      if (!dialog || !openButton) return;
-      openButton.addEventListener('click', function () {
-        if (typeof dialog.showModal === 'function') {
-          dialog.showModal();
-        }
-      });
-    })();
-  </script>
 </body>
 </html>
