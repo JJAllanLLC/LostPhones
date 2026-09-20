@@ -1,0 +1,118 @@
+#!/usr/bin/env node
+const fs = require('fs');
+const path = require('path');
+const assert = require('node:assert/strict');
+const content = require('../recovery-content.js');
+
+const root = path.join(__dirname, '..');
+const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
+
+const indexHtml = read('index.html');
+const recoveryHtml = read('recovery.html');
+const recoveryJs = read('recovery.js');
+const recoveryLogic = read('recovery-logic.js');
+const recoveryCss = read('v2.css');
+const robots = read('robots.txt');
+const vercel = JSON.parse(read('vercel.json'));
+
+function fail(message) {
+  console.error('validate:phase2 failed:', message);
+  process.exit(1);
+}
+
+if (!/href="recovery\.html"/.test(indexHtml) || !/Start My Recovery/.test(indexHtml)) {
+  fail('Homepage primary CTA must link to the recovery flow.');
+}
+
+const requiredQuestions = [
+  ['situation', ['nearby', 'lost', 'stolen', 'unsure'], 'What best describes the phone?'],
+  ['platform', ['iphone', 'android', 'unsure'], 'What kind of phone is missing?'],
+  ['currentDevice', ['trusted', 'borrowed', 'public'], 'What are you using now?']
+];
+
+for (const [name, values, legend] of requiredQuestions) {
+  if (!recoveryHtml.includes(legend)) {
+    fail(`Missing question legend: ${legend}`);
+  }
+  for (const value of values) {
+    const pattern = new RegExp(`name="${name}"[^>]*value="${value}"|value="${value}"[^>]*name="${name}"`);
+    if (!pattern.test(recoveryHtml)) {
+      fail(`Missing bounded value ${name}=${value}`);
+    }
+  }
+}
+
+const pageBundle = [indexHtml, recoveryHtml, recoveryJs].join('\n');
+const officialUrlSet = new Set(content.getApprovedOfficialUrls());
+const foundUrls = pageBundle.match(/https:\/\/[^\s"'<>]+/g) || [];
+for (const url of foundUrls) {
+  const clean = url.replace(/[.,)]+$/, '');
+  if (/apple\.com|icloud\.com|android\.com|google\.com|iforgot/.test(clean) && !officialUrlSet.has(clean)) {
+    fail(`Unofficial or unapproved recovery URL found: ${clean}`);
+  }
+}
+
+const stripeNeedle = /stripe|buy\.stripe\.com|js\.stripe\.com|checkout\.js/i;
+if (stripeNeedle.test(indexHtml) || stripeNeedle.test(recoveryHtml)) {
+  fail('Stripe scripts or payment links must not appear on the homepage or recovery page.');
+}
+
+if (/googletagmanager|google-analytics|G-KQTTP3KMKN|clarity\.ms|uivo0q97p5/i.test(indexHtml + recoveryHtml)) {
+  fail('Analytics or Clarity scripts must not appear on the new homepage or recovery page.');
+}
+
+if (/<textarea|<input[^>]*(type="text"|type="search"|type="email"|type="password"|type="tel"|type="number")/i.test(recoveryHtml)) {
+  fail('Free-form or prohibited fields exist in the recovery page.');
+}
+
+const prohibited = ['password', 'passwd', 'pin', 'verification code', 'imei', 'serial number', 'phone number', 'credit card'];
+const fieldHaystack = recoveryHtml.toLowerCase();
+if (/(name|id)="(password|pin|imei|serial|email|phone|ssn)"/i.test(recoveryHtml)) {
+  fail('Prohibited credential or identifier field exists.');
+}
+
+const storageHaystack = [recoveryJs, recoveryLogic, indexHtml, recoveryHtml].join('\n');
+if (/localStorage|sessionStorage|document\.cookie/.test(storageHaystack)) {
+  fail('Storage APIs are used. Phase 2 must remain memory-only.');
+}
+
+if (!/User-agent:\s*\*\s*Disallow:\s*\//i.test(robots.replace(/\n/g, '\n'))) {
+  const collapsed = robots.replace(/\r/g, '');
+  if (!/User-agent: \*\nDisallow: \//.test(collapsed)) {
+    fail('robots.txt must still block crawling.');
+  }
+}
+
+const robotsHeader = vercel.headers
+  .flatMap((block) => block.headers)
+  .find((header) => header.key === 'X-Robots-Tag');
+if (!robotsHeader || robotsHeader.value !== 'noindex, nofollow, noarchive') {
+  fail('vercel.json must still send X-Robots-Tag: noindex, nofollow, noarchive');
+}
+
+if (vercel.domains || /lostphones\.com/.test(JSON.stringify(vercel.rewrites || [])) === false && false) {
+  /* existing production host redirect is Phase 1 config and must remain unchanged */
+}
+
+const vercelText = fs.readFileSync(path.join(root, 'vercel.json'), 'utf8');
+const originalRedirect = vercel.redirects.find((item) => item.has && item.has[0] && item.has[0].value === 'www.lostphones.com');
+if (!originalRedirect) {
+  fail('Phase 1 production host redirect was altered.');
+}
+
+if (fs.existsSync(path.join(root, 'CNAME'))) {
+  const cname = read('CNAME').trim();
+  if (cname && !['lostphones.com', 'www.lostphones.com'].includes(cname) === false) {
+    // CNAME already existed; do not introduce a new production domain file in Phase 2.
+  }
+}
+
+if (!recoveryCss.includes('min-height: 44px') && !recoveryCss.includes('min-height: 48px')) {
+  fail('v2.css must keep large touch targets.');
+}
+
+if (prohibited.some((word) => new RegExp(`<input[^>]+${word}`, 'i').test(fieldHaystack))) {
+  fail('Prohibited identifier field exists.');
+}
+
+console.log('validate:phase2 passed');

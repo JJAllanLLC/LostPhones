@@ -1,0 +1,437 @@
+/* LostPhones V2 — homepage and recovery flow only. Legacy pages keep style.css. */
+
+:root {
+  --bg: #f3f5f7;
+  --surface: #ffffff;
+  --text: #17202a;
+  --muted: #3d4a57;
+  --line: #d5dde5;
+  --accent: #1f4e79;
+  --accent-hover: #163a5b;
+  --focus: #0b3b66;
+  --caution-bg: #f4efe2;
+  --caution-text: #3f3420;
+  --trust-bg: #eaf1f6;
+  --shadow: 0 10px 30px rgba(23, 32, 42, 0.06);
+  --radius: 16px;
+  --space: 1rem;
+  --max: 40rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Avenir Next", "Segoe UI", Calibri, Arial, sans-serif;
+  line-height: 1.55;
+  min-height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -3rem;
+  background: var(--surface);
+  color: var(--text);
+  padding: 0.75rem 1rem;
+  z-index: 20;
+}
+
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+.site-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--line);
+  background: rgba(243, 245, 247, 0.94);
+}
+
+.site-header-inner {
+  max-width: 72rem;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.wordmark {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-quiet {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-quiet a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.65rem 0.7rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-quiet a[aria-current="page"] {
+  color: var(--text);
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.hero {
+  padding-top: 1.25rem;
+}
+
+.hero h1 {
+  font-size: clamp(1.7rem, 6vw, 2.4rem);
+  line-height: 1.2;
+  margin: 0 0 0.85rem;
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  font-size: 1.05rem;
+  color: var(--muted);
+  margin: 0 0 1.5rem;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  min-height: 48px;
+  padding: 0.85rem 1.1rem;
+  font: inherit;
+  font-weight: 650;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.btn-tertiary {
+  background: transparent;
+  color: var(--muted);
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.btn[disabled],
+.btn[aria-disabled="true"] {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.secondary-path {
+  margin-top: 1.5rem;
+  color: var(--muted);
+}
+
+.secondary-path p {
+  margin: 0 0 0.35rem;
+}
+
+.secondary-path button {
+  color: var(--accent);
+  background: none;
+  border: 0;
+  font: inherit;
+  font-weight: 650;
+  min-height: 44px;
+  padding: 0.4rem 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.15rem;
+  margin-top: 1.5rem;
+}
+
+.panel h2 {
+  font-size: 1.05rem;
+  margin: 0 0 0.65rem;
+}
+
+.panel ul {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+
+.panel li + li {
+  margin-top: 0.4rem;
+}
+
+.trust {
+  background: var(--trust-bg);
+}
+
+.caution {
+  background: var(--caution-bg);
+  color: var(--caution-text);
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 1.25rem 1rem 2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.site-footer a {
+  color: var(--muted);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.progress {
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 650;
+  margin: 0 0 0.85rem;
+}
+
+.screen[hidden],
+.flow-nav[hidden],
+[hidden] {
+  display: none !important;
+}
+
+.choice-list {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.choice-list legend {
+  font-size: clamp(1.35rem, 5vw, 1.8rem);
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+  padding: 0;
+  color: var(--text);
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 48px;
+  margin: 0 0 0.55rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.choice:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.choice input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--accent);
+  flex: 0 0 auto;
+}
+
+.action-card h1,
+.screen-title {
+  font-size: clamp(1.4rem, 5vw, 1.9rem);
+  line-height: 1.25;
+  margin: 0 0 0.75rem;
+}
+
+.action-card p,
+.orientation p {
+  margin: 0 0 0.9rem;
+}
+
+.meta-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 1rem 0 0.35rem;
+}
+
+.privacy-box,
+.leaving-note,
+.support-note {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: var(--trust-bg);
+}
+
+.privacy-box h2,
+.leaving-note strong {
+  font-size: 1rem;
+  margin: 0 0 0.4rem;
+}
+
+.flow-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+.live-region {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+dialog {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  width: min(22rem, calc(100% - 2rem));
+  box-shadow: var(--shadow);
+}
+
+dialog::backdrop {
+  background: rgba(23, 32, 42, 0.45);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .site-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-quiet {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .nav-quiet a {
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
+  }
+}
+
+@media (min-width: 768px) {
+  main {
+    padding-top: 2.5rem;
+  }
+
+  .hero {
+    padding-top: 2rem;
+  }
+}

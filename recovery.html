@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Start My Recovery | LostPhones</title>
+  <meta name="description" content="Answer three short questions and get the safest next step for a missing iPhone or Android.">
+  <link rel="stylesheet" href="v2.css">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
+  <link rel="shortcut icon" href="/favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+</head>
+<body>
+  <a class="skip-link" href="#recovery-app">Skip to recovery</a>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="wordmark" href="/">LostPhones</a>
+      <nav aria-label="Primary">
+        <ul class="nav-quiet">
+          <li><a href="/">Home</a></li>
+          <li><a href="recovery.html" aria-current="page">Recovery</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="recovery-app">
+    <p class="progress" id="progress-label" hidden>Step 1 of 3</p>
+    <div class="live-region" id="status-live" aria-live="polite" aria-atomic="true"></div>
+
+    <section class="screen orientation" id="screen-orientation" data-step="orientation">
+      <h1 class="screen-title" id="orientation-title" tabindex="-1">We’ll guide you one step at a time</h1>
+      <p>LostPhones will ask three short questions, then show the safest first action for this situation.</p>
+      <p>You can go back or start over at any time. Your answers stay in this page’s memory only. Reloading this page clears them.</p>
+      <p>LostPhones never asks for passwords, verification codes, IMEI numbers, or account details.</p>
+      <div class="flow-nav">
+        <button class="btn btn-primary" type="button" id="begin-recovery" data-action="continue">Continue</button>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-situation" data-step="situation" hidden>
+      <form id="form-situation">
+        <fieldset class="choice-list">
+          <legend id="legend-situation" tabindex="-1">What best describes the phone?</legend>
+          <label class="choice"><input type="radio" name="situation" value="nearby" required> Misplaced nearby</label>
+          <label class="choice"><input type="radio" name="situation" value="lost"> Lost</label>
+          <label class="choice"><input type="radio" name="situation" value="stolen"> Stolen</label>
+          <label class="choice"><input type="radio" name="situation" value="unsure"> Not sure</label>
+        </fieldset>
+        <div class="flow-nav">
+          <button class="btn btn-secondary" type="button" data-action="back">Back</button>
+          <button class="btn btn-primary" type="submit">Continue</button>
+          <button class="btn btn-tertiary" type="button" data-action="start-over">Start Over</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="screen" id="screen-platform" data-step="platform" hidden>
+      <form id="form-platform">
+        <fieldset class="choice-list">
+          <legend id="legend-platform" tabindex="-1">What kind of phone is missing?</legend>
+          <label class="choice"><input type="radio" name="platform" value="iphone" required> iPhone</label>
+          <label class="choice"><input type="radio" name="platform" value="android"> Android</label>
+          <label class="choice"><input type="radio" name="platform" value="unsure"> Not sure</label>
+        </fieldset>
+        <div class="flow-nav">
+          <button class="btn btn-secondary" type="button" data-action="back">Back</button>
+          <button class="btn btn-primary" type="submit">Continue</button>
+          <button class="btn btn-tertiary" type="button" data-action="start-over">Start Over</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="screen" id="screen-currentDevice" data-step="currentDevice" hidden>
+      <form id="form-currentDevice">
+        <fieldset class="choice-list">
+          <legend id="legend-currentDevice" tabindex="-1">What are you using now?</legend>
+          <label class="choice"><input type="radio" name="currentDevice" value="trusted" required> My trusted device</label>
+          <label class="choice"><input type="radio" name="currentDevice" value="borrowed"> A device from someone I trust</label>
+          <label class="choice"><input type="radio" name="currentDevice" value="public"> A public or shared device</label>
+        </fieldset>
+        <div class="flow-nav">
+          <button class="btn btn-secondary" type="button" data-action="back">Back</button>
+          <button class="btn btn-primary" type="submit">Continue</button>
+          <button class="btn btn-tertiary" type="button" data-action="start-over">Start Over</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="screen action-card" id="screen-action" data-step="action" hidden>
+      <h1 class="screen-title" id="action-title" tabindex="-1"></h1>
+      <p id="action-reason"></p>
+      <p id="action-instruction"></p>
+      <p class="caution panel" id="action-caution"></p>
+      <div class="privacy-box" id="privacy-box" hidden>
+        <h2 id="privacy-title"></h2>
+        <ul id="privacy-list"></ul>
+      </div>
+      <p class="leaving-note" id="leaving-note" hidden></p>
+      <div class="stack" id="action-controls"></div>
+      <p class="support-note" id="support-note" hidden></p>
+      <div class="flow-nav">
+        <button class="btn btn-secondary" type="button" data-action="back">Back</button>
+        <button class="btn btn-tertiary" type="button" data-action="start-over">Start Over</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <nav aria-label="Footer">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="/">Home</a>
+    </nav>
+    <p>© 2026 LostPhones. Operated by JJ ALLAN, LLC.</p>
+  </footer>
+
+  <script src="recovery-content.js"></script>
+  <script src="recovery-logic.js"></script>
+  <script src="recovery.js"></script>
+</body>
+</html>

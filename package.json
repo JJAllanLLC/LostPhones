@@ -2,7 +2,9 @@
   "name": "lost-phones",
   "version": "1.0.0",
   "scripts": {
-    "postbuild": "node scripts/indexnow.js"
+    "postbuild": "node scripts/indexnow.js",
+    "test": "node --test tests/recovery-logic.test.cjs",
+    "validate:phase2": "node scripts/validate-phase2.cjs"
   },
   "dependencies": {
     "stripe": "^16.2.0"
