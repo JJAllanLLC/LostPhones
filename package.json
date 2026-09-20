@@ -7,6 +7,7 @@
     "validate:phase2": "node scripts/validate-phase2.cjs",
     "validate:phase3": "node scripts/validate-phase3.cjs",
     "validate:phase4": "node scripts/validate-phase4.cjs",
+    "validate:phase5": "node scripts/validate-phase5.cjs",
     "smoke:modules": "node scripts/smoke-modules.cjs"
   },
   "dependencies": {

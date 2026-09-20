@@ -84,7 +84,10 @@
     'Mark the phone lost or lock it before considering erase.',
     'Protect the Apple or Google account, then the mobile line, then financial accounts.',
     'Keep LostPhones open while official services open in a new tab, then come back and continue.',
-    'LostPhones never asks for account secrets, codes, or device identifiers.'
+    'LostPhones never asks for account secrets, codes, or device identifiers.',
+    'Do not enter passwords, PINs, or recovery secrets into LostPhones.',
+    'Ask the carrier to suspend or replace the mobile line through its official app or website.',
+    'Protect the main Apple or Google account before financial apps.'
   ]);
 
   const PROHIBITED_PDF_PATTERNS = Object.freeze([
@@ -182,6 +185,17 @@
     return action && action.title ? action.title : 'Recovery step';
   }
 
+  function platformArticle(platform) {
+    return platform === 'iphone' || platform === 'android' ? 'an' : 'a';
+  }
+
+  function situationPhrase(situation) {
+    if (situation === 'nearby') return 'misplaced nearby';
+    if (situation === 'lost') return 'lost';
+    if (situation === 'stolen') return 'stolen';
+    return 'missing';
+  }
+
   function buildPdfModel(state, generatedAt) {
     const validated = schema.validatePersistedState(state);
     if (!validated.ok) return reject(validated.error || 'invalid-state');
@@ -213,10 +227,12 @@
     const model = {
       cover: {
         product: 'My Complete Recovery and Protection Plan',
-        personalization: 'This plan is based on the bounded LostPhones recovery journey for a '
+        personalization: 'Prepared for '
+          + platformArticle(platform)
+          + ' '
           + (PLATFORM_LABELS[platform] || 'phone')
-          + ' reported as '
-          + (SITUATION_LABELS[assessed.answers.situation] || 'missing')
+          + ' reported '
+          + situationPhrase(assessed.answers.situation)
           + '.'
       },
       summary: {

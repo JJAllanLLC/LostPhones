@@ -35,7 +35,7 @@
       disclosure: 'We may earn a commission from qualifying purchases or referrals, at no extra cost to you.',
       active: true,
       title: 'Protective phone case',
-      copy: 'A protective case can reduce damage if the phone is dropped. Open Amazon to browse cases for your phone.',
+      copy: 'A protective case can reduce damage if the phone is dropped.',
       priority: 1
     }),
     Object.freeze({

@@ -57,13 +57,13 @@ if (/coming-later/.test(indexHtml)) {
 
 const recoveryHtml = read('recovery.html');
 const recoveryJs = read('recovery.js');
-if (!/My Complete Recovery and Protection Plan/.test(recoveryHtml)) {
+if (!/Optional complete recovery PDF/.test(recoveryHtml)) {
   fail('Paid offer title is missing.');
 }
-if (!/Keep My Complete Recovery Plan — \$8\.95/.test(recoveryHtml)) {
+if (!/Download my complete recovery PDF — \$8\.95/.test(recoveryHtml)) {
   fail('Paid offer CTA is missing.');
 }
-if (!/Continue with my free plan/.test(recoveryHtml)) {
+if (!/No thanks — continue free/.test(recoveryHtml)) {
   fail('Paid offer dismiss copy is missing.');
 }
 if (/localStorage|sessionStorage|document\.cookie/.test(recoveryJs + recoveryHtml)) {

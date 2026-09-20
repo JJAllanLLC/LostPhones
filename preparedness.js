@@ -26,10 +26,22 @@
     document.getElementById('screen-question').hidden = id !== 'question';
     document.getElementById('screen-results').hidden = id !== 'results';
     const progress = document.getElementById('progress-label');
+    const rail = document.getElementById('prep-progress');
     const questionIndex = logic.QUESTION_ORDER.indexOf(state.step);
+    const filled = id === 'results' ? 5 : id === 'question' && questionIndex >= 0 ? questionIndex + 1 : 0;
+    if (rail) {
+      rail.hidden = filled === 0;
+      Array.prototype.forEach.call(rail.querySelectorAll('.segment'), function (seg, index) {
+        seg.classList.toggle('is-done', index < filled);
+        seg.classList.toggle('is-current', filled > 0 && index === filled - 1 && filled < 5);
+      });
+    }
     if (id === 'question' && questionIndex >= 0) {
       progress.hidden = false;
       progress.textContent = 'Question ' + (questionIndex + 1) + ' of 5';
+    } else if (id === 'results') {
+      progress.hidden = false;
+      progress.textContent = 'Safety check complete';
     } else {
       progress.hidden = true;
     }
@@ -98,7 +110,9 @@
       link.href = record.destinationUrl;
       link.target = '_blank';
       link.rel = registry.linkRel(record);
-      link.textContent = 'Open ' + record.providerName;
+      link.textContent = record.commercialType === 'amazon_associate'
+        ? 'Browse ' + record.title.toLowerCase() + ' on Amazon'
+        : 'Open official ' + record.providerName + ' guide';
       link.addEventListener('click', function () {
         track('preparedness_recommendation_clicked', {
           recommendationId: record.id,
@@ -122,34 +136,72 @@
     });
   }
 
+  function resultCopy(category, result) {
+    if (result === 'protected') return category.protectedCopy;
+    if (result === 'not_sure') return category.notSureCopy;
+    if (result === 'needs_setup') return category.needsSetupCopy;
+    return category.missingCopy;
+  }
+
   function renderResults() {
     const mapped = logic.mapResults(state);
     state = mapped;
+    const order = { needs_setup: 0, not_sure: 1, protected: 2, missing: 3 };
+    const overview = document.getElementById('results-overview');
     const list = document.getElementById('results-list');
+    overview.innerHTML = '';
     list.innerHTML = '';
-    content.CATEGORIES.forEach(function (category) {
+    const ranked = content.CATEGORIES.slice().sort(function (a, b) {
+      const rankA = order[state.results[a.id]];
+      const rankB = order[state.results[b.id]];
+      return (rankA == null ? 9 : rankA) - (rankB == null ? 9 : rankB);
+    });
+    ranked.forEach(function (category) {
+      const result = state.results[category.id];
+      const row = document.createElement('div');
+      row.className = 'overview-row is-' + result;
+      const label = document.createElement('span');
+      label.textContent = category.title;
+      const status = document.createElement('span');
+      status.className = 'status-pill' + (result === 'protected' ? ' is-secured' : result === 'needs_setup' ? ' is-attention' : '');
+      status.textContent = statusLabel(result);
+      row.appendChild(label);
+      row.appendChild(status);
+      overview.appendChild(row);
+    });
+    ranked.forEach(function (category) {
       const result = state.results[category.id];
       const card = document.createElement('article');
       card.className = 'result-card';
       const heading = document.createElement('h2');
       heading.textContent = category.title;
-      const status = document.createElement('p');
-      status.className = 'status-pill';
-      status.textContent = statusLabel(result);
       const copy = document.createElement('p');
-      if (result === 'protected') copy.textContent = category.protectedCopy;
-      else if (result === 'not_sure') copy.textContent = category.notSureCopy;
-      else if (result === 'needs_setup') copy.textContent = category.needsSetupCopy;
-      else copy.textContent = category.missingCopy;
+      copy.textContent = resultCopy(category, result);
       card.appendChild(heading);
-      card.appendChild(status);
       card.appendChild(copy);
       if (result === 'needs_setup') {
         track('preparedness_gap_identified', { category: category.id });
-        renderRecommendations(category.id, card);
+        const details = document.createElement('details');
+        details.className = 'why-details';
+        const summary = document.createElement('summary');
+        summary.textContent = 'Optional product ideas';
+        details.appendChild(summary);
+        renderRecommendations(category.id, details);
+        card.appendChild(details);
       }
       list.appendChild(card);
     });
+    const counts = { needs_setup: 0, not_sure: 0, protected: 0 };
+    ranked.forEach(function (category) {
+      const result = state.results[category.id];
+      if (counts[result] != null) counts[result] += 1;
+    });
+    const summary = document.getElementById('results-summary');
+    if (summary) {
+      summary.textContent = counts.needs_setup + ' area' + (counts.needs_setup === 1 ? '' : 's') + ' need setup / '
+        + counts.not_sure + ' area' + (counts.not_sure === 1 ? '' : 's') + ' to verify / '
+        + counts.protected + ' area' + (counts.protected === 1 ? '' : 's') + ' protected';
+    }
     document.getElementById('page-disclosure').textContent = content.PAGE_DISCLOSURE;
     showScreen('results');
     announce('Your safety plan is ready.');

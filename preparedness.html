@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <title>Build My Safety Plan | LostPhones</title>
-  <meta name="description" content="Answer five bounded questions and see a digital preparedness plan for screen protection, backup, passwords, and travel connectivity.">
+  <title>Build a five-minute phone safety plan | LostPhones</title>
+  <meta name="description" content="Check protection, backup, account security, and travel readiness. No account and no free-text answers.">
   <link rel="stylesheet" href="v2.css">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
   <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
@@ -22,26 +22,34 @@
           <li><a href="/">Home</a></li>
           <li><a href="recovery.html">Recovery</a></li>
           <li><a href="preparedness.html" aria-current="page">Preparedness</a></li>
-          <li><a href="about.html">About</a></li>
+          <li class="nav-about"><a href="about.html">About</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main id="preparedness-app">
-    <p class="progress" id="progress-label" hidden>Question 1 of 5</p>
+    <p class="progress" id="progress-label">Five-minute safety check</p>
+    <div class="segmented-progress" id="prep-progress" data-steps="5" hidden>
+      <span class="segment" data-seg="1"></span>
+      <span class="segment" data-seg="2"></span>
+      <span class="segment" data-seg="3"></span>
+      <span class="segment" data-seg="4"></span>
+      <span class="segment" data-seg="5"></span>
+    </div>
     <div class="live-region" id="status-live" aria-live="polite" aria-atomic="true"></div>
 
     <section class="screen orientation" id="screen-orientation" data-step="orientation">
-      <h1 class="screen-title" id="orientation-title" tabindex="-1">Protect yourself before it happens</h1>
-      <p>This is not an emergency recovery. Answer five short questions about the phone you use most. LostPhones will show a status for screen protection, cloud backup, password security, and travel connectivity.</p>
-      <p>No LostPhones account is required. There is no free-text field. Commercial recommendations appear only when a gap is already established.</p>
+      <h1 class="screen-title" id="orientation-title" tabindex="-1">Build a five-minute phone safety plan</h1>
+      <p>We will check protection, backup, account security, and travel readiness. No LostPhones account is required.</p>
+      <p class="plan-intro">LostPhones never asks for passwords, codes, or free-text answers.</p>
       <div class="flow-nav">
-        <button class="btn btn-primary" type="button" id="begin-preparedness">Continue</button>
+        <button class="btn btn-primary" type="button" id="begin-preparedness">Start the safety check</button>
       </div>
     </section>
 
     <section class="screen" id="screen-question" data-step="question" hidden>
+      <p class="kicker" id="question-kicker">Safety check</p>
       <form id="form-question">
         <fieldset class="choice-list">
           <legend id="legend-question" tabindex="-1">Question</legend>
@@ -51,19 +59,19 @@
         <div class="flow-nav">
           <button class="btn btn-secondary" type="button" data-action="back">Back</button>
           <button class="btn btn-primary" type="submit">Continue</button>
-          <button class="btn btn-tertiary" type="button" data-action="start-over">Start Over</button>
         </div>
       </form>
     </section>
 
     <section class="screen" id="screen-results" data-step="results" hidden>
-      <h1 class="screen-title" id="results-title" tabindex="-1">Your safety plan</h1>
-      <p id="results-intro">These four statuses come from the answers you just chose. LostPhones does not invent extra products.</p>
+      <h1 class="screen-title" id="results-title" tabindex="-1">Your plan is ready</h1>
+      <p id="results-intro">Here is what is protected, what to verify, and what to set up next.</p>
+      <p class="kicker" id="results-summary"></p>
+      <div class="overview-list" id="results-overview"></div>
       <div id="results-list"></div>
       <p class="disclosure" id="page-disclosure"></p>
       <div class="flow-nav">
         <button class="btn btn-secondary" type="button" data-action="back">Back</button>
-        <button class="btn btn-tertiary" type="button" data-action="start-over">Start Over</button>
         <a class="btn btn-primary" href="recovery.html">I need emergency recovery</a>
       </div>
     </section>

@@ -22,13 +22,18 @@
     retry.focus();
   }
 
+  function showReady() {
+    statusEl.textContent = 'Payment confirmed. Your PDF is ready. Keep this private recovery record somewhere safe.';
+    retry.hidden = false;
+  }
+
   async function downloadPdf() {
     if (!captured) {
       showError('This download link is missing a verified payment. Return to your free plan or try checkout again.');
       return;
     }
     statusEl.textContent = 'Preparing your download…';
-    retry.hidden = true;
+    retry.hidden = false;
     try {
       const response = await fetch('/api/recovery-plan-pdf', {
         method: 'POST',
@@ -53,7 +58,8 @@
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-      statusEl.textContent = 'Your recovery plan PDF downloaded. Keep it private.';
+      showReady();
+      retry.focus();
       track('recovery_checkout_succeeded', {
         productId: analytics ? analytics.PRODUCT_ID : 'recovery-complete-plan',
         value: analytics ? analytics.PRODUCT_VALUE : 8.95

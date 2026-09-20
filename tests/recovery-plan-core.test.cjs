@@ -1,5 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const zlib = require('zlib');
+const { PDFDocument } = require('pdf-lib');
 const logic = require('../recovery-logic.js');
 const plan = require('../recovery-plan-core.js');
 const pdf = require('../recovery-plan-pdf.js');
@@ -44,6 +46,32 @@ function stabilizeWithBlockers() {
   view = logic.recordOutcome(view.state, 'protect-mobile-line', 'cannot_access_carrier');
   view = logic.recordOutcome(view.state, 'protect-financial-accounts', 'secured');
   return view;
+}
+
+function pdfVisibleText(bytes) {
+  const raw = Buffer.from(bytes).toString('latin1');
+  const parts = [raw];
+  const re = /stream\r?\n([\s\S]*?)\nendstream/g;
+  let match;
+  while ((match = re.exec(raw))) {
+    const payload = Buffer.from(match[1], 'latin1');
+    try {
+      const inflated = zlib.inflateSync(payload).toString('latin1');
+      parts.push(inflated.replace(/<([0-9A-Fa-f]+)>/g, function (_, hex) {
+        return Buffer.from(hex, 'hex').toString('latin1');
+      }));
+    } catch (error) {
+      try {
+        const inflated = zlib.inflateRawSync(payload).toString('latin1');
+        parts.push(inflated.replace(/<([0-9A-Fa-f]+)>/g, function (_, hex) {
+          return Buffer.from(hex, 'hex').toString('latin1');
+        }));
+      } catch (ignored) {
+        // Non-deflate streams are ignored.
+      }
+    }
+  }
+  return parts.join('\n');
 }
 
 function recoverIphone() {
@@ -189,4 +217,39 @@ test('representative iPhone and Android PDFs stay personalized and free of inter
   assert.equal(iphonePdf.includes('apple-mark-lost'), false);
   assert.equal(androidPdf.includes('google-mark-lost'), false);
   assert.equal(iphonePdf.toString('latin1').includes('iPhone') || iphone.model.summary.platform === 'iPhone', true);
+});
+
+test('PDF personalization uses the correct article and a three-page US Letter layout', async () => {
+  const iphone = plan.buildPdfModel(stabilizeIphone().state, Date.parse('2026-09-20T12:00:00Z'));
+  const android = plan.buildPdfModel(stabilizeAndroid().state, Date.parse('2026-09-20T12:00:00Z'));
+  const blocked = plan.buildPdfModel(stabilizeWithBlockers().state, Date.parse('2026-09-20T12:00:00Z'));
+  const recovered = plan.buildPdfModel(recoverIphone().state, Date.parse('2026-09-20T12:00:00Z'));
+  assert.equal(iphone.ok, true);
+  assert.equal(android.ok, true);
+  assert.equal(blocked.ok, true);
+  assert.equal(recovered.ok, true);
+  assert.match(iphone.model.cover.personalization, /Prepared for an iPhone reported stolen/);
+  assert.match(android.model.cover.personalization, /Prepared for an Android reported stolen/);
+  assert.equal(/a iPhone/.test(iphone.model.cover.personalization), false);
+  assert.ok(blocked.model.blocked.length > 0);
+  assert.ok(iphone.model.officialLinks.every((item) => item.label && item.url && item.label !== item.url));
+
+  const cases = [iphone, android, blocked, recovered];
+  for (const mapped of cases) {
+    assert.equal(plan.assertPdfModelSafe(mapped.model).ok, true);
+    const bytes = await pdf.generatePdf(mapped.model);
+    const loaded = await PDFDocument.load(bytes);
+    assert.equal(loaded.getPageCount(), 3);
+    const size = loaded.getPage(0).getSize();
+    assert.equal(Math.round(size.width), 612);
+    assert.equal(Math.round(size.height), 792);
+    const text = pdfVisibleText(bytes);
+    assert.match(text, /Private recovery record/);
+    assert.match(text, /Page 1 of 3/);
+    assert.match(text, /Page 3 of 3/);
+    assert.equal(text.includes('session_id'), false);
+    assert.equal(text.includes('recovery-plan:v1:'), false);
+    assert.equal(text.includes('apple-mark-lost'), false);
+    assert.equal(/a iPhone/.test(text), false);
+  }
 });

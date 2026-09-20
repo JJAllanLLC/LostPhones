@@ -13,8 +13,8 @@
       answerId: 'screenProtection',
       title: 'Screen protection',
       protectedCopy: 'Your phone already has a case and an undamaged screen protector.',
-      notSureCopy: 'Check whether this phone has both a protective case and an undamaged screen protector. LostPhones is not recommending a product here.',
-      needsSetupCopy: 'This phone still needs a protective case and an undamaged screen protector.',
+      notSureCopy: 'Check this item when you can. LostPhones is not recommending a product here.',
+      needsSetupCopy: 'Add a protective case and an undamaged screen protector.',
       missingCopy: 'Confirm whether this phone has a protective case and an undamaged screen protector.'
     }),
     Object.freeze({
@@ -23,7 +23,7 @@
       title: 'Cloud backup',
       protectedCopy: 'Photos and contacts would restore automatically if this phone disappeared today.',
       notSureCopy: 'Check the official backup setting for this phone. LostPhones is not recommending a product here.',
-      needsSetupCopy: 'Photos and contacts would not restore automatically if this phone disappeared today.',
+      needsSetupCopy: 'Turn on automatic backup so photos and contacts can restore.',
       missingCopy: 'Confirm whether photos and contacts would restore automatically.'
     }),
     Object.freeze({
@@ -31,8 +31,8 @@
       answerId: 'passwordSecurity',
       title: 'Password security',
       protectedCopy: 'Unique passwords and two-step verification are already in use.',
-      notSureCopy: 'Check whether unique passwords and two-step verification are in use, preferably with a password manager. LostPhones is not recommending a product here.',
-      needsSetupCopy: 'Unique passwords and two-step verification still need to be set up.',
+      notSureCopy: 'Check unique passwords and two-step verification when you can. LostPhones is not recommending a product here.',
+      needsSetupCopy: 'Set up unique passwords and two-step verification.',
       missingCopy: 'Confirm whether unique passwords and two-step verification are in use.'
     }),
     Object.freeze({
@@ -41,7 +41,7 @@
       title: 'Travel connectivity',
       protectedCopy: 'A backup way to get mobile data is already in place, or it is not needed now.',
       notSureCopy: 'Check whether you have a backup way to get mobile data if the main SIM stops working. LostPhones is not recommending a product here.',
-      needsSetupCopy: 'A backup way to get mobile data is not set up yet.',
+      needsSetupCopy: 'Set up a backup way to get mobile data when you travel.',
       missingCopy: 'Confirm whether a backup way to get mobile data is needed.'
     })
   ]);
@@ -103,7 +103,7 @@
 
   const PAGE_DISCLOSURE = 'As an Amazon Associate, LostPhones earns from qualifying purchases.';
   const CARD_DISCLOSURE = 'We may earn a commission from qualifying purchases or referrals, at no extra cost to you.';
-  const NEUTRAL_MISSING = 'No matching recommendation is available right now. Use the official help from your phone maker or carrier if you want to set this up.';
+  const NEUTRAL_MISSING = 'Ask your carrier whether your phone supports an eSIM or another backup data option.';
 
   function getQuestion(id) {
     return QUESTIONS.find((item) => item.id === id) || null;
