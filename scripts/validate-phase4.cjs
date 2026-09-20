@@ -45,7 +45,7 @@ const indexHtml = read('index.html');
 if (!/Start My Recovery/.test(indexHtml) || !/href="recovery\.html"/.test(indexHtml)) {
   fail('Homepage primary CTA must remain Start My Recovery.');
 }
-if (!/Not an emergency\? Protect yourself before it happens\./.test(indexHtml)) {
+if (!/Don't wait\. Be prepared\./.test(indexHtml) || !/Protect your phone\./.test(indexHtml)) {
   fail('Homepage must use the approved preparedness prompt.');
 }
 if (!/Build My Safety Plan/.test(indexHtml) || !/preparedness\.html/.test(indexHtml)) {

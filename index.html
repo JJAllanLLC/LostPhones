@@ -4,58 +4,184 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <title>Lost your phone? Start here. | LostPhones</title>
-  <meta name="description" content="Get one safe step at a time. Free emergency guidance. No LostPhones account required.">
+  <title>Lost your phone? We'll help you take the right steps. | LostPhones</title>
+  <meta name="description" content="Tell us what happened. We'll guide you through the right next steps, one at a time. Free, no account required.">
   <link rel="stylesheet" href="v2.css">
+  <link rel="stylesheet" href="homepage.css">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
   <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
   <link rel="shortcut icon" href="/favicon/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
 </head>
-<body>
+<body class="home">
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header">
-    <div class="site-header-inner">
-      <a class="wordmark" href="/">LostPhones</a>
-      <nav aria-label="Primary">
-        <ul class="nav-quiet">
+
+  <header class="hp-header">
+    <div class="hp-header-inner">
+      <a class="hp-brand" href="/" aria-label="LostPhones home">
+        <img class="hp-logo" src="assets/homepage/logo.svg" alt="" width="40" height="40">
+        <span class="hp-brand-text">
+          <span class="hp-brand-name">LostPhones</span>
+          <span class="hp-brand-tag">The hard part's over. You found us.</span>
+        </span>
+      </a>
+      <button class="hp-menu-toggle" id="hp-menu-toggle" type="button" aria-expanded="false" aria-controls="hp-nav" aria-label="Open menu">
+        <span class="hp-menu-bars" aria-hidden="true"></span>
+      </button>
+      <nav class="hp-nav" id="hp-nav" aria-label="Primary">
+        <ul>
           <li><a href="/" aria-current="page">Home</a></li>
           <li><a href="recovery.html">Recovery</a></li>
-          <li><a href="preparedness.html">Preparedness</a></li>
-          <li class="nav-about"><a href="about.html">About</a></li>
+          <li><a href="preparedness.html">Protect Your Phone</a></li>
+          <li><a href="about.html">About</a></li>
         </ul>
+        <a class="hp-btn hp-btn-header" href="recovery.html">Start Recovery <span aria-hidden="true">→</span></a>
       </nav>
     </div>
   </header>
 
   <main id="main">
-    <section class="hero">
-      <h1>Lost your phone? Start here.</h1>
-      <p class="lede">Get one safe step at a time. Free emergency guidance. No account required.</p>
-      <div class="stack">
-        <a class="btn btn-primary" href="recovery.html">Start My Recovery</a>
+    <section class="hp-hero" aria-labelledby="hp-hero-heading">
+      <div class="hp-hero-scene" aria-hidden="true">
+        <img src="assets/homepage/hero-landscape.jpg" alt="" width="1920" height="1080">
       </div>
-      <ul class="trust-facts">
-        <li>Free emergency guidance, with no LostPhones account.</li>
-        <li>One safest next step after three short questions.</li>
-        <li>Official Apple or Google tools open in a new tab. Come back here to continue.</li>
-      </ul>
+      <div class="hp-hero-inner">
+        <div class="hp-hero-copy">
+          <p class="hp-eyebrow">Lost today. A clearer tomorrow.</p>
+          <h1 id="hp-hero-heading">Lost your phone?<br>We'll help you<br>take the right steps.</h1>
+        </div>
+        <div class="hp-hero-visual">
+          <figure class="hp-phone">
+            <div class="hp-phone-frame">
+              <img src="assets/homepage/hero-lockscreen.jpg" width="720" height="1280" alt="A calm phone lock screen that reads: Phones get lost. People find solutions. You're not alone. We're here to help.">
+            </div>
+          </figure>
+          <p class="hp-script hp-script-hero" aria-hidden="true">A few steps can make a big difference.</p>
+        </div>
+        <div class="hp-hero-rest">
+          <p class="hp-lede">Tell us what happened. We'll guide you through the right next steps, one at a time. Free, no account required.</p>
+          <a class="hp-btn hp-btn-primary" href="recovery.html">Start My Recovery <span aria-hidden="true">→</span></a>
+          <ul class="hp-trust">
+            <li>
+              <span class="hp-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="M16 4.5 7 8.2v7.1c0 6.1 3.9 10.4 9 12.2 5.1-1.8 9-6.1 9-12.2V8.2L16 4.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m12.2 16.1 2.5 2.5 5.2-5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span>
+                <strong>Free guidance</strong>
+                Always free
+              </span>
+            </li>
+            <li>
+              <span class="hp-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><circle cx="11.2" cy="12.2" r="3.6" stroke="currentColor" stroke-width="1.8"/><path d="M13.8 14.8 24 25M20.4 21.4h3.3V25M17.6 18.6H21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.6" cy="11.4" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="m18.3 13.7-7.6 7.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
+              <span>
+                <strong>No account required</strong>
+                Get help right away
+              </span>
+            </li>
+            <li>
+              <span class="hp-trust-icon hp-trust-brands" aria-hidden="true">
+                <svg class="hp-apple" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.7c0-2.4 2-3.3 2.1-3.4-1.2-1.7-3-1.9-3.6-1.9-1.5-.2-3 .9-3.7.9s-2-.9-3.3-.9c-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.3 2.5 1.3 0 1.8-.8 3.4-.8s2 .8 3.4.8 2.2-1.3 3.1-2.5c1-1.4 1.4-2.8 1.5-2.9-.03-.01-2.8-1.1-2.8-4.5ZM14.8 5.8c.7-.9 1.2-2.1 1.1-3.3-1 .04-2.3.7-3 .1 6-.8-1.8.1-2.5 1.9-.7.9-1.1 2.1-1 3.2 1.1.1 2.2-.6 3.1-1.5Z"/></svg>
+                <svg class="hp-google" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h5.9c-.3 1.4-1 2.5-2.1 3.3v2.7h3.4c2 1.8 3.3-1.6 3.3-8.1Z"/><path fill="#34A853" d="M12 23c2.8 0 5.2-.9 6.9-2.5l-3.4-2.6c-.9.6-2.1 1-3.5 1-2.7 0-5-1.8-5.8-4.3H2.7v2.7C4.4 20.8 8 23 12 23Z"/><path fill="#FBBC05" d="M6.2 14.6c-.2-.6-.4-1.3-.4-2s.1-1.4.4-2V7.9H2.7C2 9.2 1.6 10.6 1.6 12.6c0 1.6.4 3 1.1 4.3l3.5-2.3Z"/><path fill="#EA4335" d="M12 6.5c1.5 0 2.9.5 4 1.6l3-3C17.2 3.3 14.8 2.3 12 2.3 8 2.3 4.4 4.5 2.7 7.9l3.5 2.7C7 8.3 9.3 6.5 12 6.5Z"/></svg>
+              </span>
+              <span>
+                <strong>Official tools</strong>
+                Apple &amp; Google
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </section>
 
-    <section class="prepare-panel" aria-labelledby="prepare-heading">
-      <h2 id="prepare-heading">Prepare before it happens</h2>
-      <p class="lede">Not an emergency? Protect yourself before it happens.</p>
-      <a class="btn btn-secondary" href="preparedness.html">Build My Safety Plan</a>
+    <section class="hp-mid" aria-label="Why LostPhones and how to prepare">
+      <article class="hp-story">
+        <img src="assets/homepage/story-still.jpg" width="1600" height="1200" alt="A mug that says Good connections matter sitting beside a phone on a wooden table.">
+        <div class="hp-story-copy">
+          <p class="hp-eyebrow hp-eyebrow-light">Why we built LostPhones</p>
+          <h2>It started with our family.</h2>
+          <p>When my son lost his phone, we realized how confusing and stressful it was to figure out what to do. We created LostPhones to make that moment simpler for the next person.</p>
+          <a class="hp-text-link hp-text-link-light" href="about.html">Our story <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+
+      <aside class="hp-safety" aria-labelledby="hp-safety-heading">
+        <p class="hp-eyebrow">Be ready before it happens</p>
+        <h2 id="hp-safety-heading">Protect your phone.<br>Protect your peace.</h2>
+        <p class="hp-safety-lede">A little preparation today can save time, stress, and your data tomorrow.</p>
+        <div class="hp-safety-note">
+          <span class="hp-safety-note-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none"><rect x="8" y="6" width="16" height="20" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 12h8M12 16h8M12 20h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span>
+            <strong>Don't wait. Be prepared.</strong>
+            A simple plan can make all the difference.
+          </span>
+        </div>
+        <a class="hp-btn hp-btn-outline" href="preparedness.html">Build My Safety Plan <span aria-hidden="true">→</span></a>
+        <p class="hp-safety-support">
+          <span aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V8a4 4 0 0 1 8 0v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </span>
+          No account required. Just practical, step-by-step guidance.
+        </p>
+      </aside>
+    </section>
+
+    <section class="hp-reassurance" aria-labelledby="hp-reassurance-heading">
+      <img class="hp-reassurance-scene" src="assets/homepage/reassurance-mountains.jpg" width="1920" height="800" alt="" aria-hidden="true">
+      <div class="hp-reassurance-inner">
+        <div class="hp-reassurance-copy">
+          <p class="hp-eyebrow">Simple steps. A brighter tomorrow.</p>
+          <h2 id="hp-reassurance-heading">You're in control.</h2>
+          <p>The right information. At the right time.<br>For a safer, more connected life.</p>
+        </div>
+        <ul class="hp-reassurance-points">
+          <li>
+            <span class="hp-reassurance-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none"><path d="m6.5 16 19-9-7.8 18-3.4-6.2L6.5 16Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m14.3 18.8 3.4 6.2L18 17.2" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </span>
+            <strong>Guidance</strong>
+            When you need it
+          </li>
+          <li>
+            <span class="hp-reassurance-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none"><path d="M16 26s-8.5-5.2-11.2-10.1C3.2 13.2 4 9.4 7.2 8.2c2.2-.8 4.5.1 5.8 2 1.3-1.9 3.6-2.8 5.8-2 3.2 1.2 4 5 2.4 7.7C24.5 20.8 16 26 16 26Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </span>
+            <strong>Confidence</strong>
+            At every step
+          </li>
+          <li>
+            <span class="hp-reassurance-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="4.6" stroke="currentColor" stroke-width="1.8"/><path d="M16 5.2v2.6M16 24.2v2.6M5.2 16h2.6M24.2 16h2.6M8.3 8.3l1.9 1.9M21.8 21.8l1.9 1.9M8.3 23.7l1.9-1.9M21.8 10.2l1.9-1.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </span>
+            <strong>A safer tomorrow</strong>
+            Starts today
+          </li>
+        </ul>
+      </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <nav aria-label="Footer">
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="about.html">About</a>
-    </nav>
-    <p>© 2026 LostPhones. Operated by JJ ALLAN, LLC.</p>
+  <footer class="hp-footer">
+    <div class="hp-footer-inner">
+      <a class="hp-brand hp-footer-brand" href="/" aria-label="LostPhones home">
+        <img class="hp-logo" src="assets/homepage/logo.svg" alt="" width="40" height="40">
+        <span class="hp-brand-text">
+          <span class="hp-brand-name">LostPhones</span>
+          <span class="hp-brand-tag">The hard part's over. You found us.</span>
+        </span>
+      </a>
+      <nav aria-label="Footer">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="about.html">About</a>
+      </nav>
+      <p class="hp-copyright">© 2026 LostPhones. Operated by <a href="https://jjallanllc.com" rel="noopener noreferrer">JJ ALLAN, LLC</a>.</p>
+      <p class="hp-script hp-script-footer">Same you,<br>just one step ahead.</p>
+    </div>
   </footer>
+  <script src="homepage.js" defer></script>
 </body>
 </html>

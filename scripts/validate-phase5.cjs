@@ -23,6 +23,8 @@ const requiredFiles = [
   'recovery-plan-core.js',
   'recovery-plan-pdf.js',
   'v2.css',
+  'homepage.css',
+  'homepage.js',
   'scripts/validate-phase5.cjs'
 ];
 
@@ -44,17 +46,22 @@ const successJs = read('recovery-plan-success.js');
 const pdfJs = read('recovery-plan-pdf.js');
 const core = read('recovery-plan-core.js');
 
-if (!/Lost your phone\? Start here\./.test(indexHtml)) fail('Homepage H1 copy is missing.');
-if (!/Get one safe step at a time\. Free emergency guidance\. No account required\./.test(indexHtml)) {
+if (!/Lost your phone\?/.test(indexHtml) || !/We'll help you/.test(indexHtml) || !/take the right steps/.test(indexHtml)) {
+  fail('Homepage H1 copy is missing.');
+}
+if (!/Tell us what happened\. We'll guide you through the right next steps, one at a time\. Free, no account required\./.test(indexHtml)) {
   fail('Homepage lede copy is missing.');
+}
+if (/Get your first recommended step in about 60 seconds/.test(indexHtml)) {
+  fail('Rejected 60-second homepage line must not appear.');
 }
 if (!/Start My Recovery/.test(indexHtml) || !/href="recovery\.html"/.test(indexHtml)) {
   fail('Homepage primary CTA must remain Start My Recovery.');
 }
-if (!/Prepare before it happens/.test(indexHtml) || !/Build My Safety Plan/.test(indexHtml)) {
+if (!/Protect your phone/.test(indexHtml) || !/Build My Safety Plan/.test(indexHtml)) {
   fail('Homepage preparedness section is missing.');
 }
-if (!/nav-about/.test(indexHtml)) fail('Homepage must hide About on mobile via nav-about.');
+if (!/hp-menu-toggle/.test(indexHtml)) fail('Homepage must use a hamburger menu on small screens.');
 
 if (!/emergency-header/.test(recoveryHtml) || !/Exit recovery/.test(recoveryHtml)) {
   fail('Recovery must use a focused emergency shell with Exit recovery.');
