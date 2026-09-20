@@ -33,9 +33,9 @@
 
     <section class="screen orientation" id="screen-orientation" data-step="orientation">
       <h1 class="screen-title" id="orientation-title" tabindex="-1">We’ll guide you one step at a time</h1>
-      <p>LostPhones will ask three short questions, then show the safest first action for this situation.</p>
-      <p>You can go back or start over at any time. Your answers stay in this page’s memory only. Reloading this page clears them.</p>
-      <p>LostPhones never asks for passwords, verification codes, IMEI numbers, or account details.</p>
+      <p>LostPhones will ask three short questions, then show the safest next action for this situation.</p>
+      <p>Official Apple or Google services open in a new tab. Keep this LostPhones page available and come back afterward. LostPhones never assumes a step succeeded just because a tab opened.</p>
+      <p>You can go back or start over at any time. LostPhones never asks for passwords, verification codes, IMEI numbers, or account details.</p>
       <div class="flow-nav">
         <button class="btn btn-primary" type="button" id="begin-recovery" data-action="continue">Continue</button>
       </div>
@@ -90,7 +90,27 @@
       </form>
     </section>
 
+    <section class="screen" id="screen-question" data-step="question" hidden>
+      <form id="form-question">
+        <fieldset class="choice-list">
+          <legend id="legend-question" tabindex="-1"></legend>
+          <p id="question-help"></p>
+          <div id="question-choices"></div>
+        </fieldset>
+        <div class="flow-nav">
+          <button class="btn btn-secondary" type="button" data-action="back">Back</button>
+          <button class="btn btn-primary" type="submit">Continue</button>
+          <button class="btn btn-tertiary" type="button" data-action="start-over">Start Over</button>
+        </div>
+      </form>
+    </section>
+
     <section class="screen action-card" id="screen-action" data-step="action" hidden>
+      <p class="status-pill" id="journey-status" hidden></p>
+      <div class="awaiting-banner" id="awaiting-banner" hidden>
+        <p id="awaiting-copy">The official service opened in a new tab. Keep LostPhones available. LostPhones does not assume that step succeeded until you return and tell it what happened.</p>
+        <button class="btn btn-primary" type="button" id="im-back">I’m back — continue</button>
+      </div>
       <h1 class="screen-title" id="action-title" tabindex="-1"></h1>
       <p id="action-reason"></p>
       <p id="action-instruction"></p>
@@ -101,7 +121,34 @@
       </div>
       <p class="leaving-note" id="leaving-note" hidden></p>
       <div class="stack" id="action-controls"></div>
+      <div id="outcome-box" hidden>
+        <h2 class="meta-label" id="outcome-heading">What happened?</h2>
+        <p id="return-prompt"></p>
+        <div class="stack" id="outcome-controls"></div>
+      </div>
       <p class="support-note" id="support-note" hidden></p>
+      <div class="resume-box" id="resume-box" hidden>
+        <h2 class="meta-label">Resume this recovery</h2>
+        <p id="resume-copy"></p>
+        <div class="stack" id="resume-controls"></div>
+        <p id="resume-feedback" hidden></p>
+      </div>
+      <aside class="plan-panel" id="plan-panel" hidden>
+        <h2 id="plan-heading">Now, next, and later</h2>
+        <p class="plan-intro">This list is only for orientation. Work one current action at a time. A blocked step is not complete.</p>
+        <section>
+          <h3>Now — immediate safety and risk containment</h3>
+          <ul class="plan-list" id="plan-now"></ul>
+        </section>
+        <section>
+          <h3>Next — important follow-up after immediate control</h3>
+          <ul class="plan-list" id="plan-next"></ul>
+        </section>
+        <section>
+          <h3>Later — cleanup, reporting, and replacement when you are ready</h3>
+          <ul class="plan-list" id="plan-later"></ul>
+        </section>
+      </aside>
       <div class="flow-nav">
         <button class="btn btn-secondary" type="button" data-action="back">Back</button>
         <button class="btn btn-tertiary" type="button" data-action="start-over">Start Over</button>
@@ -119,7 +166,9 @@
   </footer>
 
   <script src="recovery-content.js"></script>
+  <script src="recovery-state-schema.js"></script>
   <script src="recovery-logic.js"></script>
+  <script src="recovery-session-client.js"></script>
   <script src="recovery.js"></script>
 </body>
 </html>

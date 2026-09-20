@@ -6,7 +6,9 @@ const content = require('../recovery-content.js');
 function answeredState(situation, platform, currentDevice, extra) {
   const state = logic.createInitialState();
   state.step = 'action';
-  state.answers = { situation, platform, currentDevice };
+  state.answers.situation = situation;
+  state.answers.platform = platform;
+  state.answers.currentDevice = currentDevice;
   return Object.assign(state, extra || {});
 }
 
@@ -21,7 +23,7 @@ test('nearby iPhone → Apple play-sound action', () => {
 test('lost iPhone → Apple locate action', () => {
   const result = logic.selectFirstAction(answeredState('lost', 'iphone', 'trusted'));
   assert.equal(result.ok, true);
-  assert.equal(result.actionId, 'apple-locate-mark-lost');
+  assert.equal(result.actionId, 'apple-locate-device');
   assert.equal(result.content.officialUrl, content.OFFICIAL_URLS.appleFind);
 });
 
@@ -45,7 +47,7 @@ test('nearby Android → Google play-sound action', () => {
 test('lost Android → Google locate action', () => {
   const result = logic.selectFirstAction(answeredState('lost', 'android', 'trusted'));
   assert.equal(result.ok, true);
-  assert.equal(result.actionId, 'google-locate-secure');
+  assert.equal(result.actionId, 'google-locate-device');
   assert.equal(result.content.officialUrl, content.OFFICIAL_URLS.googleFind);
 });
 
@@ -61,14 +63,14 @@ test('stolen Android → personal-safety action with Android context', () => {
 test('unsure situation plus iPhone → reversible Apple location action', () => {
   const result = logic.selectFirstAction(answeredState('unsure', 'iphone', 'trusted'));
   assert.equal(result.ok, true);
-  assert.equal(result.actionId, 'apple-reversible-locate');
+  assert.equal(result.actionId, 'apple-locate-device');
   assert.match(result.content.caution, /confront/i);
 });
 
 test('unsure situation plus Android → reversible Google location action', () => {
   const result = logic.selectFirstAction(answeredState('unsure', 'android', 'trusted'));
   assert.equal(result.ok, true);
-  assert.equal(result.actionId, 'google-reversible-locate');
+  assert.equal(result.actionId, 'google-locate-device');
   assert.match(result.content.caution, /confront/i);
 });
 
@@ -93,7 +95,7 @@ test('borrowed device → borrowed privacy modifier', () => {
 test('public/shared device → public privacy modifier', () => {
   const result = logic.selectFirstAction(answeredState('lost', 'android', 'public'));
   assert.equal(result.ok, true);
-  assert.equal(result.actionId, 'google-locate-secure');
+  assert.equal(result.actionId, 'google-locate-device');
   assert.equal(result.privacyModifier, 'public');
   assert.equal(result.privacyGuidance.id, 'public');
   assert.ok(result.privacyGuidance.items.includes('Do not save passwords.'));
