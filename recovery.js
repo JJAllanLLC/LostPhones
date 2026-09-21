@@ -459,6 +459,23 @@
     return !!(created && created.ok && created.token);
   }
 
+  function whyLedeText(record) {
+    if (!record) return 'Learn why this step helps.';
+    if (/play a sound/i.test(record.title || '')) {
+      return record.platform === 'android'
+        ? 'Learn how playing a sound can help you find your phone.'
+        : 'Learn how playing a sound can help you find your iPhone.';
+    }
+    return 'Learn why this step helps you recover safely.';
+  }
+
+  function sourceLedeText(record) {
+    if (!record) return 'Official recovery service';
+    if (record.officialProvider === 'Apple') return 'Apple Find Devices (iCloud.com)';
+    if (record.officialProvider === 'Google') return 'Google Find Hub';
+    return record.officialProvider ? record.officialProvider + ' official service' : 'Official recovery service';
+  }
+
   function renderPrivacy(guidance) {
     const box = document.getElementById('privacy-box');
     const title = document.getElementById('privacy-title');
@@ -757,6 +774,8 @@
     renderCaution(record.caution);
     renderHelp(record);
     why.textContent = record.reason;
+    const whyLede = document.getElementById('why-lede');
+    if (whyLede) whyLede.textContent = whyLedeText(record);
     renderPrivacy(content.privacyGuidance[state.answers.currentDevice]);
 
     const awaitingReturn = !!view.awaitingReturn;
@@ -772,12 +791,16 @@
       if (keepOpen) keepOpen.hidden = false;
     }
 
-    if (record.supportSourceUrl) {
+    const supportLede = document.getElementById('support-lede');
+    if (supportLede) supportLede.textContent = sourceLedeText(record);
+    if (record.supportSourceUrl || record.officialUrl) {
       const supportLink = document.createElement('a');
-      supportLink.href = record.supportSourceUrl;
+      supportLink.href = record.supportSourceUrl || record.officialUrl;
       supportLink.target = '_blank';
       supportLink.rel = 'noopener noreferrer';
-      supportLink.textContent = 'Official support article (opens in a new tab)';
+      supportLink.textContent = record.supportSourceUrl
+        ? 'Official support article (opens in a new tab)'
+        : (record.primaryControlLabel || 'Official service') + ' (opens in a new tab)';
       support.textContent = '';
       support.appendChild(supportLink);
       supportDetails.hidden = false;

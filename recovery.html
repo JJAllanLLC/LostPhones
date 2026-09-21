@@ -199,6 +199,119 @@
                     <div class="stack" id="outcome-exception-controls"></div>
                   </details>
                 </div>
+
+                <div class="action-secondary">
+                  <details class="more-details" id="more-details" open>
+                    <summary>
+                      <span class="more-details-caret" aria-hidden="true"></span>
+                      <span class="more-details-summary">
+                        <strong>More details</strong>
+                        <span>Helpful information about this step.</span>
+                      </span>
+                    </summary>
+                    <div class="more-details-body">
+                      <details class="more-item" id="why-details">
+                        <summary>
+                          <span class="more-item-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M6.5 5.2h9.2A2.3 2.3 0 0 1 18 7.5V19l-4.2-1.6L9.5 19V7.5A2.3 2.3 0 0 0 7.2 5.2H6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.5 5.2A2.3 2.3 0 0 0 4.2 7.5V19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                          </span>
+                          <span class="more-item-copy">
+                            <strong>Why this matters</strong>
+                            <span id="why-lede">Learn why this step helps.</span>
+                          </span>
+                        </summary>
+                        <div class="more-item-panel">
+                          <p id="why-copy"></p>
+                        </div>
+                      </details>
+                      <details class="more-item" id="privacy-box" hidden>
+                        <summary>
+                          <span class="more-item-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3.8 5.5 6.4v5.1c0 4.1 2.7 7.1 6.5 8.7 3.8-1.6 6.5-4.6 6.5-8.7V6.4L12 3.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                          </span>
+                          <span class="more-item-copy">
+                            <strong>Using this device safely</strong>
+                            <span id="privacy-lede">Tips to keep your information secure.</span>
+                          </span>
+                        </summary>
+                        <div class="more-item-panel">
+                          <h2 id="privacy-title"></h2>
+                          <ul id="privacy-list"></ul>
+                        </div>
+                      </details>
+                      <details class="more-item" id="support-details" hidden>
+                        <summary>
+                          <span class="more-item-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M14 5h5v5M19 5 10 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 13.2V18a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18V6.5A1.5 1.5 0 0 1 6 5h4.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                          </span>
+                          <span class="more-item-copy">
+                            <strong>Official source</strong>
+                            <span id="support-lede">Official recovery service</span>
+                          </span>
+                        </summary>
+                        <div class="more-item-panel">
+                          <p class="support-note" id="support-note"></p>
+                        </div>
+                      </details>
+                      <details class="reveal plan-panel more-item-plan" id="plan-panel" hidden>
+                        <summary>View full recovery plan</summary>
+                        <div class="more-item-panel">
+                          <h2 id="plan-heading">Your full recovery plan</h2>
+                          <p class="plan-intro">This list is only for orientation. Work one current action at a time. A waiting step is not done.</p>
+                          <section>
+                            <h3>Now — immediate safety and risk containment</h3>
+                            <ul class="plan-list" id="plan-now"></ul>
+                          </section>
+                          <section>
+                            <h3>Next — important follow-up after immediate control</h3>
+                            <ul class="plan-list" id="plan-next"></ul>
+                          </section>
+                          <section>
+                            <h3>Later — cleanup, reporting, and replacement when you are ready</h3>
+                            <ul class="plan-list" id="plan-later"></ul>
+                          </section>
+                        </div>
+                      </details>
+                    </div>
+                  </details>
+
+                  <div class="quiet-actions">
+                    <details class="quiet-action" id="resume-box" hidden>
+                      <summary>
+                        <span class="quiet-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.1" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.6V12l3.1 1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span class="quiet-copy">
+                          <strong>Continue later</strong>
+                          <span>Save your progress and come back anytime.</span>
+                        </span>
+                      </summary>
+                      <div class="quiet-panel">
+                        <h2 class="meta-label">Continue later</h2>
+                        <p id="resume-copy"></p>
+                        <div class="stack" id="resume-controls"></div>
+                        <p id="resume-feedback" hidden></p>
+                      </div>
+                    </details>
+                    <details class="quiet-action" id="more-options">
+                      <summary>
+                        <span class="quiet-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none"><circle cx="6.2" cy="12" r="1.45" fill="currentColor"/><circle cx="12" cy="12" r="1.45" fill="currentColor"/><circle cx="17.8" cy="12" r="1.45" fill="currentColor"/></svg>
+                        </span>
+                        <span class="quiet-copy">
+                          <strong>More options</strong>
+                          <span>Need a different recovery path?</span>
+                        </span>
+                      </summary>
+                      <div class="quiet-panel">
+                        <div class="flow-nav">
+                          <button class="btn btn-secondary" type="button" data-action="back">Back</button>
+                          <button class="btn btn-tertiary" type="button" id="start-over-request">Start over</button>
+                        </div>
+                      </div>
+                    </details>
+                  </div>
+                </div>
               </div>
 
               <div class="complete-summary" id="complete-summary" hidden>
@@ -210,44 +323,6 @@
                   <button class="btn btn-secondary" type="button" id="review-erase-slot" hidden>Review erase option</button>
                 </div>
               </div>
-
-              <details class="reveal" id="why-details">
-                <summary>Why this matters</summary>
-                <p id="why-copy"></p>
-              </details>
-              <details class="reveal" id="privacy-box" hidden>
-                <summary>Using this device safely</summary>
-                <h2 id="privacy-title"></h2>
-                <ul id="privacy-list"></ul>
-              </details>
-              <details class="reveal" id="support-details" hidden>
-                <summary>Official source</summary>
-                <p class="support-note" id="support-note"></p>
-              </details>
-              <details class="reveal" id="resume-box" hidden>
-                <summary>Continue later</summary>
-                <h2 class="meta-label">Continue later</h2>
-                <p id="resume-copy"></p>
-                <div class="stack" id="resume-controls"></div>
-                <p id="resume-feedback" hidden></p>
-              </details>
-              <details class="reveal plan-panel" id="plan-panel" hidden>
-                <summary>View full recovery plan</summary>
-                <h2 id="plan-heading">Your full recovery plan</h2>
-                <p class="plan-intro">This list is only for orientation. Work one current action at a time. A waiting step is not done.</p>
-                <section>
-                  <h3>Now — immediate safety and risk containment</h3>
-                  <ul class="plan-list" id="plan-now"></ul>
-                </section>
-                <section>
-                  <h3>Next — important follow-up after immediate control</h3>
-                  <ul class="plan-list" id="plan-next"></ul>
-                </section>
-                <section>
-                  <h3>Later — cleanup, reporting, and replacement when you are ready</h3>
-                  <ul class="plan-list" id="plan-later"></ul>
-                </section>
-              </details>
 
               <aside class="paid-offer" id="paid-offer" hidden>
                 <p class="kicker">Optional one-time download</p>
@@ -266,14 +341,6 @@
                 </div>
                 <p id="paid-offer-feedback" hidden></p>
               </aside>
-
-              <details class="reveal" id="more-options">
-                <summary>More options</summary>
-                <div class="flow-nav">
-                  <button class="btn btn-secondary" type="button" data-action="back">Back</button>
-                  <button class="btn btn-tertiary" type="button" id="start-over-request">Start over</button>
-                </div>
-              </details>
             </div>
 
             <aside class="progress-rail" id="progress-rail" hidden>
@@ -312,11 +379,13 @@
         </span>
       </a>
       <p class="recovery-script" aria-hidden="true">A clearer tomorrow.</p>
-      <nav aria-label="Footer">
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-      </nav>
-      <p class="site-footer-copy">© 2026 LostPhones. Operated by <a href="https://jjallanllc.com" rel="noopener noreferrer">JJ ALLAN, LLC</a>.</p>
+      <div class="site-footer-meta">
+        <nav aria-label="Footer">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+        </nav>
+        <p class="site-footer-copy">© 2026 LostPhones. Operated by <a href="https://jjallanllc.com" rel="noopener noreferrer">JJ ALLAN, LLC</a>.</p>
+      </div>
     </div>
   </footer>
 
