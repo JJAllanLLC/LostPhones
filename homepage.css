@@ -745,6 +745,12 @@ body.home .hp-copyright a {
     display: flex;
   }
 
+  body.home .hp-nav a:focus-visible,
+  body.home .hp-menu-toggle:focus-visible {
+    outline: 3px solid var(--hp-blue);
+    outline-offset: 2px;
+  }
+
   body.home .hp-nav ul {
     flex-direction: column;
     align-items: stretch;

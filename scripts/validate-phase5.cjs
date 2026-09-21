@@ -116,6 +116,51 @@ const recoveryShell = read('recovery-shell.css');
 if (!/body\.emergency-shell \[hidden\][\s\S]{0,120}display:\s*none\s*!important/.test(recoveryShell)) {
   fail('Hidden recovery content must be globally suppressed.');
 }
+if (!/id="legend-question"[\s\S]{0,80}<h1 class="screen-title"/.test(recoveryHtml)) {
+  fail('Dynamic recovery questions must expose a visible H1 inside the legend.');
+}
+if (!/id="continue-question"[^>]*disabled/.test(recoveryHtml)) {
+  fail('Dynamic recovery Continue must stay disabled until a choice is selected.');
+}
+if (!/step === 'question'|isQuestion/.test(recoveryJs) || !/data-recovery-phase',\s*isTriage/.test(recoveryJs)) {
+  fail('Dynamic recovery questions must keep the triage shell.');
+}
+if (!/choice-copy/.test(recoveryJs) || !/enableContinue\(form\)/.test(recoveryJs)) {
+  fail('Dynamic recovery questions must use the accepted choice-card pattern.');
+}
+if (!/#action-controls \{ order: 6; \}/.test(recoveryShell) || !/\.action-steps \{ order: 9; \}/.test(recoveryShell)) {
+  fail('Mobile action screens must place the primary CTA above instruction steps.');
+}
+if (!/#action-caution \{ order: 5; \}/.test(recoveryShell)) {
+  fail('Critical action caution must remain above the primary CTA.');
+}
+if (!/el\.inert = open/.test(recoveryJs) || !/event\.key === 'Escape'/.test(recoveryJs)) {
+  fail('Recovery mobile menu must use inert background, focus trap, and Escape.');
+}
+
+const preparednessShell = read('preparedness-shell.css');
+const homepageJs = read('homepage.js');
+if (!/id="legend-question"[\s\S]{0,80}<h1 class="screen-title"/.test(preparednessHtml)) {
+  fail('Preparedness questions must expose a visible H1 inside the legend.');
+}
+if (!/id="continue-preparedness"[^>]*disabled/.test(preparednessHtml)) {
+  fail('Preparedness Continue must stay disabled until a choice is selected.');
+}
+if (!/querySelector\('h1'\)/.test(preparednessJs)) {
+  fail('Preparedness must focus the question H1 on each step.');
+}
+if (!/body\.prep-shell \[hidden\][\s\S]{0,120}display:\s*none\s*!important/.test(preparednessShell)) {
+  fail('Hidden preparedness content must be globally suppressed.');
+}
+if (!/data-prep-phase="results"\] \.prep-scene[\s\S]{0,180}grid-template-columns:\s*minmax\(0,\s*1fr\)/.test(preparednessShell)) {
+  fail('Preparedness results must use the full mobile column, not a narrow side strip.');
+}
+if (!/el\.inert = open/.test(preparednessJs) || !/event\.key === 'Escape'/.test(preparednessJs)) {
+  fail('Preparedness mobile menu must use inert background, focus trap, and Escape.');
+}
+if (!/el\.inert = open/.test(homepageJs) || !/event\.key === 'Escape'/.test(homepageJs)) {
+  fail('Homepage mobile menu must use inert background, focus trap, and Escape.');
+}
 
 if (!/#17324[Dd]/.test(recoveryCss) || !/#2[Ee]5[Ff]8[Aa]/.test(recoveryCss)) fail('Visual tokens for navy and interactive blue are missing.');
 if (!/#2[Dd]6[Aa]4[Ff]/.test(recoveryCss) || !/#9[Aa]5[Aa]00/.test(recoveryCss) || !/#9[Bb]2[Cc]2[Cc]/.test(recoveryCss)) {

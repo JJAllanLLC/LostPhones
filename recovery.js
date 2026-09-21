@@ -151,7 +151,7 @@
 
   function enableContinue(form) {
     if (!form) return;
-    const submit = form.querySelector('#continue-situation, #continue-platform, #continue-currentDevice');
+    const submit = form.querySelector('#continue-situation, #continue-platform, #continue-currentDevice, #continue-question');
     if (!submit) return;
     submit.disabled = !form.querySelector('input[type="radio"]:checked');
   }
@@ -161,6 +161,19 @@
     const stepLabel = document.getElementById('triage-step-label');
     const head = document.getElementById('recovery-progress');
     if (!bar) return;
+    if (step === 'question') {
+      bar.hidden = false;
+      if (head) head.hidden = false;
+      if (stepLabel) {
+        stepLabel.hidden = false;
+        stepLabel.textContent = 'KEEP GOING';
+      }
+      bar.querySelectorAll('.segment').forEach(function (seg) {
+        seg.classList.add('is-done');
+        seg.classList.remove('is-current');
+      });
+      return;
+    }
     const index = { situation: 1, platform: 2, currentDevice: 3 }[step] || 0;
     bar.hidden = !index;
     if (stepLabel) {
@@ -175,21 +188,31 @@
     });
   }
 
+  function focusScreenHeading(step) {
+    const root = document.getElementById(focusTargets[step] || '');
+    const heading = root && root.querySelector ? (root.querySelector('h1') || root) : root;
+    if (heading && typeof heading.focus === 'function') heading.focus();
+  }
+
   function showScreen(step) {
     Object.keys(screens).forEach(function (key) {
       screens[key].hidden = key !== step;
     });
 
-    const isTriage = !!questionSteps[step];
+    const isQuestion = step === 'question';
+    const isTriage = !!questionSteps[step] || isQuestion;
     document.body.setAttribute('data-recovery-phase', isTriage || step === 'orientation' ? 'triage' : 'action');
     if (step !== 'action') {
       document.body.setAttribute('data-recovery-return', '0');
       document.body.setAttribute('data-recovery-complete', '0');
     }
 
-    if (isTriage) {
+    if (questionSteps[step]) {
       progress.hidden = false;
       progress.textContent = 'Three quick questions';
+    } else if (isQuestion) {
+      progress.hidden = false;
+      progress.textContent = 'Choose the closest answer';
     } else if (step === 'orientation') {
       progress.hidden = false;
       progress.textContent = 'Three quick questions, then your safest next step.';
@@ -197,11 +220,7 @@
       progress.hidden = true;
     }
     setTriageProgress(step);
-
-    if (step === 'action') {
-      const focusNode = document.getElementById('action-title');
-      if (focusNode) focusNode.focus();
-    }
+    focusScreenHeading(step);
   }
 
   function pushHistory(step) {
@@ -836,8 +855,6 @@
     const complete = document.getElementById('complete-summary');
     const why = document.getElementById('why-copy');
     const moreDetails = document.getElementById('more-details');
-    const wasReturn = document.body.getAttribute('data-recovery-return') === '1';
-
     controls.innerHTML = '';
     if (againSlot) againSlot.innerHTML = '';
     leaving.hidden = true;
@@ -904,10 +921,7 @@
     const returnMode = awaitingReturn;
     const manualOutcomeMode = !!(showingOutcomes && isManualExternal(record));
     document.body.setAttribute('data-recovery-return', returnMode ? '1' : '0');
-    if (moreDetails) {
-      if (returnMode) moreDetails.open = false;
-      else if (wasReturn) moreDetails.open = true;
-    }
+    if (moreDetails) moreDetails.open = false;
 
     awaiting.hidden = !returnMode;
     if (returnMode) {
@@ -1005,10 +1019,13 @@
 
   function renderDynamicQuestion(view) {
     const question = view.question;
-    document.getElementById('legend-question').querySelector('h1').textContent = question.title;
+    const heading = document.getElementById('legend-question').querySelector('h1');
+    heading.textContent = question.title;
     document.getElementById('question-help').textContent = question.help || '';
     const holder = document.getElementById('question-choices');
+    const form = document.getElementById('form-question');
     holder.innerHTML = '';
+    const current = state.answers[question.id];
     question.choices.forEach(function (choice) {
       const label = document.createElement('label');
       label.className = 'choice';
@@ -1017,11 +1034,19 @@
       input.name = 'dynamic-question';
       input.value = choice.id;
       input.required = true;
+      if (current === choice.id) input.checked = true;
+      const copy = document.createElement('span');
+      copy.className = 'choice-copy';
+      const title = document.createElement('strong');
+      title.textContent = choice.label;
+      copy.appendChild(title);
       label.appendChild(input);
-      label.appendChild(document.createTextNode(' ' + choice.label));
+      label.appendChild(copy);
       holder.appendChild(label);
     });
-    document.getElementById('form-question').setAttribute('data-question-id', question.id);
+    form.setAttribute('data-question-id', question.id);
+    syncChoiceStyles(form);
+    enableContinue(form);
     showScreen('question');
     announce(question.title);
   }
@@ -1143,6 +1168,10 @@
     });
   });
 
+  document.getElementById('form-question').addEventListener('change', function (event) {
+    syncChoiceStyles(event.currentTarget);
+    enableContinue(event.currentTarget);
+  });
   document.getElementById('form-question').addEventListener('submit', function (event) {
     event.preventDefault();
     const questionId = event.currentTarget.getAttribute('data-question-id');
@@ -1232,25 +1261,78 @@
     const toggle = document.getElementById('emergency-menu-toggle');
     const nav = document.getElementById('emergency-nav');
     if (!toggle || !nav) return;
+    const inertRoots = [
+      document.querySelector('.skip-link'),
+      document.querySelector('.emergency-brand'),
+      document.querySelector('.recovery-scene'),
+      document.querySelector('.site-footer')
+    ];
 
-    function setOpen(open) {
-      toggle.setAttribute('aria-expanded', String(open));
-      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      document.body.classList.toggle('emergency-nav-open', open);
+    function isMobile() {
+      return window.matchMedia('(max-width: 959px)').matches;
+    }
+
+    function menuItems() {
+      const links = Array.prototype.slice.call(nav.querySelectorAll('a'));
+      return [toggle].concat(links);
+    }
+
+    function setInert(open) {
+      inertRoots.forEach(function (el) {
+        if (!el) return;
+        el.inert = open;
+        if (open) el.setAttribute('aria-hidden', 'true');
+        else el.removeAttribute('aria-hidden');
+      });
+    }
+
+    function setOpen(open, restoreFocus) {
+      const mobile = isMobile();
+      const show = !!(open && mobile);
+      toggle.setAttribute('aria-expanded', String(show));
+      toggle.setAttribute('aria-label', show ? 'Close menu' : 'Open menu');
+      document.body.classList.toggle('emergency-nav-open', show);
+      if (mobile) nav.setAttribute('aria-hidden', show ? 'false' : 'true');
+      else nav.removeAttribute('aria-hidden');
+      setInert(show);
+      if (show) {
+        const first = nav.querySelector('a');
+        if (first) first.focus();
+      } else if (restoreFocus !== false && mobile) {
+        toggle.focus();
+      }
     }
 
     toggle.addEventListener('click', function () {
       setOpen(toggle.getAttribute('aria-expanded') !== 'true');
     });
     nav.addEventListener('click', function (event) {
-      if (event.target.closest('a')) setOpen(false);
+      if (event.target.closest('a')) setOpen(false, false);
     });
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') setOpen(false);
+      if (toggle.getAttribute('aria-expanded') !== 'true') return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const items = menuItems();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     });
     window.addEventListener('resize', function () {
-      if (window.matchMedia('(min-width: 960px)').matches) setOpen(false);
+      if (!isMobile()) setOpen(false, false);
     });
+    setOpen(false, false);
   })();
 
   function boot() {

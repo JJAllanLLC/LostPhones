@@ -113,13 +113,13 @@
           <p class="kicker" id="question-kicker">Safety check</p>
           <form id="form-question">
             <fieldset class="choice-list">
-              <legend id="legend-question" tabindex="-1">Question</legend>
+              <legend id="legend-question"><h1 class="screen-title" tabindex="-1">Question</h1></legend>
               <p id="question-help" class="plan-intro"></p>
               <div id="question-choices"></div>
             </fieldset>
             <div class="flow-nav">
               <button class="btn btn-secondary" type="button" data-action="back">Back</button>
-              <button class="btn btn-primary" type="submit">Continue</button>
+              <button class="btn btn-primary" type="submit" id="continue-preparedness" disabled>Continue <span aria-hidden="true">→</span></button>
             </div>
           </form>
         </section>

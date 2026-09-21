@@ -64,7 +64,7 @@
         <section class="screen" id="screen-situation" data-step="situation">
           <form id="form-situation">
             <fieldset class="choice-list">
-              <legend id="legend-situation"><h1 class="screen-title">What best describes the phone?</h1></legend>
+              <legend id="legend-situation"><h1 class="screen-title" tabindex="-1">What best describes the phone?</h1></legend>
               <p class="plan-intro">First, tell us what happened. We'll use your answer to guide you to the safest next step.</p>
               <label class="choice">
                 <input type="radio" name="situation" value="nearby" required>
@@ -116,10 +116,19 @@
         <section class="screen" id="screen-platform" data-step="platform" hidden>
           <form id="form-platform">
             <fieldset class="choice-list">
-              <legend id="legend-platform"><h1 class="screen-title">What kind of phone is missing?</h1></legend>
-              <label class="choice"><input type="radio" name="platform" value="iphone" required> iPhone</label>
-              <label class="choice"><input type="radio" name="platform" value="android"> Android</label>
-              <label class="choice"><input type="radio" name="platform" value="unsure"> Not sure</label>
+              <legend id="legend-platform"><h1 class="screen-title" tabindex="-1">What kind of phone is missing?</h1></legend>
+              <label class="choice">
+                <input type="radio" name="platform" value="iphone" required>
+                <span class="choice-copy"><strong>iPhone</strong></span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="platform" value="android">
+                <span class="choice-copy"><strong>Android</strong></span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="platform" value="unsure">
+                <span class="choice-copy"><strong>Not sure</strong></span>
+              </label>
             </fieldset>
             <div class="flow-nav">
               <button class="btn btn-secondary" type="button" data-action="back">Back</button>
@@ -131,10 +140,19 @@
         <section class="screen" id="screen-currentDevice" data-step="currentDevice" hidden>
           <form id="form-currentDevice">
             <fieldset class="choice-list">
-              <legend id="legend-currentDevice"><h1 class="screen-title">What device are you using to access LostPhones right now?</h1></legend>
-              <label class="choice"><input type="radio" name="currentDevice" value="trusted" required> My own phone, tablet, or computer</label>
-              <label class="choice"><input type="radio" name="currentDevice" value="borrowed"> Someone else's phone, tablet, or computer</label>
-              <label class="choice"><input type="radio" name="currentDevice" value="public"> A public or shared device</label>
+              <legend id="legend-currentDevice"><h1 class="screen-title" tabindex="-1">What device are you using to access LostPhones right now?</h1></legend>
+              <label class="choice">
+                <input type="radio" name="currentDevice" value="trusted" required>
+                <span class="choice-copy"><strong>My own phone, tablet, or computer</strong></span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="currentDevice" value="borrowed">
+                <span class="choice-copy"><strong>Someone else's phone, tablet, or computer</strong></span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="currentDevice" value="public">
+                <span class="choice-copy"><strong>A public or shared device</strong></span>
+              </label>
             </fieldset>
             <div class="flow-nav">
               <button class="btn btn-secondary" type="button" data-action="back">Back</button>
@@ -146,13 +164,13 @@
         <section class="screen" id="screen-question" data-step="question" hidden>
           <form id="form-question">
             <fieldset class="choice-list">
-              <legend id="legend-question"><h1 class="screen-title"></h1></legend>
+              <legend id="legend-question"><h1 class="screen-title" tabindex="-1"></h1></legend>
               <p id="question-help"></p>
               <div id="question-choices"></div>
             </fieldset>
             <div class="flow-nav">
               <button class="btn btn-secondary" type="button" data-action="back">Back</button>
-              <button class="btn btn-primary" type="submit">Continue</button>
+              <button class="btn btn-primary" type="submit" id="continue-question" disabled>Continue <span aria-hidden="true">→</span></button>
             </div>
           </form>
         </section>
@@ -254,7 +272,7 @@
                 </aside>
 
                 <div class="action-secondary">
-                  <details class="more-details" id="more-details" open>
+                  <details class="more-details" id="more-details">
                     <summary>
                       <span class="more-details-caret" aria-hidden="true"></span>
                       <span class="more-details-summary">

@@ -48,16 +48,33 @@
       progress.textContent = 'STEP ' + stepNum + ' OF 5';
     }
     const focusId = id === 'orientation' ? 'orientation-title' : id === 'results' ? 'results-title' : 'legend-question';
-    const focusEl = document.getElementById(focusId);
+    const focusRoot = document.getElementById(focusId);
+    const focusEl = focusRoot && focusRoot.querySelector ? (focusRoot.querySelector('h1') || focusRoot) : focusRoot;
     if (focusEl && typeof focusEl.focus === 'function') focusEl.focus();
+  }
+
+  function syncChoiceStyles(form) {
+    if (!form) return;
+    form.querySelectorAll('.choice').forEach(function (label) {
+      const input = label.querySelector('input');
+      label.classList.toggle('is-selected', !!(input && input.checked));
+    });
+  }
+
+  function enableContinue(form) {
+    const submit = document.getElementById('continue-preparedness');
+    if (!form || !submit) return;
+    submit.disabled = !form.querySelector('input[type="radio"]:checked');
   }
 
   function renderQuestion(questionId) {
     const question = content.getQuestion(questionId);
     if (!question) return;
-    document.getElementById('legend-question').textContent = question.title;
+    const heading = document.getElementById('legend-question').querySelector('h1') || document.getElementById('legend-question');
+    heading.textContent = question.title;
     document.getElementById('question-help').textContent = question.help || '';
     const holder = document.getElementById('question-choices');
+    const form = document.getElementById('form-question');
     holder.innerHTML = '';
     question.choices.forEach(function (choice) {
       const label = document.createElement('label');
@@ -70,12 +87,19 @@
       if ((questionId === 'platform' && state.platform === choice.id) || state.answers[questionId] === choice.id) {
         input.checked = true;
       }
+      const copy = document.createElement('span');
+      copy.className = 'choice-copy';
+      const title = document.createElement('strong');
+      title.textContent = choice.label;
+      copy.appendChild(title);
       label.appendChild(input);
-      label.appendChild(document.createTextNode(' ' + choice.label));
+      label.appendChild(copy);
       holder.appendChild(label);
     });
-    document.getElementById('form-question').setAttribute('data-question-id', questionId);
+    form.setAttribute('data-question-id', questionId);
     state.step = questionId;
+    syncChoiceStyles(form);
+    enableContinue(form);
     showScreen('question');
     announce(question.title);
   }
@@ -266,6 +290,10 @@
     applyView(logic.evaluate(state));
   });
 
+  document.getElementById('form-question').addEventListener('change', function (event) {
+    syncChoiceStyles(event.currentTarget);
+    enableContinue(event.currentTarget);
+  });
   document.getElementById('form-question').addEventListener('submit', function (event) {
     event.preventDefault();
     const questionId = event.currentTarget.getAttribute('data-question-id');
@@ -290,24 +318,76 @@
     const toggle = document.getElementById('prep-menu-toggle');
     const nav = document.getElementById('prep-nav');
     if (!toggle || !nav) return;
+    const inertRoots = [
+      document.querySelector('.skip-link'),
+      document.querySelector('.prep-header .prep-brand'),
+      document.querySelector('.prep-scene'),
+      document.querySelector('.site-footer')
+    ];
 
-    function setOpen(open) {
-      toggle.setAttribute('aria-expanded', String(open));
-      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      document.body.classList.toggle('prep-nav-open', open);
+    function isMobile() {
+      return window.matchMedia('(max-width: 959px)').matches;
+    }
+
+    function menuItems() {
+      return [toggle].concat(Array.prototype.slice.call(nav.querySelectorAll('a')));
+    }
+
+    function setInert(open) {
+      inertRoots.forEach(function (el) {
+        if (!el) return;
+        el.inert = open;
+        if (open) el.setAttribute('aria-hidden', 'true');
+        else el.removeAttribute('aria-hidden');
+      });
+    }
+
+    function setOpen(open, restoreFocus) {
+      const mobile = isMobile();
+      const show = !!(open && mobile);
+      toggle.setAttribute('aria-expanded', String(show));
+      toggle.setAttribute('aria-label', show ? 'Close menu' : 'Open menu');
+      document.body.classList.toggle('prep-nav-open', show);
+      if (mobile) nav.setAttribute('aria-hidden', show ? 'false' : 'true');
+      else nav.removeAttribute('aria-hidden');
+      setInert(show);
+      if (show) {
+        const first = nav.querySelector('a');
+        if (first) first.focus();
+      } else if (restoreFocus !== false && mobile) {
+        toggle.focus();
+      }
     }
 
     toggle.addEventListener('click', function () {
       setOpen(toggle.getAttribute('aria-expanded') !== 'true');
     });
     nav.addEventListener('click', function (event) {
-      if (event.target.closest('a')) setOpen(false);
+      if (event.target.closest('a')) setOpen(false, false);
     });
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') setOpen(false);
+      if (toggle.getAttribute('aria-expanded') !== 'true') return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const items = menuItems();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     });
     window.addEventListener('resize', function () {
-      if (window.matchMedia('(min-width: 960px)').matches) setOpen(false);
+      if (!isMobile()) setOpen(false, false);
     });
+    setOpen(false, false);
   })();
 })();
