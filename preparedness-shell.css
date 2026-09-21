@@ -341,20 +341,23 @@ body.prep-shell .prep-areas li:last-child {
   padding-right: 0;
 }
 
-body.prep-shell .prep-area-icon {
+body.prep-shell .prep-areas span.prep-area-icon {
   width: 3.4rem;
   height: 3.4rem;
   margin: 0 auto 0.7rem;
   border-radius: 50%;
   display: grid;
   place-items: center;
+  line-height: 0;
   color: #2157ea;
   background: #dce8ff;
 }
 
-body.prep-shell .prep-area-icon svg {
-  width: 1.55rem;
-  height: 1.55rem;
+body.prep-shell .prep-areas span.prep-area-icon svg {
+  width: 2.35rem;
+  height: 2.35rem;
+  display: block;
+  overflow: visible;
 }
 
 body.prep-shell .prep-areas strong {
@@ -366,7 +369,7 @@ body.prep-shell .prep-areas strong {
   letter-spacing: -0.02em;
 }
 
-body.prep-shell .prep-areas span {
+body.prep-shell .prep-areas li > strong + span {
   display: block;
   font-size: 0.82rem;
   line-height: 1.35;
@@ -703,9 +706,14 @@ body.prep-shell[data-prep-phase="results"] .prep-scene {
 }
 
 @media (max-width: 430px) {
-  body.prep-shell .prep-area-icon {
+  body.prep-shell .prep-areas span.prep-area-icon {
     width: 3rem;
     height: 3rem;
+  }
+
+  body.prep-shell .prep-areas span.prep-area-icon svg {
+    width: 2.05rem;
+    height: 2.05rem;
   }
 }
 
