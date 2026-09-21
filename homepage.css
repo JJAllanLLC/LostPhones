@@ -1016,7 +1016,9 @@ body.home .hp-copyright a {
   }
 
   body.home .hp-story p {
-    font-size: 0.92rem;
+    font-size: 0.84rem;
+    line-height: 1.42;
+    margin-bottom: 0.8rem;
   }
 
   body.home .hp-safety {
@@ -1027,6 +1029,12 @@ body.home .hp-copyright a {
   body.home .hp-reassurance {
     min-height: 0;
     margin: 0 0 0.85rem;
+  }
+
+  body.home .hp-reassurance::after {
+    background:
+      linear-gradient(90deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 42%, rgba(255, 255, 255, 0.2) 76%, rgba(255, 255, 255, 0.34) 100%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 32%, rgba(255, 255, 255, 0.2) 64%, rgba(255, 255, 255, 0.4) 100%);
   }
 
   body.home .hp-reassurance-inner {
@@ -1046,6 +1054,8 @@ body.home .hp-copyright a {
 
   body.home .hp-reassurance-points li {
     font-size: 0.82rem;
+    color: var(--hp-navy);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.95), 0 1px 8px rgba(255, 255, 255, 0.8);
   }
 
   body.home .hp-footer {
@@ -1053,13 +1063,13 @@ body.home .hp-copyright a {
   }
 
   body.home .hp-footer-inner {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1.28fr 0.82fr;
     grid-template-areas:
       "brand script"
       "links script"
       "copy copy";
     align-items: start;
-    gap: 0.05rem 0.75rem;
+    gap: 0.05rem 0.45rem;
     min-height: 0;
   }
 
@@ -1074,10 +1084,11 @@ body.home .hp-copyright a {
   }
 
   body.home .hp-script-footer {
-    font-size: 1.18rem;
+    font-size: 0.98rem;
+    line-height: 1.12;
     border-left: 0;
-    padding: 0.15rem 0 0;
-    transform: rotate(-8deg);
+    padding: 0.1rem 0 0;
+    transform: rotate(-7deg);
     align-self: start;
   }
 }
