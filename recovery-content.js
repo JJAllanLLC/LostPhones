@@ -401,7 +401,7 @@
         Object.freeze({ icon: 'sound', title: 'Select your iPhone and play a sound', body: "You'll hear a sound if it's in the same area." }),
         Object.freeze({ icon: 'return', title: 'Come back to LostPhones', body: 'Keep this page open and tell us what happened.' })
       ]),
-      caution: 'This computer cannot ring the missing iPhone by itself. Use Apple’s official Find Devices page.',
+      caution: 'This device cannot ring the missing iPhone by itself. Use Apple’s official Find Devices page.',
       officialProvider: 'Apple',
       officialUrl: OFFICIAL_URLS.appleFind,
       supportSourceUrl: OFFICIAL_URLS.appleLostSupport,
@@ -427,7 +427,7 @@
         Object.freeze({ icon: 'sound', title: 'Select your phone and play a sound', body: "You'll hear a sound if it's in the same area." }),
         Object.freeze({ icon: 'return', title: 'Come back to LostPhones', body: 'Keep this page open and tell us what happened.' })
       ]),
-      caution: 'This computer cannot ring the missing phone by itself. Use Google’s official Find Hub page.',
+      caution: 'This device cannot ring the missing phone by itself. Use Google’s official Find Hub page.',
       officialProvider: 'Google',
       officialUrl: OFFICIAL_URLS.googleFind,
       supportSourceUrl: OFFICIAL_URLS.googleLostSupport,

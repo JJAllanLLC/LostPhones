@@ -553,12 +553,8 @@
     });
   }
 
-  function deviceNoun() {
-    return window.matchMedia('(max-width: 959px)').matches ? 'phone' : 'computer';
-  }
-
   function presentCaution(text) {
-    return String(text || '').replace(/\bThis (computer|phone) cannot\b/i, 'This ' + deviceNoun() + ' cannot');
+    return String(text || '').replace(/\bThis (computer|phone|device) cannot\b/i, 'This device cannot');
   }
 
   let lastCaution = '';
@@ -586,20 +582,20 @@
   }
 
   function renderHelp(record) {
-    const card = document.getElementById('action-help');
-    if (!card) return;
+    const cards = document.querySelectorAll('.action-help-card');
     const sound = record && record.boundedOutcomes && record.boundedOutcomes.some(function (outcome) {
       return outcome.id === 'not_heard';
     });
-    if (!sound) {
-      card.hidden = true;
-      return;
-    }
-    const title = document.getElementById('action-help-title');
-    const copy = document.getElementById('action-help-copy');
-    if (title) title.textContent = "Can't hear the sound?";
-    if (copy) copy.textContent = "If you don't hear it, we'll help you try other options next.";
-    card.hidden = false;
+    cards.forEach(function (card) {
+      card.hidden = !sound;
+    });
+    if (!sound) return;
+    document.querySelectorAll('.action-help-title').forEach(function (title) {
+      title.textContent = "Can't hear the sound?";
+    });
+    document.querySelectorAll('.action-help-copy').forEach(function (copy) {
+      copy.textContent = "If you don't hear it, we'll help you try other options next.";
+    });
   }
 
   function externalLink(href, label, leavingText, actionId) {
@@ -1098,15 +1094,6 @@
     window.addEventListener('resize', function () {
       if (window.matchMedia('(min-width: 960px)').matches) setOpen(false);
     });
-  })();
-
-  (function bindCautionViewport() {
-    const media = window.matchMedia('(max-width: 959px)');
-    const refresh = function () {
-      if (lastCaution) renderCaution();
-    };
-    if (media.addEventListener) media.addEventListener('change', refresh);
-    else if (media.addListener) media.addListener(refresh);
   })();
 
   function boot() {
