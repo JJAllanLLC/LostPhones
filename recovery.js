@@ -115,9 +115,16 @@
 
   function setTriageProgress(step) {
     const bar = document.getElementById('triage-progress');
+    const stepLabel = document.getElementById('triage-step-label');
+    const head = document.getElementById('recovery-progress');
     if (!bar) return;
     const index = { situation: 1, platform: 2, currentDevice: 3 }[step] || 0;
     bar.hidden = !index;
+    if (stepLabel) {
+      stepLabel.hidden = !index;
+      if (index) stepLabel.textContent = 'STEP ' + index + ' OF 3';
+    }
+    if (head) head.hidden = !index;
     bar.querySelectorAll('.segment').forEach(function (seg) {
       const n = Number(seg.getAttribute('data-seg'));
       seg.classList.toggle('is-current', n === index);
@@ -130,7 +137,10 @@
       screens[key].hidden = key !== step;
     });
 
-    if (questionSteps[step]) {
+    const isTriage = !!questionSteps[step];
+    document.body.setAttribute('data-recovery-phase', isTriage || step === 'orientation' ? 'triage' : 'action');
+
+    if (isTriage) {
       progress.hidden = false;
       progress.textContent = 'Three quick questions';
     } else if (step === 'orientation') {
@@ -875,6 +885,31 @@
       document.body.classList.toggle('keyboard-open', raised);
     });
   }
+
+  (function bindRecoveryMenu() {
+    const toggle = document.getElementById('emergency-menu-toggle');
+    const nav = document.getElementById('emergency-nav');
+    if (!toggle || !nav) return;
+
+    function setOpen(open) {
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      document.body.classList.toggle('emergency-nav-open', open);
+    }
+
+    toggle.addEventListener('click', function () {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+    nav.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') setOpen(false);
+    });
+    window.addEventListener('resize', function () {
+      if (window.matchMedia('(min-width: 960px)').matches) setOpen(false);
+    });
+  })();
 
   function boot() {
     showScreen('situation');

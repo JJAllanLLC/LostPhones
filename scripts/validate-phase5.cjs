@@ -25,6 +25,7 @@ const requiredFiles = [
   'v2.css',
   'homepage.css',
   'homepage.js',
+  'recovery-shell.css',
   'scripts/validate-phase5.cjs'
 ];
 

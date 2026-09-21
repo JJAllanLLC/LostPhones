@@ -7,218 +7,286 @@
   <title>Start My Recovery | LostPhones</title>
   <meta name="description" content="Answer three short questions and get the safest next step for a missing iPhone or Android.">
   <link rel="stylesheet" href="v2.css">
+  <link rel="stylesheet" href="recovery-shell.css">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
   <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
   <link rel="shortcut icon" href="/favicon/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
 </head>
-<body class="emergency-shell">
+<body class="emergency-shell" data-recovery-phase="triage">
   <a class="skip-link" href="#recovery-app">Skip to recovery</a>
   <header class="emergency-header">
     <div class="emergency-header-inner">
-      <span class="wordmark">LostPhones</span>
-      <nav class="emergency-nav" aria-label="Recovery">
-        <a href="privacy.html">Privacy</a>
-        <a href="/">Exit recovery</a>
-      </nav>
+      <a class="emergency-brand" href="/" aria-label="LostPhones home">
+        <img class="emergency-logo" src="assets/homepage/logo.svg" alt="" width="56" height="56">
+        <span class="emergency-brand-text">
+          <span class="wordmark emergency-brand-name">LostPhones</span>
+          <span class="emergency-brand-tag">The hard part's over. You found us.</span>
+        </span>
+      </a>
+      <div class="emergency-header-actions">
+        <nav class="emergency-nav" id="emergency-nav" aria-label="Recovery">
+          <a href="privacy.html">Privacy</a>
+          <a href="/">Exit recovery</a>
+        </nav>
+        <button class="emergency-menu-toggle" id="emergency-menu-toggle" type="button" aria-expanded="false" aria-controls="emergency-nav" aria-label="Open menu">
+          <span class="emergency-menu-bars" aria-hidden="true"></span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <main id="recovery-app">
-    <p class="progress" id="progress-label">Three quick questions</p>
-    <div class="segmented-progress" id="triage-progress" hidden>
-      <span class="segment" data-seg="1"></span>
-      <span class="segment" data-seg="2"></span>
-      <span class="segment" data-seg="3"></span>
-    </div>
-    <div class="live-region" id="status-live" aria-live="polite" aria-atomic="true"></div>
-
-    <section class="screen orientation" id="screen-orientation" data-step="orientation" hidden>
-      <h1 class="screen-title" id="orientation-title" tabindex="-1">Three quick questions, then your safest next step</h1>
-      <p>First, tell us what happened. We will use three answers to choose the safest next step.</p>
-      <div class="flow-nav">
-        <button class="btn btn-primary" type="button" id="begin-recovery" data-action="continue">Continue</button>
-      </div>
-    </section>
-
-    <section class="screen" id="screen-situation" data-step="situation">
-      <form id="form-situation">
-        <fieldset class="choice-list">
-          <legend id="legend-situation" tabindex="-1"><h1 class="screen-title">What best describes the phone?</h1></legend>
-          <p class="plan-intro">First, tell us what happened. We will use three answers to choose the safest next step.</p>
-          <label class="choice"><input type="radio" name="situation" value="nearby" required> Misplaced nearby</label>
-          <label class="choice"><input type="radio" name="situation" value="lost"> Lost</label>
-          <label class="choice"><input type="radio" name="situation" value="stolen"> Stolen</label>
-          <label class="choice"><input type="radio" name="situation" value="unsure"> Not sure</label>
-        </fieldset>
-        <div class="flow-nav">
-          <button class="btn btn-primary" type="submit" id="continue-situation" disabled>Continue</button>
+  <div class="recovery-scene">
+    <img class="recovery-scene-img" src="assets/homepage/reassurance-mountains.jpg" alt="" width="1920" height="1080">
+    <p class="recovery-aside recovery-aside-mobile" aria-hidden="true">Get help.<br>Take the right steps.<br>One at a time.</p>
+    <p class="recovery-aside recovery-aside-desktop" aria-hidden="true">Small<br>steps<br>brighter<br>days ahead.</p>
+    <main id="recovery-app">
+      <div class="recovery-card">
+        <div class="recovery-progress" id="recovery-progress">
+          <p class="progress" id="progress-label">Three quick questions</p>
+          <p class="triage-step" id="triage-step-label">STEP 1 OF 3</p>
+          <div class="segmented-progress" id="triage-progress">
+            <span class="segment is-current" data-seg="1"></span>
+            <span class="segment" data-seg="2"></span>
+            <span class="segment" data-seg="3"></span>
+          </div>
         </div>
-      </form>
-    </section>
+        <div class="live-region" id="status-live" aria-live="polite" aria-atomic="true"></div>
 
-    <section class="screen" id="screen-platform" data-step="platform" hidden>
-      <form id="form-platform">
-        <fieldset class="choice-list">
-          <legend id="legend-platform" tabindex="-1"><h1 class="screen-title">What kind of phone is missing?</h1></legend>
-          <label class="choice"><input type="radio" name="platform" value="iphone" required> iPhone</label>
-          <label class="choice"><input type="radio" name="platform" value="android"> Android</label>
-          <label class="choice"><input type="radio" name="platform" value="unsure"> Not sure</label>
-        </fieldset>
-        <div class="flow-nav">
-          <button class="btn btn-secondary" type="button" data-action="back">Back</button>
-          <button class="btn btn-primary" type="submit" id="continue-platform" disabled>Continue</button>
-        </div>
-      </form>
-    </section>
+        <section class="screen orientation" id="screen-orientation" data-step="orientation" hidden>
+          <h1 class="screen-title" id="orientation-title" tabindex="-1">Three quick questions, then your safest next step</h1>
+          <p>First, tell us what happened. We will use three answers to choose the safest next step.</p>
+          <div class="flow-nav">
+            <button class="btn btn-primary" type="button" id="begin-recovery" data-action="continue">Continue</button>
+          </div>
+        </section>
 
-    <section class="screen" id="screen-currentDevice" data-step="currentDevice" hidden>
-      <form id="form-currentDevice">
-        <fieldset class="choice-list">
-          <legend id="legend-currentDevice" tabindex="-1"><h1 class="screen-title">What are you using now?</h1></legend>
-          <label class="choice"><input type="radio" name="currentDevice" value="trusted" required> My trusted device</label>
-          <label class="choice"><input type="radio" name="currentDevice" value="borrowed"> A device from someone I trust</label>
-          <label class="choice"><input type="radio" name="currentDevice" value="public"> A public or shared device</label>
-        </fieldset>
-        <div class="flow-nav">
-          <button class="btn btn-secondary" type="button" data-action="back">Back</button>
-          <button class="btn btn-primary" type="submit" id="continue-currentDevice" disabled>Continue</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="screen" id="screen-question" data-step="question" hidden>
-      <form id="form-question">
-        <fieldset class="choice-list">
-          <legend id="legend-question" tabindex="-1"><h1 class="screen-title"></h1></legend>
-          <p id="question-help"></p>
-          <div id="question-choices"></div>
-        </fieldset>
-        <div class="flow-nav">
-          <button class="btn btn-secondary" type="button" data-action="back">Back</button>
-          <button class="btn btn-primary" type="submit">Continue</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="screen action-card" id="screen-action" data-step="action" hidden>
-      <div class="emergency-layout">
-        <aside class="progress-rail" id="progress-rail" hidden>
-          <p class="kicker" id="progress-kicker">You are making progress</p>
-          <div id="progress-stages"></div>
-        </aside>
-
-        <div>
-          <p class="status-pill" id="journey-status" hidden></p>
-          <div class="action-surface">
-            <p class="kicker" id="action-kicker">Current step</p>
-            <div class="awaiting-banner" id="awaiting-banner" hidden>
-              <p id="awaiting-copy">Apple Find Devices opened in a new tab. When you finish there, return here and choose I am back.</p>
-              <button class="btn btn-primary" type="button" id="im-back">I am back</button>
+        <section class="screen" id="screen-situation" data-step="situation">
+          <form id="form-situation">
+            <fieldset class="choice-list">
+              <legend id="legend-situation" tabindex="-1"><h1 class="screen-title">What best describes the phone?</h1></legend>
+              <p class="plan-intro">First, tell us what happened. We'll use your answer to guide you to the safest next step.</p>
+              <label class="choice">
+                <input type="radio" name="situation" value="nearby" required>
+                <span class="choice-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-6.2-5.4-6.2-10.1A6.2 6.2 0 0 1 12 4.7a6.2 6.2 0 0 1 6.2 6.2C18.2 15.6 12 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10.8" r="2.15" stroke="currentColor" stroke-width="1.8"/></svg>
+                </span>
+                <span class="choice-copy">
+                  <strong>Misplaced nearby</strong>
+                  <span>I think it's around here somewhere.</span>
+                </span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="situation" value="lost">
+                <span class="choice-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.2" stroke="currentColor" stroke-width="1.8"/><path d="m15.6 15.6 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                </span>
+                <span class="choice-copy">
+                  <strong>Lost</strong>
+                  <span>I can't find it and don't know where it is.</span>
+                </span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="situation" value="stolen">
+                <span class="choice-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M4.4 11.1h15.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M7.1 11.1c.3-3.5 2.2-5.7 4.9-5.7s4.6 2.2 4.9 5.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15.6" r="2.35" stroke="currentColor" stroke-width="1.8"/></svg>
+                </span>
+                <span class="choice-copy">
+                  <strong>Stolen</strong>
+                  <span>I believe it was stolen.</span>
+                </span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="situation" value="unsure">
+                <span class="choice-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.1" stroke="currentColor" stroke-width="1.8"/><path d="M9.4 9.5a2.7 2.7 0 0 1 5.2.9c0 1.5-1.5 2.1-2.6 2.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1" fill="currentColor"/></svg>
+                </span>
+                <span class="choice-copy">
+                  <strong>Not sure</strong>
+                  <span>I'm not sure what happened.</span>
+                </span>
+              </label>
+            </fieldset>
+            <div class="flow-nav">
+              <button class="btn btn-primary" type="submit" id="continue-situation" disabled>Continue <span aria-hidden="true">→</span></button>
             </div>
-            <h1 class="screen-title" id="action-title" tabindex="-1"></h1>
-            <p id="action-reason"></p>
-            <ol class="action-steps" id="action-steps"></ol>
-            <p id="action-instruction" hidden></p>
-            <p class="safety-note caution panel" id="action-caution"></p>
-            <p class="leaving-note" id="leaving-note" hidden></p>
-            <div class="primary-cta-slot sticky-cta" id="action-controls"></div>
-            <div id="outcome-box" hidden>
-              <h2 class="meta-label" id="outcome-heading" tabindex="-1">What did you find?</h2>
-              <p id="return-prompt"></p>
-              <div class="stack" id="outcome-primary"></div>
-              <div class="stack" id="outcome-controls" hidden></div>
-              <details class="reveal" id="outcome-exceptions">
-                <summary>I could not complete this</summary>
-                <div class="stack" id="outcome-exception-controls"></div>
+          </form>
+        </section>
+
+        <section class="screen" id="screen-platform" data-step="platform" hidden>
+          <form id="form-platform">
+            <fieldset class="choice-list">
+              <legend id="legend-platform" tabindex="-1"><h1 class="screen-title">What kind of phone is missing?</h1></legend>
+              <label class="choice"><input type="radio" name="platform" value="iphone" required> iPhone</label>
+              <label class="choice"><input type="radio" name="platform" value="android"> Android</label>
+              <label class="choice"><input type="radio" name="platform" value="unsure"> Not sure</label>
+            </fieldset>
+            <div class="flow-nav">
+              <button class="btn btn-secondary" type="button" data-action="back">Back</button>
+              <button class="btn btn-primary" type="submit" id="continue-platform" disabled>Continue <span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+        </section>
+
+        <section class="screen" id="screen-currentDevice" data-step="currentDevice" hidden>
+          <form id="form-currentDevice">
+            <fieldset class="choice-list">
+              <legend id="legend-currentDevice" tabindex="-1"><h1 class="screen-title">What are you using now?</h1></legend>
+              <label class="choice"><input type="radio" name="currentDevice" value="trusted" required> My trusted device</label>
+              <label class="choice"><input type="radio" name="currentDevice" value="borrowed"> A device from someone I trust</label>
+              <label class="choice"><input type="radio" name="currentDevice" value="public"> A public or shared device</label>
+            </fieldset>
+            <div class="flow-nav">
+              <button class="btn btn-secondary" type="button" data-action="back">Back</button>
+              <button class="btn btn-primary" type="submit" id="continue-currentDevice" disabled>Continue <span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+        </section>
+
+        <section class="screen" id="screen-question" data-step="question" hidden>
+          <form id="form-question">
+            <fieldset class="choice-list">
+              <legend id="legend-question" tabindex="-1"><h1 class="screen-title"></h1></legend>
+              <p id="question-help"></p>
+              <div id="question-choices"></div>
+            </fieldset>
+            <div class="flow-nav">
+              <button class="btn btn-secondary" type="button" data-action="back">Back</button>
+              <button class="btn btn-primary" type="submit">Continue</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="screen action-card" id="screen-action" data-step="action" hidden>
+          <div class="emergency-layout">
+            <aside class="progress-rail" id="progress-rail" hidden>
+              <p class="kicker" id="progress-kicker">You are making progress</p>
+              <div id="progress-stages"></div>
+            </aside>
+
+            <div>
+              <p class="status-pill" id="journey-status" hidden></p>
+              <div class="action-surface">
+                <p class="kicker" id="action-kicker">Current step</p>
+                <div class="awaiting-banner" id="awaiting-banner" hidden>
+                  <p id="awaiting-copy">Apple Find Devices opened in a new tab. When you finish there, return here and choose I am back.</p>
+                  <button class="btn btn-primary" type="button" id="im-back">I am back</button>
+                </div>
+                <h1 class="screen-title" id="action-title" tabindex="-1"></h1>
+                <p id="action-reason"></p>
+                <ol class="action-steps" id="action-steps"></ol>
+                <p id="action-instruction" hidden></p>
+                <p class="safety-note caution panel" id="action-caution"></p>
+                <p class="leaving-note" id="leaving-note" hidden></p>
+                <div class="primary-cta-slot sticky-cta" id="action-controls"></div>
+                <div id="outcome-box" hidden>
+                  <h2 class="meta-label" id="outcome-heading" tabindex="-1">What did you find?</h2>
+                  <p id="return-prompt"></p>
+                  <div class="stack" id="outcome-primary"></div>
+                  <div class="stack" id="outcome-controls" hidden></div>
+                  <details class="reveal" id="outcome-exceptions">
+                    <summary>I could not complete this</summary>
+                    <div class="stack" id="outcome-exception-controls"></div>
+                  </details>
+                </div>
+              </div>
+
+              <div class="complete-summary" id="complete-summary" hidden>
+                <h2 id="complete-heading">You are safer now</h2>
+                <p id="complete-copy">The immediate risk is under control. Here is what is secure and what can wait.</p>
+                <div id="complete-groups"></div>
+                <div class="stack">
+                  <button class="btn btn-secondary" type="button" id="print-summary">Print my free summary</button>
+                  <button class="btn btn-secondary" type="button" id="review-erase-slot" hidden>Review erase option</button>
+                </div>
+              </div>
+
+              <details class="reveal" id="why-details">
+                <summary>Why this matters</summary>
+                <p id="why-copy"></p>
+              </details>
+              <details class="reveal" id="privacy-box" hidden>
+                <summary>Using this device safely</summary>
+                <h2 id="privacy-title"></h2>
+                <ul id="privacy-list"></ul>
+              </details>
+              <details class="reveal" id="support-details" hidden>
+                <summary>Official source</summary>
+                <p class="support-note" id="support-note"></p>
+              </details>
+              <details class="reveal" id="resume-box" hidden>
+                <summary>Continue later</summary>
+                <h2 class="meta-label">Continue later</h2>
+                <p id="resume-copy"></p>
+                <div class="stack" id="resume-controls"></div>
+                <p id="resume-feedback" hidden></p>
+              </details>
+              <details class="reveal plan-panel" id="plan-panel" hidden>
+                <summary>View full recovery plan</summary>
+                <h2 id="plan-heading">Your full recovery plan</h2>
+                <p class="plan-intro">This list is only for orientation. Work one current action at a time. A waiting step is not done.</p>
+                <section>
+                  <h3>Now — immediate safety and risk containment</h3>
+                  <ul class="plan-list" id="plan-now"></ul>
+                </section>
+                <section>
+                  <h3>Next — important follow-up after immediate control</h3>
+                  <ul class="plan-list" id="plan-next"></ul>
+                </section>
+                <section>
+                  <h3>Later — cleanup, reporting, and replacement when you are ready</h3>
+                  <ul class="plan-list" id="plan-later"></ul>
+                </section>
+              </details>
+
+              <aside class="paid-offer" id="paid-offer" hidden>
+                <p class="kicker">Optional one-time download</p>
+                <h2 id="paid-offer-title">Optional complete recovery PDF</h2>
+                <p>Keep a private copy of this journey. Your free summary stays available.</p>
+                <ul>
+                  <li>Personalized recovery record</li>
+                  <li>Remaining and waiting actions</li>
+                  <li>Claim, security, and preparedness checklists</li>
+                  <li>One-page emergency reference</li>
+                </ul>
+                <p>No account. One-time purchase.</p>
+                <div class="stack">
+                  <button class="btn btn-primary" type="button" id="keep-recovery-plan">Download my complete recovery PDF — $8.95</button>
+                  <button class="btn btn-tertiary" type="button" id="dismiss-recovery-plan">No thanks — continue free</button>
+                </div>
+                <p id="paid-offer-feedback" hidden></p>
+              </aside>
+
+              <details class="reveal" id="more-options">
+                <summary>More options</summary>
+                <div class="flow-nav">
+                  <button class="btn btn-secondary" type="button" data-action="back">Back</button>
+                  <button class="btn btn-tertiary" type="button" id="start-over-request">Start over</button>
+                </div>
               </details>
             </div>
           </div>
-
-          <div class="complete-summary" id="complete-summary" hidden>
-            <h2 id="complete-heading">You are safer now</h2>
-            <p id="complete-copy">The immediate risk is under control. Here is what is secure and what can wait.</p>
-            <div id="complete-groups"></div>
-            <div class="stack">
-              <button class="btn btn-secondary" type="button" id="print-summary">Print my free summary</button>
-              <button class="btn btn-secondary" type="button" id="review-erase-slot" hidden>Review erase option</button>
-            </div>
-          </div>
-
-          <details class="reveal" id="why-details">
-            <summary>Why this matters</summary>
-            <p id="why-copy"></p>
-          </details>
-          <details class="reveal" id="privacy-box" hidden>
-            <summary>Using this device safely</summary>
-            <h2 id="privacy-title"></h2>
-            <ul id="privacy-list"></ul>
-          </details>
-          <details class="reveal" id="support-details" hidden>
-            <summary>Official source</summary>
-            <p class="support-note" id="support-note"></p>
-          </details>
-          <details class="reveal" id="resume-box" hidden>
-            <summary>Continue later</summary>
-            <h2 class="meta-label">Continue later</h2>
-            <p id="resume-copy"></p>
-            <div class="stack" id="resume-controls"></div>
-            <p id="resume-feedback" hidden></p>
-          </details>
-          <details class="reveal plan-panel" id="plan-panel" hidden>
-            <summary>View full recovery plan</summary>
-            <h2 id="plan-heading">Your full recovery plan</h2>
-            <p class="plan-intro">This list is only for orientation. Work one current action at a time. A waiting step is not done.</p>
-            <section>
-              <h3>Now — immediate safety and risk containment</h3>
-              <ul class="plan-list" id="plan-now"></ul>
-            </section>
-            <section>
-              <h3>Next — important follow-up after immediate control</h3>
-              <ul class="plan-list" id="plan-next"></ul>
-            </section>
-            <section>
-              <h3>Later — cleanup, reporting, and replacement when you are ready</h3>
-              <ul class="plan-list" id="plan-later"></ul>
-            </section>
-          </details>
-
-          <aside class="paid-offer" id="paid-offer" hidden>
-            <p class="kicker">Optional one-time download</p>
-            <h2 id="paid-offer-title">Optional complete recovery PDF</h2>
-            <p>Keep a private copy of this journey. Your free summary stays available.</p>
-            <ul>
-              <li>Personalized recovery record</li>
-              <li>Remaining and waiting actions</li>
-              <li>Claim, security, and preparedness checklists</li>
-              <li>One-page emergency reference</li>
-            </ul>
-            <p>No account. One-time purchase.</p>
-            <div class="stack">
-              <button class="btn btn-primary" type="button" id="keep-recovery-plan">Download my complete recovery PDF — $8.95</button>
-              <button class="btn btn-tertiary" type="button" id="dismiss-recovery-plan">No thanks — continue free</button>
-            </div>
-            <p id="paid-offer-feedback" hidden></p>
-          </aside>
-
-          <details class="reveal" id="more-options">
-            <summary>More options</summary>
-            <div class="flow-nav">
-              <button class="btn btn-secondary" type="button" data-action="back">Back</button>
-              <button class="btn btn-tertiary" type="button" id="start-over-request">Start over</button>
-            </div>
-          </details>
-        </div>
+        </section>
       </div>
-    </section>
-  </main>
+    </main>
+  </div>
 
   <footer class="site-footer">
-    <nav aria-label="Footer">
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-    </nav>
-    <p>© 2026 LostPhones. Operated by JJ ALLAN, LLC.</p>
+    <div class="site-footer-inner">
+      <a class="emergency-brand site-footer-brand" href="/" aria-label="LostPhones home">
+        <img class="emergency-logo" src="assets/homepage/logo.svg" alt="" width="56" height="56">
+        <span class="emergency-brand-text">
+          <span class="emergency-brand-name">LostPhones</span>
+          <span class="emergency-brand-tag">The hard part's over. You found us.</span>
+        </span>
+      </a>
+      <p class="recovery-script" aria-hidden="true">A clearer tomorrow.</p>
+      <nav aria-label="Footer">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </nav>
+      <p class="site-footer-copy">© 2026 LostPhones. Operated by <a href="https://jjallanllc.com" rel="noopener noreferrer">JJ ALLAN, LLC</a>.</p>
+    </div>
   </footer>
 
   <dialog class="reset-dialog" id="reset-dialog" aria-labelledby="reset-title">
