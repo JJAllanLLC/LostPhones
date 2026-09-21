@@ -2050,6 +2050,66 @@ body.emergency-shell[data-recovery-return="1"] #return-prompt {
   }
 }
 
+body.emergency-shell.paid-success .paid-download {
+  display: grid;
+  gap: 0.7rem;
+}
+
+body.emergency-shell.paid-success .action-kicker {
+  margin: 0;
+}
+
+body.emergency-shell.paid-success .screen-title {
+  margin: 0;
+}
+
+body.emergency-shell.paid-success #download-copy,
+body.emergency-shell.paid-success #download-status {
+  margin: 0;
+  color: var(--rc-navy);
+  font-size: 1.02rem;
+  line-height: 1.45;
+}
+
+body.emergency-shell.paid-success #download-status {
+  color: var(--rc-muted);
+  font-size: 0.95rem;
+}
+
+body.emergency-shell.paid-success .filename {
+  margin: 0;
+  font-weight: 650;
+}
+
+body.emergency-shell.paid-success .disclosure,
+body.emergency-shell.paid-success #download-complete {
+  margin: 0;
+  color: var(--rc-muted);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+body.emergency-shell.paid-success .prevention-transition {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+}
+
+body.emergency-shell.paid-success .prevention-transition .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+body.emergency-shell.paid-success[data-download-state="error"] .screen-title {
+  color: var(--rc-navy);
+}
+
+@media (max-width: 959px) {
+  body.emergency-shell.paid-success .recovery-card {
+    padding: 1.15rem 1rem 1.2rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   body.emergency-shell .recovery-script {
     transform: none;

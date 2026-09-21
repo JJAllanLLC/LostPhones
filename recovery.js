@@ -278,19 +278,7 @@
   }
 
   function planStatusText(item) {
-    if (item.status === 'completed') return 'Done';
-    if (item.status === 'blocked') {
-      if (item.blockedReason === 'service_unavailable' || item.blockedReason === 'waiting_for_provider') {
-        return 'Retry later';
-      }
-      if (/apple|iphone/i.test(item.actionId || item.title || '')) return 'Waiting on Apple';
-      if (/google|android/i.test(item.actionId || item.title || '')) return 'Waiting on Google';
-      return 'Needs another route';
-    }
-    if (item.status === 'not_applicable') return 'Not needed';
-    if (item.status === 'skipped') return 'Skipped';
-    if (item.status === 'active') return 'Current';
-    return 'Later';
+    return content.planStatusText(item);
   }
 
   function stageStatus(stage, currentId) {
@@ -329,8 +317,9 @@
   function stageDetail(stage, status, record) {
     if (status === 'Current' && record) return shortActionDetail(record);
     if (stage.id === 'protect') {
-      if (state.answers.platform === 'unsure') return 'Protect the account connected to the missing phone';
-      return state.answers.platform === 'android' ? 'Secure your Google account' : 'Secure your Apple account';
+      if (state.answers.platform === 'android') return 'Secure your Google account';
+      if (state.answers.platform === 'iphone') return 'Secure your Apple account';
+      return 'Protect the account connected to the missing phone';
     }
     if (stage.id === 'find' && record && stage.ids.indexOf(record.actionId) !== -1) return shortActionDetail(record);
     return stage.fallback;
@@ -510,10 +499,7 @@
   }
 
   function sourceLedeText(record) {
-    if (!record) return 'Official recovery service';
-    if (record.officialProvider === 'Apple') return 'Apple Find Devices (iCloud.com)';
-    if (record.officialProvider === 'Google') return 'Google Find Hub';
-    return record.officialProvider ? record.officialProvider + ' official service' : 'Official recovery service';
+    return content.officialSourceLabel(record);
   }
 
   function renderPrivacy(guidance) {
@@ -698,7 +684,7 @@
     const copy = document.createElement('span');
     copy.className = 'outcome-copy';
     const title = document.createElement('strong');
-    title.textContent = SHORT_OUTCOMES[outcome.id] || outcome.label;
+    title.textContent = outcomeDisplayLabel(action, outcome);
     copy.appendChild(title);
     if (outcome.label && outcome.label !== title.textContent) {
       const help = document.createElement('span');
@@ -719,6 +705,14 @@
       applyView(result, true);
     });
     return button;
+  }
+
+  function outcomeDisplayLabel(action, outcome) {
+    if (outcome && outcome.id === 'waiting_for_provider') {
+      if (action && action.officialProvider === 'Apple') return 'I am waiting on Apple';
+      if (action && action.officialProvider === 'Google') return 'I am waiting on Google';
+    }
+    return (outcome && (SHORT_OUTCOMES[outcome.id] || outcome.label)) || '';
   }
 
   function renderOutcomes(action, returnMode) {

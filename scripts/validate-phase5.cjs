@@ -99,7 +99,8 @@ if (!/noopener noreferrer/.test(recoveryJs)) fail('Official links must keep noop
 if (/localStorage|sessionStorage|document\.cookie/.test(recoveryJs + recoveryHtml)) {
   fail('recovery.js/html must not call storage APIs.');
 }
-if (!/Needs another route/.test(recoveryJs) || !/Not needed/.test(recoveryJs)) {
+const recoveryContent = read('recovery-content.js');
+if (!/Needs another route/.test(recoveryJs + recoveryContent) || !/Not needed/.test(recoveryJs + recoveryContent)) {
   fail('Human blocked and not-needed labels are missing.');
 }
 if (!/EXCEPTION_OUTCOMES/.test(recoveryJs)) fail('Outcome grouping must remain presentation-only in recovery.js.');
@@ -107,7 +108,22 @@ if (!/PROGRESS_STAGES/.test(recoveryJs)) fail('Compact progress stages are missi
 if (!/I’m somewhere safe now/.test(recoveryJs)) fail('Personal safety must use an internal confirmation control.');
 if (!/I finished in the official app or site/.test(recoveryJs)) fail('Manual carrier/financial actions need an internal completion control.');
 if (!/Protect the account connected to the missing phone/.test(recoveryJs)) fail('Unknown-platform progress copy is missing.');
-if (!/Retry later/.test(recoveryJs)) fail('Provider-unavailable tasks must show Retry later.');
+if (!/Retry later/.test(recoveryJs + recoveryContent)) fail('Provider-unavailable tasks must show Retry later.');
+if (!/Could not turn on Lost Mode/.test(recoveryContent) || !/Waiting for the carrier/.test(recoveryContent)) {
+  fail('Full recovery plan must use plain outcomes instead of internal workflow labels.');
+}
+if (!/I am waiting on Apple/.test(recoveryContent) || !/I am waiting on Google/.test(recoveryContent)) {
+  fail('Known-provider waiting copy must name Apple or Google specifically.');
+}
+if (/I am waiting on Apple or Google/.test(recoveryContent)) {
+  fail('Known-provider screens must not use generic Apple or Google waiting copy.');
+}
+if (!/officialSourceLabel/.test(recoveryContent + recoveryJs)) {
+  fail('Official-source labels must come from the current action.');
+}
+if (!/Do you have the iPhone with you now\?/.test(recoveryContent) || !/Do you have the Android phone with you now\?/.test(recoveryContent)) {
+  fail('Possession questions must name the known phone type.');
+}
 if (/officialUrl \|\| record\.supportSourceUrl \|\| '#'/.test(recoveryJs) || /href\s*=\s*['"]#['"]/.test(recoveryJs)) {
   fail('Recovery UI must not use href="#" fake handoffs.');
 }
@@ -200,14 +216,33 @@ if (!/Ask your carrier whether your phone supports an eSIM/.test(preparednessCon
   fail('Inactive travel copy is missing.');
 }
 
-if (!/Payment confirmed/.test(successHtml)) fail('Paid success heading is missing.');
+if (/<h1[^>]*>\s*Payment confirmed/.test(successHtml) || /Your PDF is ready/.test(successHtml)) {
+  fail('Paid success HTML must not claim payment before server-side verification.');
+}
+if (!/Checking your download/.test(successHtml)) fail('Paid success pending heading is missing.');
+if (!/We could not verify this download link\./.test(successJs)) fail('Unverified download copy is missing.');
+if (!/titleEl\.textContent = 'Payment confirmed'/.test(successJs) || !/Your PDF is ready/.test(successJs)) {
+  fail('Verified paid success copy is missing.');
+}
+if (!/emergency-shell/.test(successHtml) || !/recovery-shell\.css/.test(successHtml)) {
+  fail('Paid success must use the Phase 5 recovery shell.');
+}
+if (!/el\.inert = open/.test(successJs) || !/event\.key === 'Escape'/.test(successJs)) {
+  fail('Paid success mobile menu must use inert background, focus trap, and Escape.');
+}
 if (!/Protect My Phone for Next Time/.test(successHtml) || !/I[’']m done for now/.test(successHtml)) {
   fail('Paid success page must keep the prevention transition.');
+}
+if (!/Return to my free plan/.test(successHtml) || !/Keep this file private/.test(successHtml)) {
+  fail('Paid success must keep private-file guidance and the free-plan return.');
 }
 if (!/lostphones-recovery-plan\.pdf/.test(successHtml + successJs)) fail('PDF filename cue is missing.');
 if (!/Download again/.test(successHtml)) fail('Persistent Download again control is missing.');
 if (!/replaceState/.test(successJs) || !/\/api\/recovery-plan-pdf/.test(successJs)) {
   fail('Success page must strip the session id and POST it to the PDF endpoint.');
+}
+if (!/data-download-state/.test(successHtml + successJs)) {
+  fail('Paid success must gate visible copy on verification state.');
 }
 
 if (!/Prepared for /.test(core) || !/platformArticle/.test(core)) {

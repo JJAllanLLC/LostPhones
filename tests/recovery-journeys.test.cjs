@@ -32,7 +32,7 @@ test('misplaced iPhone found', () => {
   assert.equal(view.state.awaitingExternalReturnActionId, null);
   assertQuestion(view, 'recovered');
   assert.equal(view.question.title, 'Do you have the iPhone with you now?');
-  assert.match(view.question.help, /Choose Yes only if the iPhone is physically with you and safe to keep/);
+  assert.equal(view.question.help, 'Choose Yes only if the phone is physically with you and safe to keep. Do not retrieve it from an unsafe place.');
   view = logic.answerQuestion(view.state, 'recovered', 'yes');
   assertQuestion(view, 'unlockRisk');
   assert.equal(view.state.actions['recovered-device-security-check'].status, 'completed');
@@ -599,7 +599,8 @@ test('H02 recovered possession is authoritative and skips a second provider chec
   const android = content.getQuestion('recovered', 'android');
   assert.equal(iphone.title, 'Do you have the iPhone with you now?');
   assert.equal(android.title, 'Do you have the Android phone with you now?');
-  assert.match(iphone.help, /Do not retrieve it from an unsafe place/);
+  assert.equal(iphone.help, 'Choose Yes only if the phone is physically with you and safe to keep. Do not retrieve it from an unsafe place.');
+  assert.equal(android.help, iphone.help);
   assert.equal(content.getAction('recovered-device-security-check', 'android').officialUrl, null);
   assert.equal(content.getAction('recovered-device-security-check', 'android').requiresExternalReturn, false);
 });
@@ -629,5 +630,74 @@ test('H02 recovered compromised path continues only needed account protection', 
   view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
   assertQuestion(view, 'financialExposure');
   assert.notEqual(view.type, 'complete');
+});
+
+test('M01 official source labels follow the current action, not only the platform', () => {
+  assert.equal(content.officialSourceLabel(content.getAction('apple-play-sound', 'iphone')), 'Apple Find Devices');
+  assert.equal(content.officialSourceLabel(content.getAction('apple-locate-device', 'iphone')), 'Apple Find Devices');
+  assert.equal(content.officialSourceLabel(content.getAction('apple-mark-lost', 'iphone')), 'Apple Find Devices');
+  assert.equal(content.officialSourceLabel(content.getAction('apple-auth-fallback', 'iphone')), 'Apple Account Recovery');
+  assert.equal(content.officialSourceLabel(content.getAction('protect-primary-account', 'iphone')), 'Apple Account');
+  assert.equal(content.officialSourceLabel(content.getAction('google-play-sound', 'android')), 'Google Find Hub');
+  assert.equal(content.officialSourceLabel(content.getAction('google-locate-device', 'android')), 'Google Find Hub');
+  assert.equal(content.officialSourceLabel(content.getAction('google-mark-lost', 'android')), 'Google Find Hub');
+  assert.equal(content.officialSourceLabel(content.getAction('google-auth-fallback', 'android')), 'Google Account Recovery');
+  assert.equal(content.officialSourceLabel(content.getAction('protect-primary-account', 'android')), 'Google Account security');
+  assert.notEqual(content.getAction('apple-auth-fallback', 'iphone').officialSourceLabel, 'Apple Find Devices');
+  assert.notEqual(content.getAction('protect-primary-account', 'iphone').officialSourceLabel, 'Apple Find Devices');
+});
+
+test('M02 known-provider waiting copy names Apple or Google specifically', () => {
+  const appleWait = content.getAction('apple-auth-fallback', 'iphone').boundedOutcomes.find((item) => item.id === 'waiting_for_provider');
+  const googleWait = content.getAction('google-auth-fallback', 'android').boundedOutcomes.find((item) => item.id === 'waiting_for_provider');
+  assert.equal(appleWait.label, 'I am waiting on Apple');
+  assert.equal(googleWait.label, 'I am waiting on Google');
+  assert.equal(appleWait.label.includes('Apple or Google'), false);
+  assert.equal(googleWait.label.includes('Apple or Google'), false);
+});
+
+test('M03 unknown-platform progress stays provider-neutral', () => {
+  const unsureAccount = content.getAction('protect-primary-account', 'unsure');
+  assert.equal(unsureAccount.title, 'Protect the account connected to the missing phone');
+  assert.equal(unsureAccount.officialProvider, null);
+  assert.match(unsureAccount.instruction, /LostPhones will not guess Apple or Google/);
+  assert.equal(/Secure your Apple account/.test(unsureAccount.title + unsureAccount.instruction), false);
+});
+
+test('L02 full recovery plan uses plain outcomes instead of internal workflow labels', () => {
+  assert.equal(content.planStatusText({
+    actionId: 'apple-mark-lost',
+    status: 'blocked',
+    outcome: 'could_not_mark',
+    blockedReason: 'could_not_secure_device'
+  }), 'Could not turn on Lost Mode');
+  assert.equal(content.planStatusText({
+    actionId: 'protect-mobile-line',
+    status: 'blocked',
+    outcome: 'waiting_for_provider',
+    blockedReason: 'waiting_for_provider'
+  }), 'Waiting for the carrier');
+  assert.equal(content.planStatusText({
+    actionId: 'apple-auth-fallback',
+    status: 'blocked',
+    outcome: 'waiting_for_provider',
+    blockedReason: 'waiting_for_provider'
+  }), 'Waiting on Apple');
+  assert.equal(content.planStatusText({
+    actionId: 'google-auth-fallback',
+    status: 'blocked',
+    outcome: 'waiting_for_provider',
+    blockedReason: 'waiting_for_provider'
+  }), 'Waiting on Google');
+  assert.equal(content.planStatusText({
+    actionId: 'report-and-document',
+    status: 'pending'
+  }), 'Not started yet');
+  assert.equal(content.planStatusText({
+    actionId: 'apple-locate-device',
+    status: 'blocked',
+    outcome: 'service_unavailable',
+    blockedReason: 'service_unavailable'
+  }), 'Retry later');
 });
 

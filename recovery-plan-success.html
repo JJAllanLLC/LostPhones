@@ -2,55 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <title>Payment confirmed | LostPhones</title>
+  <title>Download recovery plan | LostPhones</title>
   <meta name="description" content="Download your LostPhones complete recovery and protection plan after a verified test payment.">
   <link rel="stylesheet" href="v2.css">
+  <link rel="stylesheet" href="recovery-shell.css">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
   <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg">
   <link rel="shortcut icon" href="/favicon/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
 </head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header">
-    <div class="site-header-inner">
-      <a class="wordmark" href="/">LostPhones</a>
-      <nav aria-label="Paid download">
-        <ul class="nav-quiet">
-          <li><a href="recovery.html">Return to free plan</a></li>
-          <li><a href="privacy.html">Privacy</a></li>
-        </ul>
-      </nav>
+<body class="emergency-shell paid-success" data-download-state="pending">
+  <a class="skip-link" href="#recovery-app">Skip to download</a>
+  <header class="emergency-header">
+    <div class="emergency-header-inner">
+      <a class="emergency-brand" href="/" aria-label="LostPhones home">
+        <img class="emergency-logo" src="assets/homepage/logo.svg" alt="" width="56" height="56">
+        <span class="emergency-brand-text">
+          <span class="wordmark emergency-brand-name">LostPhones</span>
+          <span class="emergency-brand-tag">The hard part's over. You found us.</span>
+        </span>
+      </a>
+      <div class="emergency-header-actions">
+        <nav class="emergency-nav" id="emergency-nav" aria-label="Paid download">
+          <a href="privacy.html">Privacy</a>
+          <a href="recovery.html">Return to free plan</a>
+        </nav>
+        <button class="emergency-menu-toggle" id="emergency-menu-toggle" type="button" aria-expanded="false" aria-controls="emergency-nav" aria-label="Open menu">
+          <span class="emergency-menu-bars" aria-hidden="true"></span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <main id="main">
-    <section class="panel trust">
-      <p class="kicker">Optional one-time download</p>
-      <h1 class="screen-title" id="download-title" tabindex="-1">Payment confirmed</h1>
-      <p id="download-copy">Your PDF is ready. Keep this private recovery record somewhere safe.</p>
-      <p class="filename">lostphones-recovery-plan.pdf</p>
-      <p id="download-status" class="plan-intro" role="status">Preparing your download…</p>
-      <p class="disclosure">Keep this file private. It may describe your recovery status.</p>
-      <p>Emergency recovery is complete.</p>
-      <div class="stack" id="download-controls">
-        <button class="btn btn-primary" type="button" id="retry-download">Download again</button>
-        <a class="btn btn-primary" href="preparedness.html">Protect My Phone for Next Time</a>
-        <a class="btn btn-secondary" href="/" id="done-for-now">I’m done for now</a>
-        <a class="btn btn-secondary" href="recovery.html">Return to my free plan</a>
+  <div class="recovery-scene">
+    <img class="recovery-scene-img" src="assets/homepage/reassurance-mountains.jpg" alt="" width="1920" height="1080">
+    <p class="recovery-aside recovery-aside-mobile" aria-hidden="true">Get help.<br>Take the right steps.<br>One at a time.</p>
+    <p class="recovery-aside recovery-aside-desktop" aria-hidden="true">Small<br>steps<br>brighter<br>days ahead.</p>
+    <main id="recovery-app">
+      <div class="recovery-card">
+        <div class="paid-download">
+          <p class="kicker action-kicker">Optional one-time download</p>
+          <h1 class="screen-title" id="download-title" tabindex="-1">Checking your download</h1>
+          <p id="download-copy">Preparing your download…</p>
+          <p class="filename" id="download-filename" hidden>lostphones-recovery-plan.pdf</p>
+          <p id="download-status" class="plan-intro" role="status">Preparing your download…</p>
+          <p class="disclosure" id="download-disclosure" hidden>Keep this file private. It may describe your recovery status.</p>
+          <p id="download-complete" hidden>Emergency recovery is complete.</p>
+          <div class="prevention-transition" id="download-controls">
+            <button class="btn btn-primary" type="button" id="retry-download" hidden>Download again</button>
+            <a class="btn btn-primary" href="preparedness.html" id="protect-next">Protect My Phone for Next Time</a>
+            <a class="btn btn-secondary" href="/" id="done-for-now">I’m done for now</a>
+            <a class="btn btn-secondary" href="recovery.html">Return to my free plan</a>
+          </div>
+        </div>
       </div>
-    </section>
-  </main>
+    </main>
+  </div>
 
   <footer class="site-footer">
-    <nav aria-label="Footer">
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="/">Home</a>
-    </nav>
-    <p>© 2026 LostPhones. Operated by JJ ALLAN, LLC.</p>
+    <div class="site-footer-inner">
+      <a class="emergency-brand site-footer-brand" href="/" aria-label="LostPhones home">
+        <img class="emergency-logo" src="assets/homepage/logo.svg" alt="" width="56" height="56">
+        <span class="emergency-brand-text">
+          <span class="emergency-brand-name">LostPhones</span>
+          <span class="emergency-brand-tag">The hard part's over. You found us.</span>
+        </span>
+      </a>
+      <p class="recovery-script" aria-hidden="true">A clearer tomorrow.</p>
+      <div class="site-footer-meta">
+        <nav aria-label="Footer">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+        </nav>
+        <p class="site-footer-copy">© 2026 LostPhones. Operated by <a href="https://jjallanllc.com" rel="noopener noreferrer">JJ ALLAN, LLC</a>.</p>
+      </div>
+    </div>
   </footer>
 
   <script src="analytics-events.js"></script>

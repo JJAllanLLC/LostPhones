@@ -95,12 +95,19 @@
     { id: 'could_not_mark', label: 'I could not mark it lost or lock it' }
   ].concat(SIGN_IN_BLOCKED));
 
-  const AUTH_OUTCOMES = Object.freeze([
-    { id: 'recovered_access', label: 'I recovered access to the account' },
-    { id: 'still_blocked', label: 'I still cannot sign in' },
-    { id: 'waiting_for_provider', label: 'I am waiting on Apple or Google' },
-    { id: 'service_unavailable', label: 'The official service was unavailable' }
-  ]);
+  function authOutcomes(provider) {
+    const waiting = provider === 'Apple'
+      ? 'I am waiting on Apple'
+      : provider === 'Google'
+        ? 'I am waiting on Google'
+        : 'I am waiting on the account provider';
+    return Object.freeze([
+      Object.freeze({ id: 'recovered_access', label: 'I recovered access to the account' }),
+      Object.freeze({ id: 'still_blocked', label: 'I still cannot sign in' }),
+      Object.freeze({ id: 'waiting_for_provider', label: waiting }),
+      Object.freeze({ id: 'service_unavailable', label: 'The official service was unavailable' })
+    ]);
+  }
 
   const PROTECT_ACCOUNT_OUTCOMES = Object.freeze([
     { id: 'secured', label: 'I reviewed and secured the primary account' },
@@ -275,6 +282,16 @@
     })
   ]);
 
+  function officialSourceLabel(action) {
+    if (!action) return 'Official recovery service';
+    if (action.officialSourceLabel) return action.officialSourceLabel;
+    if (action.primaryControlLabel) {
+      return String(action.primaryControlLabel).replace(/^Open\s+/i, '');
+    }
+    if (action.nextServiceName) return action.nextServiceName;
+    return 'Official recovery service';
+  }
+
   function record(action) {
     return Object.freeze(Object.assign({
       lastReviewed: REVIEW.lastReviewed,
@@ -290,10 +307,12 @@
       primaryControlLabel: null,
       leavingLabel: null,
       returnPrompt: null,
-      nextServiceName: null
+      nextServiceName: null,
+      officialSourceLabel: 'Official recovery service'
     }, action, {
       sourceUrl: action.sourceUrl || action.supportSourceUrl || action.officialUrl || null,
-      boundedOutcomes: Object.freeze(action.boundedOutcomes || [])
+      boundedOutcomes: Object.freeze(action.boundedOutcomes || []),
+      officialSourceLabel: officialSourceLabel(action)
     }));
   }
 
@@ -534,7 +553,7 @@
       secondaryLeavingLabel: 'Apple Find Devices opens in a new tab. Keep LostPhones available and return afterward.',
       requiresExternalReturn: true,
       planLane: 'next',
-      boundedOutcomes: AUTH_OUTCOMES
+      boundedOutcomes: authOutcomes('Apple')
     }),
     record({
       actionId: 'google-auth-fallback',
@@ -553,7 +572,7 @@
       returnPrompt: 'When you are back from Google, tell LostPhones whether you recovered access. LostPhones does not assume success from the tab.',
       requiresExternalReturn: true,
       planLane: 'next',
-      boundedOutcomes: AUTH_OUTCOMES
+      boundedOutcomes: authOutcomes('Google')
     }),
     record({
       actionId: 'protect-primary-account',
@@ -946,23 +965,64 @@
     return actions.find((item) => item.actionId === actionId && item.platform === platform) || null;
   }
 
-  function recoveredDeviceNoun(platform) {
-    if (platform === 'iphone') return 'iPhone';
-    if (platform === 'android') return 'Android phone';
-    return 'phone';
-  }
-
   function getQuestion(id, platform) {
     const question = QUESTIONS.find((item) => item.id === id) || null;
     if (!question) return null;
     if (id !== 'recovered') return question;
-    const noun = recoveredDeviceNoun(platform);
+    const help = 'Choose Yes only if the phone is physically with you and safe to keep. Do not retrieve it from an unsafe place.';
+    if (platform === 'iphone') {
+      return Object.freeze({
+        id: question.id,
+        title: 'Do you have the iPhone with you now?',
+        help: help,
+        choices: question.choices
+      });
+    }
+    if (platform === 'android') {
+      return Object.freeze({
+        id: question.id,
+        title: 'Do you have the Android phone with you now?',
+        help: help,
+        choices: question.choices
+      });
+    }
     return Object.freeze({
       id: question.id,
-      title: 'Do you have the ' + noun + ' with you now?',
-      help: 'Choose Yes only if the ' + noun + ' is physically with you and safe to keep. Do not retrieve it from an unsafe place.',
+      title: 'Do you have the phone with you now?',
+      help: help,
       choices: question.choices
     });
+  }
+
+  function planStatusText(item) {
+    if (!item) return 'Not started yet';
+    if (item.status === 'completed') return 'Done';
+    if (item.status === 'active') return 'Current';
+    if (item.status === 'not_applicable') return 'Not needed';
+    if (item.status === 'skipped') return 'Skipped';
+    if (item.status === 'blocked') {
+      const reason = item.blockedReason || item.outcome || '';
+      const actionId = item.actionId || '';
+      if (reason === 'could_not_secure_device' || item.outcome === 'could_not_mark') {
+        return /google/.test(actionId) ? 'Could not lock the phone' : 'Could not turn on Lost Mode';
+      }
+      if (reason === 'waiting_for_provider' || item.outcome === 'waiting_for_provider') {
+        if (actionId === 'protect-mobile-line') return 'Waiting for the carrier';
+        if (actionId === 'protect-financial-accounts') return 'Waiting for a bank or card issuer';
+        if (/google/.test(actionId)) return 'Waiting on Google';
+        if (/apple/.test(actionId)) return 'Waiting on Apple';
+        return 'Waiting on the official service';
+      }
+      if (reason === 'service_unavailable') return 'Retry later';
+      if (reason === 'cannot_access_carrier') return 'Could not reach the carrier';
+      if (reason === 'cannot_sign_in' || reason === 'cannot_receive_verification' || item.outcome === 'still_blocked') {
+        return 'Could not sign in';
+      }
+      if (reason === 'needs_owner') return 'Needs the owner';
+      if (reason === 'unsafe_to_retrieve') return 'Not safe to retrieve';
+      return 'Needs another route';
+    }
+    return 'Not started yet';
   }
 
   function getApprovedOfficialUrls() {
@@ -1000,6 +1060,8 @@
     PLAN_COPY,
     getAction,
     getQuestion,
+    officialSourceLabel,
+    planStatusText,
     getApprovedOfficialUrls,
     isOfficialUrl,
     isManualExternalAction,
