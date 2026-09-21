@@ -1227,6 +1227,114 @@ body.emergency-shell[data-recovery-return="1"] .action-secondary {
   border-top: 0;
 }
 
+body.emergency-shell[data-recovery-complete="1"] #action-progress-head,
+body.emergency-shell[data-recovery-complete="1"] .action-kicker,
+body.emergency-shell[data-recovery-complete="1"] .action-steps,
+body.emergency-shell[data-recovery-complete="1"] #action-instruction,
+body.emergency-shell[data-recovery-complete="1"] .action-caution,
+body.emergency-shell[data-recovery-complete="1"] #action-controls,
+body.emergency-shell[data-recovery-complete="1"] #action-keep-open,
+body.emergency-shell[data-recovery-complete="1"] #leaving-note,
+body.emergency-shell[data-recovery-complete="1"] .action-help-card,
+body.emergency-shell[data-recovery-complete="1"] .progress-rail,
+body.emergency-shell[data-recovery-complete="1"] .status-pill {
+  display: none !important;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .action-reason {
+  max-width: 46ch;
+  margin: 0 0 0.85rem;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .complete-summary {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .complete-status-groups {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0 0 0.95rem;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .complete-status-groups h3 {
+  margin: 0 0 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rc-muted);
+}
+
+body.emergency-shell[data-recovery-complete="1"] .complete-summary-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .complete-summary-list li {
+  padding: 0.18rem 0;
+  border: 0;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: var(--rc-navy);
+}
+
+body.emergency-shell[data-recovery-complete="1"] .complete-more {
+  color: var(--rc-muted);
+  font-size: 0.86rem;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .complete-free-actions {
+  margin: 0 0 0.85rem;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .prevention-transition {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0 0 0.85rem;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .prevention-transition .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .blocker-ack {
+  margin: 0 0 0.85rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid #f0d3a8;
+  border-radius: 16px;
+  background: #fff7ea;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .blocker-ack p {
+  margin: 0 0 0.7rem;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .paid-offer {
+  margin: 0 0 0.95rem;
+  padding: 0.95rem 1rem;
+}
+
+body.emergency-shell[data-recovery-complete="1"] .action-secondary {
+  margin-top: 0.35rem;
+}
+
+@media print {
+  body.emergency-shell .prevention-transition,
+  body.emergency-shell .blocker-ack,
+  body.emergency-shell .paid-offer,
+  body.emergency-shell .action-secondary {
+    display: none !important;
+  }
+}
+
 body.emergency-shell[data-recovery-phase="action"] .outcome-list {
   display: flex;
   flex-direction: column;
@@ -1616,6 +1724,19 @@ body.emergency-shell[data-recovery-return="1"] #return-prompt {
     order: 1;
     padding: 1.15rem 1rem 1.15rem;
     border-radius: 24px;
+    overflow-x: hidden;
+  }
+
+  body.emergency-shell[data-recovery-complete="1"] .action-surface {
+    padding-bottom: 1rem;
+  }
+
+  body.emergency-shell[data-recovery-complete="1"] .complete-summary-list li,
+  body.emergency-shell[data-recovery-complete="1"] .paid-offer,
+  body.emergency-shell[data-recovery-complete="1"] .prevention-transition .btn {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
   }
 
   body.emergency-shell[data-recovery-phase="action"] .progress-rail {
@@ -1834,6 +1955,16 @@ body.emergency-shell[data-recovery-return="1"] #return-prompt {
 }
 
 @media (max-width: 320px) {
+  body.emergency-shell[data-recovery-complete="1"] .action-surface {
+    overflow-x: hidden;
+  }
+
+  body.emergency-shell[data-recovery-complete="1"] .complete-summary-list li,
+  body.emergency-shell[data-recovery-complete="1"] .paid-offer li {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
   body.emergency-shell .emergency-brand-tag {
     white-space: normal;
     max-width: 16ch;

@@ -31,10 +31,14 @@ test('misplaced iPhone found', () => {
   view = logic.recordOutcome(view.state, 'apple-play-sound', 'heard_nearby');
   assert.equal(view.state.awaitingExternalReturnActionId, null);
   assertQuestion(view, 'recovered');
+  assert.equal(view.question.title, 'Do you have the iPhone with you now?');
+  assert.match(view.question.help, /Choose Yes only if the iPhone is physically with you and safe to keep/);
   view = logic.answerQuestion(view.state, 'recovered', 'yes');
-  assertAction(view, 'recovered-device-security-check');
-  view = logic.recordOutcome(view.state, 'recovered-device-security-check', 'in_hand_safe');
   assertQuestion(view, 'unlockRisk');
+  assert.equal(view.state.actions['recovered-device-security-check'].status, 'completed');
+  assert.equal(view.state.actions['recovered-device-security-check'].outcome, 'in_hand_safe');
+  assert.equal(content.getAction('recovered-device-security-check', 'iphone').officialUrl, null);
+  assert.equal(logic.startExternalAction(view.state, 'recovered-device-security-check').ok, false);
   view = logic.answerQuestion(view.state, 'unlockRisk', 'probably_not');
   assertQuestion(view, 'suspiciousActivity');
   view = logic.answerQuestion(view.state, 'suspiciousActivity', 'no');
@@ -149,7 +153,6 @@ test('recovered phone without compromise indicators', () => {
   let view = triage('lost', 'iphone', 'trusted');
   view = logic.recordOutcome(view.state, 'apple-locate-device', 'located_safe');
   view = logic.answerQuestion(view.state, 'recovered', 'yes');
-  view = logic.recordOutcome(view.state, 'recovered-device-security-check', 'in_hand_safe');
   view = logic.answerQuestion(view.state, 'unlockRisk', 'probably_not');
   view = logic.answerQuestion(view.state, 'suspiciousActivity', 'no');
   assert.ok(view.state.status === 'recovered' || view.state.status === 'stabilized');
@@ -160,7 +163,6 @@ test('recovered phone with compromise indicators', () => {
   let view = triage('lost', 'iphone', 'trusted');
   view = logic.recordOutcome(view.state, 'apple-locate-device', 'nearby');
   view = logic.answerQuestion(view.state, 'recovered', 'yes');
-  view = logic.recordOutcome(view.state, 'recovered-device-security-check', 'in_hand_safe');
   view = logic.answerQuestion(view.state, 'unlockRisk', 'yes');
   view = logic.answerQuestion(view.state, 'suspiciousActivity', 'yes');
   assertAction(view, 'protect-primary-account');
@@ -537,7 +539,6 @@ test('H01 recovered and low-risk stabilized journeys keep erase ineligible', () 
   let recovered = triage('lost', 'iphone', 'trusted');
   recovered = logic.recordOutcome(recovered.state, 'apple-locate-device', 'located_safe');
   recovered = logic.answerQuestion(recovered.state, 'recovered', 'yes');
-  recovered = logic.recordOutcome(recovered.state, 'recovered-device-security-check', 'in_hand_safe');
   recovered = logic.answerQuestion(recovered.state, 'unlockRisk', 'probably_not');
   recovered = logic.answerQuestion(recovered.state, 'suspiciousActivity', 'no');
   assert.ok(recovered.state.status === 'recovered' || recovered.state.status === 'stabilized');
@@ -591,5 +592,42 @@ test('H03 find service unavailable defers same-provider tasks and continues inde
   };
   const resumed = logic.evaluate(retry);
   assertAction(resumed, 'apple-locate-device');
+});
+
+test('H02 recovered possession is authoritative and skips a second provider check', () => {
+  const iphone = content.getQuestion('recovered', 'iphone');
+  const android = content.getQuestion('recovered', 'android');
+  assert.equal(iphone.title, 'Do you have the iPhone with you now?');
+  assert.equal(android.title, 'Do you have the Android phone with you now?');
+  assert.match(iphone.help, /Do not retrieve it from an unsafe place/);
+  assert.equal(content.getAction('recovered-device-security-check', 'android').officialUrl, null);
+  assert.equal(content.getAction('recovered-device-security-check', 'android').requiresExternalReturn, false);
+});
+
+test('H02 recovered low-risk path completes emergency recovery', () => {
+  let view = triage('nearby', 'iphone', 'trusted');
+  view = logic.recordOutcome(view.state, 'apple-play-sound', 'heard_nearby');
+  view = logic.answerQuestion(view.state, 'recovered', 'yes');
+  assertQuestion(view, 'unlockRisk');
+  assert.notEqual(view.actionId, 'recovered-device-security-check');
+  view = logic.answerQuestion(view.state, 'unlockRisk', 'probably_not');
+  view = logic.answerQuestion(view.state, 'suspiciousActivity', 'no');
+  assert.equal(view.type, 'complete');
+  assert.equal(view.state.status, 'recovered');
+  assert.equal(view.state.stabilizationStatus, 'stabilized');
+  assert.equal(logic.hasCriticalBlocker(view.state), false);
+});
+
+test('H02 recovered compromised path continues only needed account protection', () => {
+  let view = triage('lost', 'android', 'trusted');
+  view = logic.recordOutcome(view.state, 'google-locate-device', 'nearby');
+  view = logic.answerQuestion(view.state, 'recovered', 'yes');
+  assert.equal(view.question.title, 'Could someone else have unlocked or used it?');
+  view = logic.answerQuestion(view.state, 'unlockRisk', 'yes');
+  view = logic.answerQuestion(view.state, 'suspiciousActivity', 'yes');
+  assertAction(view, 'protect-primary-account');
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  assertQuestion(view, 'financialExposure');
+  assert.notEqual(view.type, 'complete');
 });
 

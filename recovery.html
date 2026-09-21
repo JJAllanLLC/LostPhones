@@ -219,6 +219,40 @@
                   </details>
                 </div>
 
+                <div class="complete-summary" id="complete-summary" hidden>
+                  <div class="complete-status-groups" id="complete-groups"></div>
+                  <div class="stack complete-free-actions">
+                    <button class="btn btn-secondary" type="button" id="print-summary">Print my free summary</button>
+                    <button class="btn btn-secondary" type="button" id="review-erase-slot" hidden>Review erase option</button>
+                  </div>
+                  <div class="prevention-transition" id="prevention-transition">
+                    <a class="btn btn-primary" href="preparedness.html">Protect My Phone for Next Time</a>
+                    <a class="btn btn-secondary" href="/" id="done-for-now">I’m done for now</a>
+                  </div>
+                  <div class="blocker-ack" id="blocker-ack" hidden>
+                    <p id="blocker-ack-copy"></p>
+                    <button class="btn btn-secondary" type="button" id="acknowledge-blocker">I understand this is still unresolved</button>
+                  </div>
+                </div>
+
+                <aside class="paid-offer" id="paid-offer" hidden>
+                  <p class="kicker">Optional one-time download</p>
+                  <h2 id="paid-offer-title">Optional complete recovery PDF</h2>
+                  <p>Keep a private copy of this journey. Your free summary stays available.</p>
+                  <ul>
+                    <li>Personalized recovery record</li>
+                    <li>Remaining and waiting actions</li>
+                    <li>Claim, security, and preparedness checklists</li>
+                    <li>One-page emergency reference</li>
+                  </ul>
+                  <p>No account. One-time purchase.</p>
+                  <div class="stack">
+                    <button class="btn btn-primary" type="button" id="keep-recovery-plan">Download my complete recovery PDF — $8.95</button>
+                    <button class="btn btn-tertiary" type="button" id="dismiss-recovery-plan">No thanks — continue free</button>
+                  </div>
+                  <p id="paid-offer-feedback" hidden></p>
+                </aside>
+
                 <div class="action-secondary">
                   <details class="more-details" id="more-details" open>
                     <summary>
@@ -332,34 +366,6 @@
                   </div>
                 </div>
               </div>
-
-              <div class="complete-summary" id="complete-summary" hidden>
-                <h2 id="complete-heading">You are safer now</h2>
-                <p id="complete-copy">The immediate risk is under control. Here is what is secure and what can wait.</p>
-                <div id="complete-groups"></div>
-                <div class="stack">
-                  <button class="btn btn-secondary" type="button" id="print-summary">Print my free summary</button>
-                  <button class="btn btn-secondary" type="button" id="review-erase-slot" hidden>Review erase option</button>
-                </div>
-              </div>
-
-              <aside class="paid-offer" id="paid-offer" hidden>
-                <p class="kicker">Optional one-time download</p>
-                <h2 id="paid-offer-title">Optional complete recovery PDF</h2>
-                <p>Keep a private copy of this journey. Your free summary stays available.</p>
-                <ul>
-                  <li>Personalized recovery record</li>
-                  <li>Remaining and waiting actions</li>
-                  <li>Claim, security, and preparedness checklists</li>
-                  <li>One-page emergency reference</li>
-                </ul>
-                <p>No account. One-time purchase.</p>
-                <div class="stack">
-                  <button class="btn btn-primary" type="button" id="keep-recovery-plan">Download my complete recovery PDF — $8.95</button>
-                  <button class="btn btn-tertiary" type="button" id="dismiss-recovery-plan">No thanks — continue free</button>
-                </div>
-                <p id="paid-offer-feedback" hidden></p>
-              </aside>
             </div>
 
             <aside class="progress-rail" id="progress-rail" hidden>

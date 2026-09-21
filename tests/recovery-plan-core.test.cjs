@@ -78,9 +78,19 @@ function recoverIphone() {
   let view = triage('nearby', 'iphone', 'trusted');
   view = logic.recordOutcome(view.state, 'apple-play-sound', 'heard_nearby');
   view = logic.answerQuestion(view.state, 'recovered', 'yes');
-  view = logic.recordOutcome(view.state, 'recovered-device-security-check', 'in_hand_safe');
   view = logic.answerQuestion(view.state, 'unlockRisk', 'probably_not');
   view = logic.answerQuestion(view.state, 'suspiciousActivity', 'no');
+  return view;
+}
+
+function failedLostMode() {
+  const locate = 'apple-locate-device';
+  const mark = 'apple-mark-lost';
+  let view = triage('lost', 'iphone', 'trusted');
+  view = logic.recordOutcome(view.state, locate, 'not_found');
+  view = logic.recordOutcome(view.state, mark, 'could_not_mark');
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  view = logic.recordOutcome(view.state, 'protect-mobile-line', 'secured');
   return view;
 }
 
@@ -252,4 +262,57 @@ test('PDF personalization uses the correct article and a three-page US Letter la
     assert.equal(text.includes('apple-mark-lost'), false);
     assert.equal(/a iPhone/.test(text), false);
   }
+});
+
+test('stabilized journeys are offer-eligible and recovered low-risk is eligible', () => {
+  const stabilized = stabilizeIphone();
+  assert.equal(stabilized.type, 'complete');
+  assert.equal(stabilized.state.status, 'stabilized');
+  assert.equal(logic.hasCriticalBlocker(stabilized.state), false);
+  assert.equal(plan.isPaidOfferEligible(stabilized.state), true);
+
+  const recovered = recoverIphone();
+  assert.equal(recovered.state.status, 'recovered');
+  assert.equal(plan.isPaidOfferEligible(recovered.state), true);
+  assert.equal(plan.shouldRenderOffer(recovered.state, false), true);
+});
+
+test('non-critical waiting blockers stay offer-eligible', () => {
+  const blocked = stabilizeWithBlockers();
+  assert.equal(blocked.state.stabilizationStatus, 'stabilized_with_blockers');
+  assert.equal(logic.hasCriticalBlocker(blocked.state), false);
+  assert.equal(plan.isPaidOfferEligible(blocked.state), true);
+});
+
+test('critical blocker hides the paid offer until explicit acknowledgment', () => {
+  const blocked = failedLostMode();
+  assert.equal(blocked.state.status, 'stabilized_with_blockers');
+  assert.equal(logic.hasCriticalBlocker(blocked.state), true);
+  assert.equal(plan.isPaidOfferEligible(blocked.state), false);
+  assert.equal(plan.shouldRenderOffer(blocked.state, false), false);
+  const acked = logic.acknowledgeCriticalBlocker(blocked.state);
+  assert.equal(acked.state.criticalBlockerAcknowledged, true);
+  assert.equal(acked.type, 'complete');
+  assert.equal(plan.isPaidOfferEligible(acked.state), true);
+  assert.equal(plan.shouldRenderOffer(acked.state, false), true);
+});
+
+test('purchase decline and checkout cancel keep the free plan and prevention path', () => {
+  const complete = stabilizeIphone();
+  assert.equal(plan.shouldRenderOffer(complete.state, true), false);
+  assert.equal(plan.isPaidOfferEligible(complete.state), true);
+  const params = plan.buildCheckoutSessionParams(plan.STAGING_ORIGIN, 'price_1Sbsnf6SN9rpiA041qTi745y', 'opaque-token-value');
+  assert.match(params.cancel_url, /\/recovery\.html\?checkout=cancelled$/);
+  const fs = require('fs');
+  const path = require('path');
+  const recoveryHtml = fs.readFileSync(path.join(__dirname, '..', 'recovery.html'), 'utf8');
+  const recoveryJs = fs.readFileSync(path.join(__dirname, '..', 'recovery.js'), 'utf8');
+  const successHtml = fs.readFileSync(path.join(__dirname, '..', 'recovery-plan-success.html'), 'utf8');
+  assert.match(recoveryHtml + recoveryJs, /Emergency recovery is complete/);
+  assert.match(recoveryHtml, /Protect My Phone for Next Time/);
+  assert.match(recoveryHtml, /preparedness\.html/);
+  assert.match(recoveryHtml, /I[’']m done for now/);
+  assert.match(successHtml, /Protect My Phone for Next Time/);
+  assert.match(successHtml, /I[’']m done for now/);
+  assert.match(successHtml, /Emergency recovery is complete/);
 });

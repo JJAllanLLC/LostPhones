@@ -182,7 +182,10 @@
 
     const isTriage = !!questionSteps[step];
     document.body.setAttribute('data-recovery-phase', isTriage || step === 'orientation' ? 'triage' : 'action');
-    if (step !== 'action') document.body.setAttribute('data-recovery-return', '0');
+    if (step !== 'action') {
+      document.body.setAttribute('data-recovery-return', '0');
+      document.body.setAttribute('data-recovery-complete', '0');
+    }
 
     if (isTriage) {
       progress.hidden = false;
@@ -390,8 +393,9 @@
     panel.hidden = false;
     panel.open = !!expanded;
     const statusEl = document.getElementById('journey-status');
+    const complete = document.body.getAttribute('data-recovery-complete') === '1';
     const label = statusLabel(plan.status);
-    if (label) {
+    if (label && !complete) {
       statusEl.hidden = false;
       statusEl.textContent = label;
       statusEl.className = 'status-pill is-secured';
@@ -537,7 +541,7 @@
         return { icon: icons[index] || 'open', title: step, body: '' };
       });
     if (!structured.length) {
-      fallback.hidden = false;
+      fallback.hidden = true;
       fallback.textContent = text || '';
       list.hidden = true;
       return;
@@ -726,41 +730,65 @@
     box.hidden = false;
   }
 
-  function renderCompleteSummary() {
-    const box = document.getElementById('complete-summary');
-    const groups = document.getElementById('complete-groups');
-    const heading = document.getElementById('complete-heading');
-    const copy = document.getElementById('complete-copy');
-    const eraseSlot = document.getElementById('review-erase-slot');
-    const plan = logic.buildPlan(state);
-    const all = [].concat(plan.now, plan.next, plan.later);
-    const secured = all.filter(function (item) { return item.status === 'completed'; });
-    const attention = all.filter(function (item) { return item.status === 'blocked'; });
-    const later = all.filter(function (item) { return item.status === 'pending' || item.status === 'skipped'; });
-    heading.textContent = state.status === 'recovered' ? 'Phone recovered' : 'Immediate risks contained';
-    copy.textContent = state.status === 'stabilized_with_blockers'
-      ? 'You are safer now. A waiting step still needs an official service or the owner.'
-      : 'You are safer now. The immediate risk is under control. Here is what is secure and what can wait.';
-    groups.innerHTML = '';
-    [
-      { title: 'Secured', items: secured },
-      { title: 'Still needs attention', items: attention },
-      { title: 'Can wait', items: later }
-    ].forEach(function (group) {
-      const section = document.createElement('section');
-      const h = document.createElement('h3');
-      h.textContent = group.title;
-      const ul = document.createElement('ul');
-      ul.className = 'plan-list';
-      (group.items.length ? group.items : [{ title: 'None recorded' }]).forEach(function (item) {
+  function completeLede(current) {
+    if (current.status === 'recovered') {
+      return 'The phone is with you. Use the short summary below, then choose what to do next.';
+    }
+    if (current.status === 'stabilized_with_blockers') {
+      return logic.hasCriticalBlocker(current)
+        ? 'A critical step still needs attention. Your free summary stays available.'
+        : 'Immediate risks are contained. A waiting step still needs an official service or the owner.';
+    }
+    return 'Immediate risks are contained. Your free summary is ready.';
+  }
+
+  function appendSummaryGroup(groups, title, items, limit) {
+    const section = document.createElement('section');
+    const h = document.createElement('h3');
+    h.textContent = title;
+    const ul = document.createElement('ul');
+    ul.className = 'plan-list complete-summary-list';
+    const visible = items.slice(0, limit);
+    const remainder = items.length - visible.length;
+    if (!items.length) {
+      const li = document.createElement('li');
+      li.textContent = 'None recorded';
+      ul.appendChild(li);
+    } else {
+      visible.forEach(function (item) {
         const li = document.createElement('li');
         li.textContent = item.title;
         ul.appendChild(li);
       });
-      section.appendChild(h);
-      section.appendChild(ul);
-      groups.appendChild(section);
+      if (remainder > 0) {
+        const li = document.createElement('li');
+        li.className = 'complete-more';
+        li.textContent = '+' + remainder + ' more in the full plan';
+        ul.appendChild(li);
+      }
+    }
+    section.appendChild(h);
+    section.appendChild(ul);
+    groups.appendChild(section);
+  }
+
+  function renderCompleteSummary() {
+    const box = document.getElementById('complete-summary');
+    const groups = document.getElementById('complete-groups');
+    const eraseSlot = document.getElementById('review-erase-slot');
+    const blockerBox = document.getElementById('blocker-ack');
+    const blockerCopy = document.getElementById('blocker-ack-copy');
+    const plan = logic.buildPlan(state);
+    const all = [].concat(plan.now, plan.next, plan.later).filter(function (item) {
+      return item.actionId !== 'recovered-device-security-check';
     });
+    const secured = all.filter(function (item) { return item.status === 'completed'; });
+    const attention = all.filter(function (item) { return item.status === 'blocked'; });
+    const later = all.filter(function (item) { return item.status === 'pending' || item.status === 'skipped'; });
+    groups.innerHTML = '';
+    appendSummaryGroup(groups, 'Secured', secured, 3);
+    appendSummaryGroup(groups, 'Still needs attention', attention, 4);
+    appendSummaryGroup(groups, 'Can wait', later, 3);
     const eraseStatus = state.actions['erase-device-decision'] && state.actions['erase-device-decision'].status;
     const canErase = logic.isEraseAvailable(state) && eraseStatus !== 'completed' && eraseStatus !== 'active';
     if (canErase) {
@@ -779,6 +807,15 @@
       eraseSlot.tabIndex = -1;
       eraseSlot.textContent = 'Review erase option';
       eraseSlot.onclick = null;
+    }
+    const blockers = logic.listCriticalBlockers(state);
+    if (blockerBox && blockerCopy) {
+      if (blockers.length && !state.criticalBlockerAcknowledged) {
+        blockerCopy.textContent = blockers.map(function (item) { return item.copy; }).join(' ');
+        blockerBox.hidden = false;
+      } else {
+        blockerBox.hidden = true;
+      }
     }
     box.hidden = false;
   }
@@ -809,25 +846,40 @@
     document.getElementById('outcome-box').hidden = true;
     complete.hidden = true;
     document.body.setAttribute('data-recovery-return', '0');
+    document.body.setAttribute('data-recovery-complete', '0');
 
     if (!record) {
-      document.getElementById('action-kicker').textContent = 'Summary';
-      setActionTitle(title, statusLabel(state.status) || 'You are safer now');
-      reason.textContent = 'You are safer now. The immediate risk is under control. Here is what is secure and what can wait.';
-      renderSteps('Use the free summary below. Print or save it before considering the optional PDF.');
-      renderCaution('LostPhones still will not ask for passwords, codes, or account details.');
+      document.body.setAttribute('data-recovery-complete', '1');
+      document.getElementById('action-kicker').textContent = 'Finished';
+      setActionTitle(title, 'Emergency recovery is complete.');
+      reason.textContent = completeLede(state);
+      renderSteps('');
+      renderCaution('');
       awaiting.hidden = true;
-      if (moreDetails && wasReturn) moreDetails.open = true;
+      if (moreDetails) {
+        moreDetails.open = false;
+        const summaryStrong = moreDetails.querySelector('.more-details-summary strong');
+        const summarySpan = moreDetails.querySelector('.more-details-summary span');
+        if (summaryStrong) summaryStrong.textContent = 'Full recovery plan';
+        if (summarySpan) summarySpan.textContent = 'Open only if you want every remaining detail.';
+      }
       renderHelp(null);
       renderCompleteSummary();
       renderPrivacy(content.privacyGuidance[state.answers.currentDevice]);
       renderProgress(null, true, null);
-      renderPlan(true);
+      renderPlan(false);
       renderResume();
       renderPaidOffer();
       showScreen('action');
       announce(title.textContent);
       return;
+    }
+
+    if (moreDetails) {
+      const summaryStrong = moreDetails.querySelector('.more-details-summary strong');
+      const summarySpan = moreDetails.querySelector('.more-details-summary span');
+      if (summaryStrong) summaryStrong.textContent = 'More details';
+      if (summarySpan) summarySpan.textContent = 'Helpful information about this step.';
     }
 
     document.getElementById('action-kicker').textContent = 'Current step';
@@ -1137,7 +1189,15 @@
       if (planClient) planClient.dismissOffer();
       hidePaidOffer();
       track('recovery_paid_offer_dismissed', { status: state.stabilizationStatus });
-      announce('Continuing with the free recovery plan.');
+      announce('Continuing with the free recovery plan. You can still protect your phone for next time.');
+    });
+  }
+
+  const acknowledgeBlocker = document.getElementById('acknowledge-blocker');
+  if (acknowledgeBlocker) {
+    acknowledgeBlocker.addEventListener('click', function () {
+      applyView(logic.acknowledgeCriticalBlocker(state), true);
+      announce('Remaining critical step noted. The optional plan is available if you want it.');
     });
   }
 

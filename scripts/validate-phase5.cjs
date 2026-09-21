@@ -80,6 +80,16 @@ if (!/Continue later/.test(recoveryHtml)) fail('Resume controls must sit behind 
 if (!/View full recovery plan/.test(recoveryHtml)) fail('Detailed plan disclosure is missing.');
 if (!/I could not complete this/.test(recoveryHtml)) fail('Outcome exception disclosure is missing.');
 if (!/Print my free summary/.test(recoveryHtml)) fail('Free print control is missing.');
+if (!/Emergency recovery is complete/.test(recoveryHtml + recoveryJs)) fail('Completion boundary copy is missing.');
+if (!/Protect My Phone for Next Time/.test(recoveryHtml) || !/href="preparedness\.html"/.test(recoveryHtml)) {
+  fail('Prevention transition must enter preparedness without restarting from the homepage.');
+}
+if (!/I[’']m done for now/.test(recoveryHtml)) fail('I’m done for now finish choice is missing.');
+if (!/I understand this is still unresolved/.test(recoveryHtml)) fail('Critical-blocker acknowledgment control is missing.');
+if (!/renderPlan\(false\)/.test(recoveryJs)) fail('Complete screen must keep the full plan collapsed.');
+if (!/criticalBlockerAcknowledged/.test(recoveryJs + recoveryHtml) && !/acknowledgeCriticalBlocker/.test(recoveryJs)) {
+  fail('Critical-blocker acknowledgment must persist on recovery state.');
+}
 if (!/Optional complete recovery PDF/.test(recoveryHtml)) fail('Optional offer title is missing.');
 if (!/Download my complete recovery PDF — \$8\.95/.test(recoveryHtml)) fail('Offer CTA is missing.');
 if (!/No thanks — continue free/.test(recoveryHtml)) fail('Offer dismiss copy is missing.');
@@ -129,6 +139,9 @@ if (!/Ask your carrier whether your phone supports an eSIM/.test(preparednessCon
 }
 
 if (!/Payment confirmed/.test(successHtml)) fail('Paid success heading is missing.');
+if (!/Protect My Phone for Next Time/.test(successHtml) || !/I[’']m done for now/.test(successHtml)) {
+  fail('Paid success page must keep the prevention transition.');
+}
 if (!/lostphones-recovery-plan\.pdf/.test(successHtml + successJs)) fail('PDF filename cue is missing.');
 if (!/Download again/.test(successHtml)) fail('Persistent Download again control is missing.');
 if (!/replaceState/.test(successJs) || !/\/api\/recovery-plan-pdf/.test(successJs)) {

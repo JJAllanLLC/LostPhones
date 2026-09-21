@@ -114,6 +114,7 @@
     'privacyMode',
     'blockedReason',
     'eraseAcknowledged',
+    'criticalBlockerAcknowledged',
     'createdAt',
     'updatedAt',
     'expiresAt'
@@ -173,6 +174,7 @@
       privacyMode: 'memory-only',
       blockedReason: null,
       eraseAcknowledged: false,
+      criticalBlockerAcknowledged: false,
       createdAt: timestamp,
       updatedAt: timestamp,
       expiresAt: timestamp + SESSION_TTL_SECONDS * 1000

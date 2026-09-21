@@ -108,7 +108,9 @@
     const validated = schema.validatePersistedState(state);
     if (!validated.ok) return false;
     const assessed = logic.assessStabilization(validated.state);
-    return ELIGIBLE_STATUSES.indexOf(assessed.state.stabilizationStatus) !== -1;
+    if (ELIGIBLE_STATUSES.indexOf(assessed.state.stabilizationStatus) === -1) return false;
+    if (logic.hasCriticalBlocker(validated.state) && !validated.state.criticalBlockerAcknowledged) return false;
+    return true;
   }
 
   function shouldRenderOffer(state, dismissed) {

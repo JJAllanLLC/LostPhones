@@ -187,10 +187,10 @@
     }),
     Object.freeze({
       id: 'recovered',
-      title: 'Do you have the phone in your possession?',
-      help: 'Only say yes if you physically have it and can keep it. Do not retrieve it from an unsafe place.',
+      title: 'Do you have the phone with you now?',
+      help: 'Choose Yes only if the phone is physically with you and safe to keep. Do not retrieve it from an unsafe place.',
       choices: Object.freeze([
-        Object.freeze({ id: 'yes', label: 'Yes, I have it' }),
+        Object.freeze({ id: 'yes', label: 'Yes' }),
         Object.freeze({ id: 'no', label: 'No, it is still missing' })
       ])
     }),
@@ -819,18 +819,18 @@
       actionId: 'recovered-device-security-check',
       platform: 'iphone',
       applicableSituations: ['nearby', 'lost', 'stolen', 'unsure'],
-      applicableConditions: 'When the person says the iPhone is found. Confirms safe physical possession. Never encourages retrieval from an unsafe location.',
-      title: 'Confirm you have the iPhone and it is safe to keep',
-      reason: 'If the iPhone is back, stop missing-phone steps. Confirm it is in your hands in a safe place before reversing Lost Mode or checking for misuse.',
-      instruction: 'Only continue if you physically have the iPhone and can keep it. If it is in an unsafe place, leave it and return to safety steps. If you have it, you can later turn off Lost Mode in Apple Find Devices.',
+      applicableConditions: 'Completed automatically when the person confirms the iPhone is physically with them and safe to keep. Does not reopen Apple Find Devices to prove possession.',
+      title: 'The iPhone is with you and safe to keep',
+      reason: 'If the iPhone is back in your hands in a safe place, stop missing-phone steps and check only whether account protection is still needed.',
+      instruction: 'Choose Yes only if the iPhone is physically with you and safe to keep. Do not retrieve it from an unsafe place. LostPhones will not open Apple Find Devices again just to prove possession.',
       caution: 'Never retrieve a phone from an unsafe location.',
-      officialProvider: 'Apple',
-      officialUrl: OFFICIAL_URLS.appleFind,
+      officialProvider: null,
+      officialUrl: null,
       supportSourceUrl: OFFICIAL_URLS.appleLostSupport,
-      primaryControlLabel: 'Open Apple Find Devices',
-      leavingLabel: 'If you need to turn off Lost Mode, Apple Find Devices opens in a new tab. Keep LostPhones available and return afterward.',
-      returnPrompt: 'When you are back, LostPhones will ask whether anyone else may have used the iPhone.',
-      requiresExternalReturn: true,
+      primaryControlLabel: null,
+      leavingLabel: null,
+      returnPrompt: null,
+      requiresExternalReturn: false,
       planLane: 'now',
       boundedOutcomes: RECOVERED_CHECK_OUTCOMES
     }),
@@ -838,18 +838,18 @@
       actionId: 'recovered-device-security-check',
       platform: 'android',
       applicableSituations: ['nearby', 'lost', 'stolen', 'unsure'],
-      applicableConditions: 'When the person says the Android phone is found. Confirms safe physical possession. Never encourages retrieval from an unsafe location.',
-      title: 'Confirm you have the phone and it is safe to keep',
-      reason: 'If the phone is back, stop missing-phone steps. Confirm it is in your hands in a safe place before reversing lock settings or checking for misuse.',
-      instruction: 'Only continue if you physically have the phone and can keep it. If it is in an unsafe place, leave it and return to safety steps. If you have it, you can later turn off lock settings in Google Find Hub.',
+      applicableConditions: 'Completed automatically when the person confirms the Android phone is physically with them and safe to keep. Does not reopen Google Find Hub to prove possession.',
+      title: 'The Android phone is with you and safe to keep',
+      reason: 'If the phone is back in your hands in a safe place, stop missing-phone steps and check only whether account protection is still needed.',
+      instruction: 'Choose Yes only if the Android phone is physically with you and safe to keep. Do not retrieve it from an unsafe place. LostPhones will not open Google Find Hub again just to prove possession.',
       caution: 'Never retrieve a phone from an unsafe location.',
-      officialProvider: 'Google',
-      officialUrl: OFFICIAL_URLS.googleFind,
+      officialProvider: null,
+      officialUrl: null,
       supportSourceUrl: OFFICIAL_URLS.googleLostSupport,
-      primaryControlLabel: 'Open Google Find Hub',
-      leavingLabel: 'If you need to turn off lock settings, Google Find Hub opens in a new tab. Keep LostPhones available and return afterward.',
-      returnPrompt: 'When you are back, LostPhones will ask whether anyone else may have used the phone.',
-      requiresExternalReturn: true,
+      primaryControlLabel: null,
+      leavingLabel: null,
+      returnPrompt: null,
+      requiresExternalReturn: false,
       planLane: 'now',
       boundedOutcomes: RECOVERED_CHECK_OUTCOMES
     }),
@@ -946,8 +946,23 @@
     return actions.find((item) => item.actionId === actionId && item.platform === platform) || null;
   }
 
-  function getQuestion(id) {
-    return QUESTIONS.find((item) => item.id === id) || null;
+  function recoveredDeviceNoun(platform) {
+    if (platform === 'iphone') return 'iPhone';
+    if (platform === 'android') return 'Android phone';
+    return 'phone';
+  }
+
+  function getQuestion(id, platform) {
+    const question = QUESTIONS.find((item) => item.id === id) || null;
+    if (!question) return null;
+    if (id !== 'recovered') return question;
+    const noun = recoveredDeviceNoun(platform);
+    return Object.freeze({
+      id: question.id,
+      title: 'Do you have the ' + noun + ' with you now?',
+      help: 'Choose Yes only if the ' + noun + ' is physically with you and safe to keep. Do not retrieve it from an unsafe place.',
+      choices: question.choices
+    });
   }
 
   function getApprovedOfficialUrls() {

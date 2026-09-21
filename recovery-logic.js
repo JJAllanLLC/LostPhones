@@ -358,7 +358,7 @@
       ok: true,
       type: 'question',
       questionId: questionId,
-      question: content.getQuestion(questionId),
+      question: content.getQuestion(questionId, next.answers.platform),
       state: next,
       action: null
     };
@@ -400,6 +400,66 @@
       state: next,
       eraseAvailable: isEraseAvailable(next)
     };
+  }
+
+  function markPossessionConfirmed(state) {
+    if (!state || state.answers.recovered !== 'yes') return;
+    state.answers.safety = 'safe';
+    markAction(state, 'recovered-device-security-check', {
+      status: 'completed',
+      outcome: 'in_hand_safe',
+      blockedReason: null
+    });
+  }
+
+  function isCriticalAccountBlock(reason) {
+    return reason === 'cannot_sign_in' || reason === 'cannot_receive_verification';
+  }
+
+  function listCriticalBlockers(state) {
+    const snapshot = state || createInitialState();
+    const platform = snapshot.answers.platform || 'unsure';
+    const items = [];
+    const mark = markLostId(platform);
+    if (mark && isBlocked(snapshot, mark) && actionRecord(snapshot, mark).blockedReason === 'could_not_secure_device') {
+      const action = content.getAction(mark, platform) || content.getAction(mark, 'unsure');
+      items.push({
+        actionId: mark,
+        title: action ? action.title : mark,
+        copy: content.BLOCKED_REASON_COPY.could_not_secure_device
+      });
+    }
+    if (needsPrimaryAccount(snapshot) && isBlocked(snapshot, 'protect-primary-account') && isCriticalAccountBlock(actionRecord(snapshot, 'protect-primary-account').blockedReason)) {
+      const action = content.getAction('protect-primary-account', platform) || content.getAction('protect-primary-account', 'unsure');
+      const reason = actionRecord(snapshot, 'protect-primary-account').blockedReason;
+      items.push({
+        actionId: 'protect-primary-account',
+        title: action ? action.title : 'protect-primary-account',
+        copy: content.BLOCKED_REASON_COPY[reason] || content.BLOCKED_REASON_COPY.cannot_sign_in
+      });
+    }
+    const auth = authFallbackId(platform);
+    if (auth && isBlocked(snapshot, auth) && isCriticalAccountBlock(actionRecord(snapshot, auth).blockedReason)) {
+      const action = content.getAction(auth, platform) || content.getAction(auth, 'unsure');
+      const reason = actionRecord(snapshot, auth).blockedReason;
+      items.push({
+        actionId: auth,
+        title: action ? action.title : auth,
+        copy: content.BLOCKED_REASON_COPY[reason] || content.BLOCKED_REASON_COPY.cannot_sign_in
+      });
+    }
+    return items;
+  }
+
+  function hasCriticalBlocker(state) {
+    return listCriticalBlockers(state).length > 0;
+  }
+
+  function acknowledgeCriticalBlocker(state) {
+    const next = clone(state || createInitialState());
+    next.criticalBlockerAcknowledged = true;
+    next.updatedAt = now();
+    return evaluate(next);
   }
 
   function applicableProtectionComplete(state, actionId, needed) {
@@ -485,9 +545,7 @@
       if (isOpen(next, id) && statusOf(next, id) === 'pending') setNotApplicable(next, id);
     });
 
-    if (isOpen(next, 'recovered-device-security-check')) {
-      return actionView(next, 'recovered-device-security-check');
-    }
+    markPossessionConfirmed(next);
 
     if (next.answers.unlockRisk == null) return questionView(next, 'unlockRisk');
     if (next.answers.suspiciousActivity == null) return questionView(next, 'suspiciousActivity');
@@ -842,6 +900,7 @@
       ['apple-play-sound', 'google-play-sound', 'apple-locate-device', 'google-locate-device', 'erase-device-decision'].forEach((id) => {
         if (statusOf(next, id) === 'pending') setNotApplicable(next, id);
       });
+      markPossessionConfirmed(next);
     }
 
     if (questionId === 'currentDevice') {
@@ -1114,6 +1173,9 @@
     isEraseAvailable,
     reviewErase,
     assessStabilization,
+    hasCriticalBlocker,
+    listCriticalBlockers,
+    acknowledgeCriticalBlocker,
     clone
   };
 });
