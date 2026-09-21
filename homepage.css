@@ -58,7 +58,7 @@ body.home .hp-header {
   z-index: 30;
   background: rgba(244, 248, 253, 0.96);
   border-bottom: 0;
-  padding: 1.25rem 1.25rem 1.05rem;
+  padding: 1.05rem 1.25rem 0.95rem;
 }
 
 body.home .hp-header-inner,
@@ -80,38 +80,38 @@ body.home .hp-header-inner {
 body.home .hp-brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.72rem;
   text-decoration: none;
   color: inherit;
   min-height: 44px;
 }
 
 body.home .hp-logo {
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   flex: 0 0 auto;
 }
 
 body.home .hp-brand-text {
   display: flex;
   flex-direction: column;
-  gap: 0.12rem;
+  gap: 0.08rem;
 }
 
 body.home .hp-brand-name {
-  font-size: 1.62rem;
+  font-size: 1.72rem;
   font-weight: 700;
-  letter-spacing: -0.038em;
-  line-height: 1.02;
+  letter-spacing: -0.04em;
+  line-height: 1;
   color: var(--hp-ink);
 }
 
 body.home .hp-brand-tag {
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   color: var(--hp-muted);
   font-weight: 400;
   letter-spacing: 0;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
 body.home .hp-menu-toggle {
@@ -196,13 +196,15 @@ body.home .hp-btn {
   letter-spacing: -0.018em;
 }
 
-body.home .hp-btn-header {
+body.home a.hp-btn-header {
   background: var(--hp-blue);
   color: #fff;
-  min-height: 42px;
-  padding: 0.48rem 1.15rem;
-  font-size: 0.92rem;
-  border-radius: 11px;
+  min-height: 40px;
+  padding: 0.42rem 1.2rem;
+  font-size: 0.94rem;
+  font-weight: 600;
+  border-radius: 10px;
+  gap: 0.45rem;
 }
 
 body.home .hp-btn-primary {
@@ -225,8 +227,11 @@ body.home .hp-btn-outline {
 }
 
 body.home .hp-btn-header:hover,
-body.home .hp-btn-primary:hover {
+body.home .hp-btn-primary:hover,
+body.home a.hp-btn-header:hover,
+body.home a.hp-btn-primary:hover {
   background: var(--hp-blue-hover);
+  color: #fff;
 }
 
 body.home .hp-btn-outline:hover {
@@ -237,8 +242,8 @@ body.home .hp-btn-outline:hover {
 body.home .hp-hero {
   position: relative;
   overflow: hidden;
-  padding: 0.2rem 0 1.8rem;
-  min-height: 34rem;
+  padding: 0.15rem 0 1.5rem;
+  min-height: 38rem;
 }
 
 body.home .hp-hero-scene {
@@ -252,8 +257,8 @@ body.home .hp-hero-scene {
 body.home .hp-hero-scene img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: 64% 58%;
+  object-fit: contain;
+  object-position: right center;
   border-radius: 0;
 }
 
@@ -264,12 +269,11 @@ body.home .hp-hero::after {
   background:
     linear-gradient(90deg,
       var(--hp-bg) 0%,
-      var(--hp-bg) 24%,
-      rgba(244, 248, 253, 0.78) 34%,
-      rgba(244, 248, 253, 0.28) 46%,
-      rgba(244, 248, 253, 0.05) 58%,
-      transparent 70%),
-    linear-gradient(180deg, rgba(244, 248, 253, 0.22) 0%, transparent 12%, transparent 92%, var(--hp-bg) 100%);
+      var(--hp-bg) 26%,
+      rgba(244, 248, 253, 0.58) 36%,
+      rgba(244, 248, 253, 0.16) 48%,
+      transparent 62%),
+    linear-gradient(180deg, rgba(244, 248, 253, 0.08) 0%, transparent 10%, transparent 94%, var(--hp-bg) 100%);
   pointer-events: none;
 }
 
@@ -283,12 +287,12 @@ body.home .hp-hero-inner {
     "rest visual";
   gap: 0 0.5rem;
   align-items: start;
-  min-height: 34rem;
+  min-height: 38rem;
 }
 
 body.home .hp-hero-copy {
   grid-area: copy;
-  padding-top: 2.6rem;
+  padding-top: 2.1rem;
 }
 
 body.home .hp-hero-visual { grid-area: visual; }
@@ -309,12 +313,16 @@ body.home .hp-eyebrow {
 
 body.home .hp-hero h1 {
   margin: 0 0 1rem;
-  color: var(--hp-blue);
-  font-size: clamp(2.15rem, 3.4vw, 3.05rem);
+  color: var(--hp-navy);
+  font-size: clamp(2.1rem, 3.25vw, 2.95rem);
   line-height: 1.14;
   letter-spacing: -0.034em;
   font-weight: 700;
   max-width: 14ch;
+}
+
+body.home .hp-hero-lead {
+  color: var(--hp-blue);
 }
 
 body.home .hp-lede {
@@ -354,8 +362,19 @@ body.home .hp-trust li {
 }
 
 body.home .hp-trust li + li {
-  padding-left: 1.15rem;
-  border-left: 1px solid rgba(183, 198, 220, 0.7);
+  padding-left: 1.2rem;
+  border-left: 0;
+  position: relative;
+}
+
+body.home .hp-trust li + li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  width: 1px;
+  background: rgba(183, 198, 220, 0.85);
 }
 
 body.home .hp-trust strong {
@@ -392,7 +411,7 @@ body.home .hp-trust-brands svg {
 
 body.home .hp-hero-visual {
   position: relative;
-  min-height: 32rem;
+  min-height: 36rem;
 }
 
 body.home .hp-phone {
@@ -407,12 +426,12 @@ body.home .hp-script {
 
 body.home .hp-script-hero {
   position: absolute;
-  right: 1.25%;
-  top: 12%;
-  width: 7.2rem;
+  right: 1.75%;
+  top: 13%;
+  width: 6.8rem;
   margin: 0;
   color: #f7fbff;
-  font-size: 1.1rem;
+  font-size: 1.02rem;
   transform: rotate(13deg);
   text-shadow: 0 6px 16px rgba(12, 28, 64, 0.32);
   z-index: 2;
@@ -752,7 +771,7 @@ body.home .hp-copyright a {
   }
 
   body.home .hp-hero-inner {
-    min-height: 32rem;
+    min-height: 34rem;
     grid-template-columns: minmax(0, 1fr) minmax(240px, 0.9fr);
   }
 
@@ -825,8 +844,8 @@ body.home .hp-copyright a {
   }
 
   body.home .hp-hero-scene {
-    width: 100%;
-    height: 52%;
+    width: 72%;
+    height: 56%;
     left: auto;
     right: 0;
     inset: 0 0 auto auto;
@@ -834,7 +853,8 @@ body.home .hp-copyright a {
 
   body.home .hp-hero-scene img {
     border-radius: 0;
-    object-position: 72% 42%;
+    object-fit: cover;
+    object-position: 78% 42%;
   }
 
   body.home .hp-hero::after {
@@ -904,12 +924,14 @@ body.home .hp-copyright a {
   body.home .hp-trust li {
     align-items: center;
     padding: 0;
-    border-left: 0;
   }
 
   body.home .hp-trust li + li {
     padding-left: 0;
-    border-left: 0;
+  }
+
+  body.home .hp-trust li + li::before {
+    display: none;
   }
 
   body.home .hp-btn-primary {
@@ -990,7 +1012,7 @@ body.home .hp-copyright a {
 
   body.home .hp-hero,
   body.home .hp-hero-inner {
-    min-height: 34rem;
+    min-height: 38rem;
   }
 }
 
