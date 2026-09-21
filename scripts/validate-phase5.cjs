@@ -175,9 +175,26 @@ if (!/min-height: 48px/.test(recoveryCss) || !/min-height: 44px/.test(recoveryCs
 }
 
 if (!/Build a five-minute phone safety plan/.test(preparednessHtml)) fail('Preparedness framing copy is missing.');
-if (!/Optional product ideas/.test(preparednessJs)) fail('Recommendations must sit under Optional product ideas.');
-if (!/needs_setup/.test(preparednessJs) || !/results-overview/.test(preparednessHtml)) {
-  fail('Preparedness overview ordering is missing.');
+if (!/Recommended next steps/.test(preparednessHtml + preparednessJs)) {
+  fail('Official guidance must sit under Recommended next steps.');
+}
+if (!/Optional products/.test(preparednessHtml + preparednessJs)) {
+  fail('Affiliate items must sit under Optional products.');
+}
+if (/Optional product ideas/.test(preparednessJs + preparednessHtml)) {
+  fail('Rejected Optional product ideas heading must not appear.');
+}
+if (!/showAmazonDisclosure/.test(preparednessJs) || !/PAGE_DISCLOSURE/.test(preparednessJs)) {
+  fail('Amazon disclosure must render only when an affiliate recommendation is visible.');
+}
+if (!/not_applicable/.test(preparednessJs) || !/Not applicable/.test(preparednessContent)) {
+  fail('Travel Not applicable must remain a distinct status.');
+}
+if (!/id: 'both'/.test(preparednessContent) || !/id: 'all'/.test(preparednessContent) || !/id: 'some'/.test(preparednessContent)) {
+  fail('Protection and account questions must use combined truthful choices.');
+}
+if (!/needs_setup/.test(preparednessJs) || !/results-overview/.test(preparednessHtml) || !/first-action/.test(preparednessHtml)) {
+  fail('Preparedness results must lead with an ordered first action and overview.');
 }
 if (!/Ask your carrier whether your phone supports an eSIM/.test(preparednessContent)) {
   fail('Inactive travel copy is missing.');

@@ -13,17 +13,6 @@
   const schema = schemaDep || (typeof require === 'function' ? require('./preparedness-state-schema.js') : null);
   const registry = registryDep || (typeof require === 'function' ? require('./preparedness-recommendations.js') : null);
 
-  const YES_NO_MAP = Object.freeze({
-    yes: 'protected',
-    no: 'needs_setup',
-    not_sure: 'not_sure'
-  });
-  const TRAVEL_MAP = Object.freeze({
-    yes: 'protected',
-    not_needed_now: 'protected',
-    no: 'needs_setup',
-    not_sure: 'not_sure'
-  });
   const QUESTION_ORDER = Object.freeze([
     'platform',
     'screenProtection',
@@ -31,21 +20,53 @@
     'passwordSecurity',
     'travelConnectivity'
   ]);
+  const RISK_ORDER = Object.freeze([
+    'password_security',
+    'cloud_backup',
+    'screen_protection',
+    'travel_connectivity'
+  ]);
+  const KIND_ORDER = Object.freeze(['needs_setup', 'not_sure', 'protected', 'not_applicable']);
 
   function clone(state) {
     return JSON.parse(JSON.stringify(state));
   }
 
-  function mapYesNo(value) {
-    return YES_NO_MAP[value] || null;
+  function mapScreen(value) {
+    if (value === 'both') return 'protected';
+    if (value === 'some' || value === 'neither') return 'needs_setup';
+    if (value === 'not_sure') return 'not_sure';
+    return null;
+  }
+
+  function mapBackup(value) {
+    if (value === 'yes') return 'protected';
+    if (value === 'no') return 'needs_setup';
+    if (value === 'not_sure') return 'not_sure';
+    return null;
+  }
+
+  function mapPassword(value) {
+    if (value === 'all') return 'protected';
+    if (value === 'some' || value === 'none') return 'needs_setup';
+    if (value === 'not_sure') return 'not_sure';
+    return null;
+  }
+
+  function mapTravel(value) {
+    if (value === 'yes') return 'protected';
+    if (value === 'not_applicable') return 'not_applicable';
+    if (value === 'no') return 'needs_setup';
+    if (value === 'not_sure') return 'not_sure';
+    return null;
   }
 
   function mapResults(state) {
     const next = clone(state);
-    next.results.screen_protection = mapYesNo(next.answers.screenProtection);
-    next.results.cloud_backup = mapYesNo(next.answers.cloudBackup);
-    next.results.password_security = mapYesNo(next.answers.passwordSecurity);
-    next.results.travel_connectivity = TRAVEL_MAP[next.answers.travelConnectivity] || null;
+    next.results.screen_protection = mapScreen(next.answers.screenProtection);
+    next.results.cloud_backup = mapBackup(next.answers.cloudBackup);
+    next.results.password_security = mapPassword(next.answers.passwordSecurity);
+    next.results.travel_connectivity = mapTravel(next.answers.travelConnectivity);
     return next;
   }
 
@@ -67,6 +88,34 @@
     return registry.displayableRecords(recommendationIdsFor(state));
   }
 
+  function splitRecommendations(state) {
+    const displayable = displayableRecommendations(state);
+    const official = displayable.filter((record) => record.commercialType === 'none');
+    const products = displayable.filter((record) => record.commercialType === 'amazon_associate');
+    return {
+      official: official,
+      products: products,
+      showAmazonDisclosure: products.length > 0
+    };
+  }
+
+  function leadCategory(state) {
+    const results = state.results || {};
+    for (let k = 0; k < KIND_ORDER.length; k += 1) {
+      const kind = KIND_ORDER[k];
+      for (let i = 0; i < RISK_ORDER.length; i += 1) {
+        const id = RISK_ORDER[i];
+        if (results[id] === kind) return { categoryId: id, kind: kind };
+      }
+    }
+    return null;
+  }
+
+  function remainingCategories(state, leadId) {
+    const results = state.results || {};
+    return RISK_ORDER.filter((id) => id !== leadId && (results[id] === 'needs_setup' || results[id] === 'not_sure'));
+  }
+
   function nextQuestion(state) {
     if (!state.platform) return 'platform';
     for (let i = 1; i < QUESTION_ORDER.length; i += 1) {
@@ -86,11 +135,16 @@
       return { ok: true, type: 'question', questionId: questionId, state: current };
     }
     current.step = 'results';
+    const split = splitRecommendations(current);
     return {
       ok: true,
       type: 'results',
       state: current,
-      recommendationIds: recommendationIdsFor(current)
+      recommendationIds: recommendationIdsFor(current),
+      lead: leadCategory(current),
+      official: split.official,
+      products: split.products,
+      showAmazonDisclosure: split.showAmazonDisclosure
     };
   }
 
@@ -117,10 +171,14 @@
 
   return {
     QUESTION_ORDER,
+    RISK_ORDER,
     clone,
     mapResults,
     recommendationIdsFor,
     displayableRecommendations,
+    splitRecommendations,
+    leadCategory,
+    remainingCategories,
     evaluate,
     answerQuestion,
     createInitialState: schema.createInitialState,

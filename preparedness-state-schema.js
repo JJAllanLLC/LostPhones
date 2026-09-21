@@ -7,7 +7,7 @@
     global.LostPhonesPreparednessSchema = api;
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
-  const SCHEMA_VERSION = 1;
+  const SCHEMA_VERSION = 2;
   const ALLOWED_FIELDS = Object.freeze([
     'schemaVersion',
     'step',
@@ -40,9 +40,11 @@
   ]);
   const ENUMS = Object.freeze({
     platform: Object.freeze(['iphone', 'android', 'other', 'not_sure', null]),
-    yesNoUnsure: Object.freeze(['yes', 'no', 'not_sure', null]),
-    travel: Object.freeze(['yes', 'no', 'not_needed_now', 'not_sure', null]),
-    result: Object.freeze(['protected', 'needs_setup', 'not_sure', null])
+    screenProtection: Object.freeze(['both', 'some', 'neither', 'not_sure', null]),
+    cloudBackup: Object.freeze(['yes', 'no', 'not_sure', null]),
+    passwordSecurity: Object.freeze(['all', 'some', 'none', 'not_sure', null]),
+    travel: Object.freeze(['yes', 'no', 'not_applicable', 'not_sure', null]),
+    result: Object.freeze(['protected', 'needs_setup', 'not_sure', 'not_applicable', null])
   });
 
   function isAllowed(list, value) {
@@ -98,13 +100,13 @@
     if (unknownKeys(input.answers, ANSWER_FIELDS).length) {
       return { ok: false, error: 'unknown-field' };
     }
-    if (!isAllowed(ENUMS.yesNoUnsure, input.answers.screenProtection)) {
+    if (!isAllowed(ENUMS.screenProtection, input.answers.screenProtection)) {
       return { ok: false, error: 'invalid-answer' };
     }
-    if (!isAllowed(ENUMS.yesNoUnsure, input.answers.cloudBackup)) {
+    if (!isAllowed(ENUMS.cloudBackup, input.answers.cloudBackup)) {
       return { ok: false, error: 'invalid-answer' };
     }
-    if (!isAllowed(ENUMS.yesNoUnsure, input.answers.passwordSecurity)) {
+    if (!isAllowed(ENUMS.passwordSecurity, input.answers.passwordSecurity)) {
       return { ok: false, error: 'invalid-answer' };
     }
     if (!isAllowed(ENUMS.travel, input.answers.travelConnectivity)) {

@@ -126,11 +126,20 @@
 
         <section class="screen" id="screen-results" data-step="results" hidden>
           <h1 class="screen-title" id="results-title" tabindex="-1">Your plan is ready</h1>
-          <p id="results-intro">Here is what is protected, what to verify, and what to set up next.</p>
+          <p id="results-intro">Start with the highest-risk next action, then follow the remaining steps.</p>
           <p class="kicker" id="results-summary"></p>
+          <article class="first-action" id="first-action"></article>
+          <section class="plan-section" id="recommended-next" hidden>
+            <h2>Recommended next steps</h2>
+            <div id="recommended-next-list"></div>
+          </section>
+          <section class="plan-section" id="optional-products" hidden>
+            <h2>Optional products</h2>
+            <div id="optional-products-list"></div>
+          </section>
+          <h2 class="meta-label" id="areas-heading">Your areas</h2>
           <div class="overview-list" id="results-overview"></div>
-          <div id="results-list"></div>
-          <p class="disclosure" id="page-disclosure"></p>
+          <p class="disclosure" id="page-disclosure" hidden></p>
           <div class="flow-nav">
             <button class="btn btn-secondary" type="button" data-action="back">Back</button>
             <a class="btn btn-primary" href="recovery.html">I need emergency recovery</a>

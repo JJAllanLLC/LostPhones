@@ -13,6 +13,7 @@
       answerId: 'screenProtection',
       title: 'Screen protection',
       protectedCopy: 'Your phone already has a case and an undamaged screen protector.',
+      mixedCopy: 'Finish the missing piece: a case, a screen protector, or both.',
       notSureCopy: 'Check this item when you can. LostPhones is not recommending a product here.',
       needsSetupCopy: 'Add a protective case and an undamaged screen protector.',
       missingCopy: 'Confirm whether this phone has a protective case and an undamaged screen protector.'
@@ -30,16 +31,18 @@
       id: 'password_security',
       answerId: 'passwordSecurity',
       title: 'Password security',
-      protectedCopy: 'Unique passwords and two-step verification are already in use.',
-      notSureCopy: 'Check unique passwords and two-step verification when you can. LostPhones is not recommending a product here.',
-      needsSetupCopy: 'Set up unique passwords and two-step verification.',
-      missingCopy: 'Confirm whether unique passwords and two-step verification are in use.'
+      protectedCopy: 'Unique passwords, two-step verification, and a password manager are already in use.',
+      mixedCopy: 'Finish the missing piece: unique passwords, two-step verification, or a password manager.',
+      notSureCopy: 'Check unique passwords, two-step verification, and a password manager when you can. LostPhones is not recommending a product here.',
+      needsSetupCopy: 'Set up unique passwords, two-step verification, and a password manager.',
+      missingCopy: 'Confirm whether unique passwords, two-step verification, and a password manager are in use.'
     }),
     Object.freeze({
       id: 'travel_connectivity',
       answerId: 'travelConnectivity',
       title: 'Travel connectivity',
-      protectedCopy: 'A backup way to get mobile data is already in place, or it is not needed now.',
+      protectedCopy: 'A backup way to get mobile data is already in place.',
+      notApplicableCopy: 'Backup mobile data is not needed for you right now.',
       notSureCopy: 'Check whether you have a backup way to get mobile data if the main SIM stops working. LostPhones is not recommending a product here.',
       needsSetupCopy: 'Set up a backup way to get mobile data when you travel.',
       missingCopy: 'Confirm whether a backup way to get mobile data is needed.'
@@ -61,10 +64,11 @@
     Object.freeze({
       id: 'screenProtection',
       title: 'Does your phone have both a protective case and an undamaged screen protector?',
-      help: 'Choose one option. There is no free-text field.',
+      help: 'Choose the closest option. There is no free-text field.',
       choices: Object.freeze([
-        Object.freeze({ id: 'yes', label: 'Yes' }),
-        Object.freeze({ id: 'no', label: 'No' }),
+        Object.freeze({ id: 'both', label: 'Both' }),
+        Object.freeze({ id: 'some', label: 'One of them' }),
+        Object.freeze({ id: 'neither', label: 'Neither' }),
         Object.freeze({ id: 'not_sure', label: 'Not sure' })
       ])
     }),
@@ -80,21 +84,22 @@
     }),
     Object.freeze({
       id: 'passwordSecurity',
-      title: 'Do you use unique passwords and two-step verification, preferably with a password manager?',
-      help: 'Choose one option. LostPhones never asks for passwords or codes.',
+      title: 'Do you use unique passwords, two-step verification, and a password manager?',
+      help: 'Choose the closest option. LostPhones never asks for passwords or codes.',
       choices: Object.freeze([
-        Object.freeze({ id: 'yes', label: 'Yes' }),
-        Object.freeze({ id: 'no', label: 'No' }),
+        Object.freeze({ id: 'all', label: 'All of these' }),
+        Object.freeze({ id: 'some', label: 'Some of these' }),
+        Object.freeze({ id: 'none', label: 'None of these' }),
         Object.freeze({ id: 'not_sure', label: 'Not sure' })
       ])
     }),
     Object.freeze({
       id: 'travelConnectivity',
       title: 'When you travel, do you have a backup way to get mobile data if your main SIM stops working?',
-      help: 'Choose one option. There is no commercial recommendation unless a gap is established.',
+      help: 'Choose Not applicable if you do not travel or do not need backup mobile data right now.',
       choices: Object.freeze([
         Object.freeze({ id: 'yes', label: 'Yes' }),
-        Object.freeze({ id: 'not_needed_now', label: 'Not needed now' }),
+        Object.freeze({ id: 'not_applicable', label: 'Not applicable' }),
         Object.freeze({ id: 'no', label: 'No' }),
         Object.freeze({ id: 'not_sure', label: 'Not sure' })
       ])
@@ -113,6 +118,23 @@
     return CATEGORIES.find((item) => item.id === id) || null;
   }
 
+  function resultCopy(category, result, answer) {
+    if (!category) return '';
+    if (result === 'protected') return category.protectedCopy;
+    if (result === 'not_applicable') return category.notApplicableCopy || category.protectedCopy;
+    if (result === 'not_sure') return category.notSureCopy;
+    if (result === 'needs_setup' && (answer === 'some') && category.mixedCopy) return category.mixedCopy;
+    if (result === 'needs_setup') return category.needsSetupCopy;
+    return category.missingCopy;
+  }
+
+  function leadKicker(kind) {
+    if (kind === 'needs_setup') return 'Start here';
+    if (kind === 'not_sure') return 'Check this next';
+    if (kind === 'not_applicable') return 'No action needed here';
+    return 'Keep this in place';
+  }
+
   return {
     CATEGORIES,
     QUESTIONS,
@@ -120,6 +142,8 @@
     CARD_DISCLOSURE,
     NEUTRAL_MISSING,
     getQuestion,
-    getCategory
+    getCategory,
+    resultCopy,
+    leadKicker
   };
 });

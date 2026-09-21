@@ -108,79 +108,134 @@
     if (value === 'protected') return 'Protected';
     if (value === 'needs_setup') return 'Needs setup';
     if (value === 'not_sure') return 'Not sure';
+    if (value === 'not_applicable') return 'Not applicable';
     return 'Not assessed';
   }
 
-  function renderRecommendations(categoryId, card) {
-    const ids = logic.recommendationIdsFor(state).filter(function (id) {
-      const record = registry.getRecord(id);
-      return record && record.gap === categoryId;
-    });
-    const displayable = registry.displayableRecords(ids);
-    if (!displayable.length) {
-      const note = document.createElement('p');
-      note.className = 'plan-intro';
-      note.textContent = content.NEUTRAL_MISSING;
-      card.appendChild(note);
-      return;
-    }
-    displayable.forEach(function (record) {
-      const article = document.createElement('article');
-      article.className = 'recommendation-card';
-      const heading = document.createElement('h3');
-      heading.textContent = record.title;
-      const copy = document.createElement('p');
-      copy.textContent = record.copy;
-      const link = document.createElement('a');
-      link.className = 'btn btn-secondary';
-      link.href = record.destinationUrl;
-      link.target = '_blank';
-      link.rel = registry.linkRel(record);
-      link.textContent = record.commercialType === 'amazon_associate'
-        ? 'Browse ' + record.title.toLowerCase() + ' on Amazon'
-        : 'Open official ' + record.providerName + ' guide';
-      link.addEventListener('click', function () {
-        track('preparedness_recommendation_clicked', {
-          recommendationId: record.id,
-          commercialType: record.commercialType
-        });
-      });
-      article.appendChild(heading);
-      article.appendChild(copy);
-      article.appendChild(link);
-      if (record.commercialType !== 'none') {
-        const disclosure = document.createElement('p');
-        disclosure.className = 'disclosure';
-        disclosure.textContent = record.disclosure || content.CARD_DISCLOSURE;
-        article.appendChild(disclosure);
-      }
-      card.appendChild(article);
-      track('preparedness_recommendation_displayed', {
+  function appendRecommendation(parent, record, primary) {
+    const article = document.createElement('article');
+    article.className = 'recommendation-card';
+    const heading = document.createElement('h3');
+    heading.textContent = record.title;
+    const copy = document.createElement('p');
+    copy.textContent = record.copy;
+    const link = document.createElement('a');
+    link.className = primary ? 'btn btn-primary' : 'btn btn-secondary';
+    link.href = record.destinationUrl;
+    link.target = '_blank';
+    link.rel = registry.linkRel(record);
+    link.textContent = record.commercialType === 'amazon_associate'
+      ? 'Browse ' + record.title.toLowerCase() + ' on Amazon'
+      : 'Open official ' + record.providerName + ' guide';
+    link.addEventListener('click', function () {
+      track('preparedness_recommendation_clicked', {
         recommendationId: record.id,
         commercialType: record.commercialType
       });
     });
-  }
-
-  function resultCopy(category, result) {
-    if (result === 'protected') return category.protectedCopy;
-    if (result === 'not_sure') return category.notSureCopy;
-    if (result === 'needs_setup') return category.needsSetupCopy;
-    return category.missingCopy;
+    article.appendChild(heading);
+    article.appendChild(copy);
+    article.appendChild(link);
+    if (record.commercialType === 'amazon_associate') {
+      const disclosure = document.createElement('p');
+      disclosure.className = 'disclosure';
+      disclosure.textContent = record.disclosure || content.CARD_DISCLOSURE;
+      article.appendChild(disclosure);
+    }
+    parent.appendChild(article);
+    track('preparedness_recommendation_displayed', {
+      recommendationId: record.id,
+      commercialType: record.commercialType
+    });
   }
 
   function renderResults() {
     const mapped = logic.mapResults(state);
     state = mapped;
-    const order = { needs_setup: 0, not_sure: 1, protected: 2, missing: 3 };
+    const lead = logic.leadCategory(state);
+    const split = logic.splitRecommendations(state);
     const overview = document.getElementById('results-overview');
-    const list = document.getElementById('results-list');
+    const first = document.getElementById('first-action');
+    const nextSection = document.getElementById('recommended-next');
+    const nextList = document.getElementById('recommended-next-list');
+    const productSection = document.getElementById('optional-products');
+    const productList = document.getElementById('optional-products-list');
+    const disclosure = document.getElementById('page-disclosure');
     overview.innerHTML = '';
-    list.innerHTML = '';
+    first.innerHTML = '';
+    nextList.innerHTML = '';
+    productList.innerHTML = '';
+
+    const leadCategory = lead ? content.getCategory(lead.categoryId) : null;
+    if (leadCategory) {
+      const kicker = document.createElement('p');
+      kicker.className = 'kicker';
+      kicker.textContent = content.leadKicker(lead.kind);
+      const heading = document.createElement('h2');
+      heading.textContent = leadCategory.title;
+      const copy = document.createElement('p');
+      copy.textContent = content.resultCopy(leadCategory, lead.kind, state.answers[leadCategory.answerId]);
+      first.appendChild(kicker);
+      first.appendChild(heading);
+      first.appendChild(copy);
+      const leadOfficial = split.official.filter(function (record) {
+        return record.gap === lead.categoryId;
+      });
+      leadOfficial.forEach(function (record) {
+        appendRecommendation(first, record, true);
+      });
+      if (lead.kind === 'needs_setup') track('preparedness_gap_identified', { category: lead.categoryId });
+    }
+
+    const remainingIds = logic.remainingCategories(state, lead && lead.categoryId);
+    remainingIds.forEach(function (id) {
+      if (state.results[id] === 'needs_setup') track('preparedness_gap_identified', { category: id });
+    });
+    const remainingOfficial = split.official.filter(function (record) {
+      return !lead || record.gap !== lead.categoryId;
+    });
+    remainingOfficial.forEach(function (record) {
+      appendRecommendation(nextList, record, false);
+    });
+    remainingIds.forEach(function (id) {
+      if (remainingOfficial.some(function (record) { return record.gap === id; })) return;
+      const category = content.getCategory(id);
+      if (!category) return;
+      const note = document.createElement('article');
+      note.className = 'recommendation-card';
+      const heading = document.createElement('h3');
+      heading.textContent = category.title;
+      const copy = document.createElement('p');
+      copy.textContent = content.resultCopy(category, state.results[id], state.answers[category.answerId]);
+      note.appendChild(heading);
+      note.appendChild(copy);
+      if (id === 'travel_connectivity' && state.results[id] === 'needs_setup') {
+        const extra = document.createElement('p');
+        extra.className = 'plan-intro';
+        extra.textContent = content.NEUTRAL_MISSING;
+        note.appendChild(extra);
+      }
+      nextList.appendChild(note);
+    });
+    if (lead && lead.categoryId === 'travel_connectivity' && lead.kind === 'needs_setup' && !split.official.some(function (record) {
+      return record.gap === 'travel_connectivity';
+    })) {
+      const extra = document.createElement('p');
+      extra.className = 'plan-intro';
+      extra.textContent = content.NEUTRAL_MISSING;
+      first.appendChild(extra);
+    }
+    nextSection.hidden = !nextList.childNodes.length;
+
+    productSection.hidden = !split.products.length;
+    split.products.forEach(function (record) {
+      appendRecommendation(productList, record, false);
+    });
+
     const ranked = content.CATEGORIES.slice().sort(function (a, b) {
-      const rankA = order[state.results[a.id]];
-      const rankB = order[state.results[b.id]];
-      return (rankA == null ? 9 : rankA) - (rankB == null ? 9 : rankB);
+      const order = { needs_setup: 0, not_sure: 1, protected: 2, not_applicable: 3 };
+      return (order[state.results[a.id]] == null ? 9 : order[state.results[a.id]])
+        - (order[state.results[b.id]] == null ? 9 : order[state.results[b.id]]);
     });
     ranked.forEach(function (category) {
       const result = state.results[category.id];
@@ -195,40 +250,31 @@
       row.appendChild(status);
       overview.appendChild(row);
     });
-    ranked.forEach(function (category) {
-      const result = state.results[category.id];
-      const card = document.createElement('article');
-      card.className = 'result-card';
-      const heading = document.createElement('h2');
-      heading.textContent = category.title;
-      const copy = document.createElement('p');
-      copy.textContent = resultCopy(category, result);
-      card.appendChild(heading);
-      card.appendChild(copy);
-      if (result === 'needs_setup') {
-        track('preparedness_gap_identified', { category: category.id });
-        const details = document.createElement('details');
-        details.className = 'why-details';
-        const summary = document.createElement('summary');
-        summary.textContent = 'Optional product ideas';
-        details.appendChild(summary);
-        renderRecommendations(category.id, details);
-        card.appendChild(details);
-      }
-      list.appendChild(card);
-    });
-    const counts = { needs_setup: 0, not_sure: 0, protected: 0 };
+
+    const counts = { needs_setup: 0, not_sure: 0, protected: 0, not_applicable: 0 };
     ranked.forEach(function (category) {
       const result = state.results[category.id];
       if (counts[result] != null) counts[result] += 1;
     });
     const summary = document.getElementById('results-summary');
     if (summary) {
-      summary.textContent = counts.needs_setup + ' area' + (counts.needs_setup === 1 ? '' : 's') + ' need setup / '
+      let text = counts.needs_setup + ' area' + (counts.needs_setup === 1 ? '' : 's') + ' need setup / '
         + counts.not_sure + ' area' + (counts.not_sure === 1 ? '' : 's') + ' to verify / '
         + counts.protected + ' area' + (counts.protected === 1 ? '' : 's') + ' protected';
+      if (counts.not_applicable) {
+        text += ' / ' + counts.not_applicable + ' not applicable';
+      }
+      summary.textContent = text;
     }
-    document.getElementById('page-disclosure').textContent = content.PAGE_DISCLOSURE;
+
+    if (split.showAmazonDisclosure) {
+      disclosure.hidden = false;
+      disclosure.textContent = content.PAGE_DISCLOSURE;
+    } else {
+      disclosure.hidden = true;
+      disclosure.textContent = '';
+    }
+
     showScreen('results');
     announce('Your safety plan is ready.');
     if (!completed) {
