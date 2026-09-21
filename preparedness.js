@@ -25,25 +25,27 @@
     document.getElementById('screen-orientation').hidden = id !== 'orientation';
     document.getElementById('screen-question').hidden = id !== 'question';
     document.getElementById('screen-results').hidden = id !== 'results';
+    document.body.setAttribute('data-prep-phase', id);
     const progress = document.getElementById('progress-label');
     const rail = document.getElementById('prep-progress');
     const questionIndex = logic.QUESTION_ORDER.indexOf(state.step);
-    const filled = id === 'results' ? 5 : id === 'question' && questionIndex >= 0 ? questionIndex + 1 : 0;
+    const stepNum = id === 'results' ? 5 : id === 'question' && questionIndex >= 0 ? questionIndex + 1 : 1;
     if (rail) {
-      rail.hidden = filled === 0;
+      rail.hidden = false;
       Array.prototype.forEach.call(rail.querySelectorAll('.segment'), function (seg, index) {
-        seg.classList.toggle('is-done', index < filled);
-        seg.classList.toggle('is-current', filled > 0 && index === filled - 1 && filled < 5);
+        const n = index + 1;
+        if (id === 'results') {
+          seg.classList.toggle('is-done', true);
+          seg.classList.toggle('is-current', false);
+        } else {
+          seg.classList.toggle('is-current', n === stepNum);
+          seg.classList.toggle('is-done', n < stepNum);
+        }
       });
     }
-    if (id === 'question' && questionIndex >= 0) {
+    if (progress) {
       progress.hidden = false;
-      progress.textContent = 'Question ' + (questionIndex + 1) + ' of 5';
-    } else if (id === 'results') {
-      progress.hidden = false;
-      progress.textContent = 'Safety check complete';
-    } else {
-      progress.hidden = true;
+      progress.textContent = 'STEP ' + stepNum + ' OF 5';
     }
     const focusId = id === 'orientation' ? 'orientation-title' : id === 'results' ? 'results-title' : 'legend-question';
     const focusEl = document.getElementById(focusId);
@@ -283,4 +285,29 @@
   if (document.referrer && /recovery\.html/.test(document.referrer)) {
     track('preparedness_return_engagement');
   }
+
+  (function bindPrepMenu() {
+    const toggle = document.getElementById('prep-menu-toggle');
+    const nav = document.getElementById('prep-nav');
+    if (!toggle || !nav) return;
+
+    function setOpen(open) {
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      document.body.classList.toggle('prep-nav-open', open);
+    }
+
+    toggle.addEventListener('click', function () {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+    nav.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') setOpen(false);
+    });
+    window.addEventListener('resize', function () {
+      if (window.matchMedia('(min-width: 960px)').matches) setOpen(false);
+    });
+  })();
 })();
