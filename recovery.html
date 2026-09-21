@@ -170,11 +170,18 @@
                     <span class="segment" data-journey="3"></span>
                   </div>
                 </div>
-                <p class="kicker action-kicker" id="action-kicker">Current step</p>
-                <div class="awaiting-banner" id="awaiting-banner" hidden>
-                  <p id="awaiting-copy">Apple Find Devices opened in a new tab. When you finish there, return here and choose I am back.</p>
-                  <button class="btn btn-primary" type="button" id="im-back">I am back</button>
+                <div class="return-banner awaiting-banner" id="awaiting-banner" hidden>
+                  <span class="return-banner-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m8.1 12.2 2.6 2.6 5.2-5.4" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </span>
+                  <div class="return-banner-copy">
+                    <strong id="awaiting-title">Apple opened in a new tab. Welcome back.</strong>
+                    <p id="awaiting-copy">Let us know what you found so we can guide you to the next step.</p>
+                  </div>
+                  <div class="return-banner-action" id="return-again-slot"></div>
+                  <button class="live-region" type="button" id="im-back">I am back</button>
                 </div>
+                <p class="kicker action-kicker" id="action-kicker">Current step</p>
                 <h1 class="screen-title" id="action-title" tabindex="-1"></h1>
                 <p class="action-reason" id="action-reason"></p>
                 <ol class="action-steps" id="action-steps"></ol>
@@ -204,9 +211,9 @@
                 <div id="outcome-box" hidden>
                   <h2 class="meta-label" id="outcome-heading" tabindex="-1">What did you find?</h2>
                   <p id="return-prompt"></p>
-                  <div class="stack" id="outcome-primary"></div>
+                  <div class="outcome-list" id="outcome-primary"></div>
                   <div class="stack" id="outcome-controls" hidden></div>
-                  <details class="reveal" id="outcome-exceptions">
+                  <details class="outcome-failed reveal" id="outcome-exceptions">
                     <summary>I could not complete this</summary>
                     <div class="stack" id="outcome-exception-controls"></div>
                   </details>

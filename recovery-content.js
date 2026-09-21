@@ -820,7 +820,7 @@
   const privacyGuidance = Object.freeze({
     trusted: Object.freeze({
       id: 'trusted',
-      title: 'You are on a trusted device',
+      title: 'You’re using your own phone, tablet, or computer',
       items: Object.freeze([
         'Use the official Apple or Google service as you normally would.',
         'You can save a private resume token on this device for seven days.',
@@ -829,7 +829,7 @@
     }),
     borrowed: Object.freeze({
       id: 'borrowed',
-      title: 'Using a device from someone you trust',
+      title: 'You’re using someone else’s phone, tablet, or computer',
       items: Object.freeze([
         'Use the phone owner’s account only.',
         'Do not save credentials.',
@@ -839,7 +839,7 @@
     }),
     public: Object.freeze({
       id: 'public',
-      title: 'Using a public or shared device',
+      title: 'You’re using a public or shared device',
       items: Object.freeze([
         'Do not save passwords.',
         'Use a private browsing window if available.',

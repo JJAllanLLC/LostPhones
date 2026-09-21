@@ -92,6 +92,18 @@
     return: '<svg viewBox="0 0 24 24" fill="none"><path d="M19 12H7.5M11.5 7.5 7 12l4.5 4.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
 
+  const OUTCOME_ICONS = {
+    nearby: { tone: 'signal', svg: '<svg viewBox="0 0 24 24" fill="none"><circle cx="6.6" cy="12" r="1.55" fill="currentColor"/><path d="M10.2 8.6a5.4 5.4 0 0 1 0 6.8M13.6 6.3a9 9 0 0 1 0 11.4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>' },
+    heard_nearby: { tone: 'signal', svg: '<svg viewBox="0 0 24 24" fill="none"><path d="M4.6 9.6v4.8h3.3L12.6 18V6L7.9 9.6H4.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15.5 9.1a3.5 3.5 0 0 1 0 5.8M17.8 7a6.5 6.5 0 0 1 0 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' },
+    located_safe: { tone: 'safe', svg: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-6.2-5.4-6.2-10.1A6.2 6.2 0 0 1 12 4.7a6.2 6.2 0 0 1 6.2 6.2C18.2 15.6 12 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10.8" r="2.15" stroke="currentColor" stroke-width="1.8"/></svg>' },
+    located_unsafe: { tone: 'alert', svg: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 4.4 20.2 19H3.8L12 4.4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9.6v4.3M12 16.6v.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>' },
+    offline: { tone: 'device', svg: '<svg viewBox="0 0 24 24" fill="none"><rect x="8" y="3.5" width="8" height="17" rx="1.8" stroke="currentColor" stroke-width="1.9"/><path d="M11 17.6h2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>' },
+    not_found: { tone: 'hidden', svg: '<svg viewBox="0 0 24 24" fill="none"><path d="M3.2 12s3.7-6.4 8.8-6.4 8.8 6.4 8.8 6.4-3.7 6.4-8.8 6.4S3.2 12 3.2 12Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.25" stroke="currentColor" stroke-width="1.8"/><path d="m4.4 19.2 15.2-14.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' },
+    not_heard: { tone: 'hidden', svg: '<svg viewBox="0 0 24 24" fill="none"><path d="M4.6 9.6v4.8h3.3L12.6 18V6L7.9 9.6H4.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m4 5 16 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' }
+  };
+
+  const OUTCOME_CHEVRON = '<svg viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
   const questionSteps = {
     situation: 'Question 1 of 3',
     platform: 'Question 2 of 3',
@@ -170,6 +182,7 @@
 
     const isTriage = !!questionSteps[step];
     document.body.setAttribute('data-recovery-phase', isTriage || step === 'orientation' ? 'triage' : 'action');
+    if (step !== 'action') document.body.setAttribute('data-recovery-return', '0');
 
     if (isTriage) {
       progress.hidden = false;
@@ -405,7 +418,7 @@
     if (device === 'borrowed') {
       copy.textContent = 'This browser session is not saved on this device. You can copy a private resume link if you need to continue later.';
     } else {
-      copy.textContent = 'On a trusted device you can save a private resume token for seven days, or copy a resume link.';
+      copy.textContent = 'On your own phone, tablet, or computer you can save a private resume token for seven days, or copy a resume link.';
     }
 
     if (device === 'trusted') {
@@ -630,16 +643,31 @@
   function outcomeButton(action, outcome) {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'btn btn-secondary';
-    const label = document.createElement('span');
-    label.textContent = SHORT_OUTCOMES[outcome.id] || outcome.label;
-    button.appendChild(label);
-    if (SHORT_OUTCOMES[outcome.id] && SHORT_OUTCOMES[outcome.id] !== outcome.label) {
+    button.className = 'outcome-row';
+    button.setAttribute('data-outcome', outcome.id);
+    const iconMeta = OUTCOME_ICONS[outcome.id] || { tone: 'device', svg: STEP_ICONS.device };
+    const icon = document.createElement('span');
+    icon.className = 'outcome-icon is-' + iconMeta.tone;
+    icon.setAttribute('aria-hidden', 'true');
+    icon.innerHTML = iconMeta.svg;
+    const copy = document.createElement('span');
+    copy.className = 'outcome-copy';
+    const title = document.createElement('strong');
+    title.textContent = SHORT_OUTCOMES[outcome.id] || outcome.label;
+    copy.appendChild(title);
+    if (outcome.label && outcome.label !== title.textContent) {
       const help = document.createElement('span');
       help.className = 'outcome-help';
       help.textContent = outcome.label;
-      button.appendChild(help);
+      copy.appendChild(help);
     }
+    const chevron = document.createElement('span');
+    chevron.className = 'outcome-chevron';
+    chevron.setAttribute('aria-hidden', 'true');
+    chevron.innerHTML = OUTCOME_CHEVRON;
+    button.appendChild(icon);
+    button.appendChild(copy);
+    button.appendChild(chevron);
     button.addEventListener('click', function () {
       const result = logic.recordOutcome(state, action.actionId, outcome.id);
       showingOutcomes = false;
@@ -648,8 +676,9 @@
     return button;
   }
 
-  function renderOutcomes(action) {
+  function renderOutcomes(action, returnMode) {
     const box = document.getElementById('outcome-box');
+    const heading = document.getElementById('outcome-heading');
     const prompt = document.getElementById('return-prompt');
     const primary = document.getElementById('outcome-primary');
     const exceptionsWrap = document.getElementById('outcome-exceptions');
@@ -660,8 +689,10 @@
       box.hidden = true;
       return;
     }
-    document.getElementById('outcome-heading').textContent = 'What did you find?';
+    heading.textContent = 'What did you find?';
+    heading.hidden = !!returnMode;
     prompt.textContent = action.returnPrompt || 'Choose the closest result. LostPhones does not infer success from a new tab.';
+    prompt.hidden = !!returnMode;
     const extras = [];
     action.boundedOutcomes.forEach(function (outcome) {
       const button = outcomeButton(action, outcome);
@@ -728,16 +759,22 @@
     const supportDetails = document.getElementById('support-details');
     const controls = document.getElementById('action-controls');
     const awaiting = document.getElementById('awaiting-banner');
+    const awaitingTitle = document.getElementById('awaiting-title');
+    const againSlot = document.getElementById('return-again-slot');
     const imBack = document.getElementById('im-back');
     const complete = document.getElementById('complete-summary');
     const why = document.getElementById('why-copy');
+    const moreDetails = document.getElementById('more-details');
+    const wasReturn = document.body.getAttribute('data-recovery-return') === '1';
 
     controls.innerHTML = '';
+    if (againSlot) againSlot.innerHTML = '';
     leaving.hidden = true;
     if (keepOpen) keepOpen.hidden = true;
     supportDetails.hidden = true;
     document.getElementById('outcome-box').hidden = true;
     complete.hidden = true;
+    document.body.setAttribute('data-recovery-return', '0');
 
     if (!record) {
       document.getElementById('action-kicker').textContent = 'Summary';
@@ -746,6 +783,7 @@
       renderSteps('Use the free summary below. Print or save it before considering the optional PDF.');
       renderCaution('LostPhones still will not ask for passwords, codes, or account details.');
       awaiting.hidden = true;
+      if (moreDetails && wasReturn) moreDetails.open = true;
       renderHelp(null);
       renderCompleteSummary();
       renderPrivacy(content.privacyGuidance[state.answers.currentDevice]);
@@ -775,16 +813,28 @@
     renderPrivacy(content.privacyGuidance[state.answers.currentDevice]);
 
     const awaitingReturn = !!view.awaitingReturn;
-    awaiting.hidden = !awaitingReturn;
-    if (awaitingReturn) {
-      const service = record.nextServiceName || record.officialProvider || 'the official service';
-      document.getElementById('awaiting-copy').textContent = service + ' opened in a new tab. When you finish there, return here and choose I am back.';
+    if (awaitingReturn) showingOutcomes = true;
+    const returnMode = !!(awaitingReturn || showingOutcomes);
+    document.body.setAttribute('data-recovery-return', returnMode ? '1' : '0');
+    if (moreDetails) {
+      if (returnMode) moreDetails.open = false;
+      else if (wasReturn) moreDetails.open = true;
+    }
+
+    awaiting.hidden = !returnMode;
+    if (returnMode) {
+      const service = record.nextServiceName || record.officialProvider || 'The official service';
+      if (awaitingTitle) awaitingTitle.textContent = service + ' opened in a new tab. Welcome back.';
+      document.getElementById('awaiting-copy').textContent = 'Let us know what you found so we can guide you to the next step.';
+      setActionTitle(title, 'What did you find?');
+      reason.textContent = record.returnPrompt || 'Back from the official service? Tell us what you found. LostPhones does not infer a location from the tab opening.';
+      renderHelp(null);
     }
 
     if (!awaitingReturn && record.leavingLabel && (record.officialUrl || record.requiresExternalReturn)) {
       leaving.textContent = record.leavingLabel;
       leaving.hidden = true;
-      if (keepOpen) keepOpen.hidden = false;
+      if (keepOpen) keepOpen.hidden = returnMode;
     }
 
     const supportLede = document.getElementById('support-lede');
@@ -802,7 +852,7 @@
       supportDetails.hidden = false;
     }
 
-    if (!awaitingReturn && !showingOutcomes) {
+    if (!returnMode) {
       if (record.officialUrl && record.primaryControlLabel) {
         controls.appendChild(externalLink(record.officialUrl, record.primaryControlLabel, record.leavingLabel, record.actionId));
       } else if (record.requiresExternalReturn) {
@@ -819,7 +869,7 @@
         });
         controls.appendChild(opened);
       } else if (record.boundedOutcomes && record.boundedOutcomes.length) {
-        renderOutcomes(record);
+        renderOutcomes(record, false);
       }
 
       if (record.secondaryOfficialUrl) {
@@ -827,23 +877,19 @@
       }
     }
 
-    if (awaitingReturn) {
+    if (returnMode) {
       const again = externalLink(record.officialUrl || record.supportSourceUrl || '#', 'Open again', record.leavingLabel, record.actionId);
-      again.className = 'btn btn-secondary';
-      controls.appendChild(again);
-    }
-
-    if (showingOutcomes) {
-      awaiting.hidden = true;
-      renderOutcomes(record);
+      again.className = 'return-again';
+      if (againSlot) againSlot.appendChild(again);
+      else controls.appendChild(again);
+      renderOutcomes(record, true);
     }
 
     imBack.onclick = function () {
       showingOutcomes = true;
       renderAction(view);
       announce('Back from the official service? Tell us what you found.');
-      const heading = document.getElementById('outcome-heading');
-      if (heading) heading.focus();
+      if (title) title.focus();
     };
 
     renderProgress(record.actionId, false, record);
@@ -851,7 +897,7 @@
     renderResume();
     hidePaidOffer();
     showScreen('action');
-    announce(awaitingReturn ? (record.nextServiceName || 'The official service') + ' opened in a new tab. When you finish there, return here and choose I am back.' : record.title);
+    announce(returnMode ? (record.nextServiceName || record.officialProvider || 'The official service') + ' opened in a new tab. Welcome back. Tell us what you found.' : record.title);
   }
 
   function renderDynamicQuestion(view) {
