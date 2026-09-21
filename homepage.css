@@ -808,17 +808,35 @@ body.home .hp-copyright a {
 }
 
 @media (max-width: 720px) {
+  body.home {
+    overflow-x: hidden;
+  }
+
   body.home .hp-header {
-    padding: 0.7rem 1rem;
+    padding: 0.8rem 0.95rem 0.7rem;
+  }
+
+  body.home .hp-header-inner {
+    align-items: center;
   }
 
   body.home .hp-logo {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
+  }
+
+  body.home .hp-brand {
+    gap: 0.58rem;
   }
 
   body.home .hp-brand-name {
-    font-size: 1.22rem;
+    font-size: 1.38rem;
+  }
+
+  body.home .hp-brand-tag {
+    font-size: 0.72rem;
+    max-width: none;
+    white-space: nowrap;
   }
 
   body.home .hp-header-inner,
@@ -830,59 +848,86 @@ body.home .hp-copyright a {
   }
 
   body.home .hp-hero {
-    padding-top: 0.35rem;
+    padding: 0.15rem 0 0.85rem;
     min-height: 0;
   }
 
   body.home .hp-hero-scene {
-    width: 72%;
-    height: 56%;
-    left: auto;
+    position: absolute;
+    top: 0;
     right: 0;
+    left: auto;
+    width: 44%;
+    height: 52%;
     inset: 0 0 auto auto;
   }
 
   body.home .hp-hero-scene img {
+    width: 100%;
+    height: 100%;
     border-radius: 0;
     object-fit: cover;
-    object-position: 78% 42%;
+    object-position: 84% 48%;
   }
 
   body.home .hp-hero::after {
     background:
-      linear-gradient(90deg, var(--hp-bg) 0%, rgba(244, 248, 253, 0.94) 36%, rgba(244, 248, 253, 0.35) 58%, transparent 78%),
-      linear-gradient(180deg, transparent 42%, var(--hp-bg) 74%);
+      linear-gradient(90deg, var(--hp-bg) 0%, var(--hp-bg) 50%, rgba(244, 248, 253, 0.9) 62%, rgba(244, 248, 253, 0.3) 74%, transparent 90%),
+      linear-gradient(180deg, transparent 58%, rgba(244, 248, 253, 0.72) 78%, var(--hp-bg) 92%);
   }
 
   body.home .hp-hero-inner {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(148px, 42%);
+    grid-template-columns: minmax(0, 1.55fr) minmax(118px, 0.8fr);
     grid-template-areas:
       "copy visual"
-      "rest rest";
+      "lede visual"
+      "cta cta"
+      "trust trust";
     min-height: 0;
     align-items: start;
-    gap: 0.35rem 0.75rem;
+    gap: 0.35rem 0.4rem;
   }
 
   body.home .hp-hero-copy {
+    grid-area: copy;
     position: relative;
     z-index: 2;
-    padding: 0.35rem 0 0;
-  }
-
-  body.home .hp-hero-rest {
-    position: relative;
-    z-index: 2;
-    padding: 0.35rem 0 0;
-    background: linear-gradient(180deg, rgba(244, 248, 253, 0.88), var(--hp-bg) 1.25rem);
+    padding: 0.2rem 0 0;
   }
 
   body.home .hp-hero-visual {
+    grid-area: visual;
     position: relative;
-    min-height: 0;
+    min-height: 13.5rem;
     pointer-events: none;
     overflow: visible;
+    z-index: 1;
+  }
+
+  body.home .hp-hero-rest {
+    display: contents;
+  }
+
+  body.home .hp-lede {
+    grid-area: lede;
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    max-width: 34ch;
+    font-size: 0.9rem;
+    line-height: 1.48;
+    padding-right: 0.35rem;
+  }
+
+  body.home .hp-btn-primary {
+    grid-area: cta;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    margin-top: 0.45rem;
   }
 
   body.home .hp-phone {
@@ -890,15 +935,17 @@ body.home .hp-copyright a {
   }
 
   body.home .hp-hero h1 {
-    font-size: clamp(1.85rem, 8vw, 2.45rem);
+    font-size: clamp(1.48rem, 6.1vw, 1.78rem);
+    line-height: 1.14;
     max-width: none;
+    margin-bottom: 0.45rem;
   }
 
-  body.home .hp-lede,
-  body.home .hp-btn-primary,
-  body.home .hp-trust {
-    padding-right: 0;
-    max-width: none;
+  body.home .hp-hero .hp-eyebrow {
+    margin-bottom: 0.5rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.11em;
+    white-space: nowrap;
   }
 
   body.home .hp-script-hero {
@@ -906,93 +953,180 @@ body.home .hp-copyright a {
   }
 
   body.home .hp-trust {
+    grid-area: trust;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.65rem;
-    margin-top: 1.4rem;
+    gap: 0;
+    margin: 1.15rem 0 0;
+    padding: 0.15rem 0 0;
+    max-width: none;
     text-align: center;
   }
 
   body.home .hp-trust li {
     align-items: center;
-    padding: 0;
+    padding: 0 0.35rem;
+    font-size: 0.78rem;
+    line-height: 1.25;
   }
 
   body.home .hp-trust li + li {
-    padding-left: 0;
+    padding-left: 0.35rem;
+    position: relative;
   }
 
   body.home .hp-trust li + li::before {
-    display: none;
-  }
-
-  body.home .hp-btn-primary {
-    width: 100%;
-  }
-
-  body.home .hp-mid {
-    gap: 1rem;
-    padding-bottom: 1.5rem;
-  }
-
-  body.home .hp-safety {
-    padding: 1.5rem 1.25rem 1.35rem;
-  }
-
-  body.home .hp-reassurance {
-    min-height: 22rem;
-    margin-bottom: 1.25rem;
-  }
-
-  body.home .hp-reassurance-points {
-    gap: 1rem;
-  }
-
-  body.home .hp-script-footer {
-    font-size: 1.2rem;
-  }
-}
-
-@media (max-width: 390px) {
-  body.home .hp-brand-tag {
-    max-width: 18ch;
-  }
-
-  body.home .hp-trust {
-    font-size: 0.8rem;
+    display: block;
+    top: 0.2rem;
+    bottom: 0.2rem;
   }
 
   body.home .hp-trust strong {
     font-size: 0.86rem;
   }
-}
 
-@media (max-width: 320px) {
-  body.home .hp-hero-inner {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "copy"
-      "visual"
-      "rest";
+  body.home .hp-trust-icon,
+  body.home .hp-trust-icon svg {
+    width: 30px;
+    height: 30px;
   }
 
-  body.home .hp-hero-scene {
-    position: relative;
-    width: 100%;
-    height: 16rem;
-    inset: auto;
+  body.home .hp-mid {
+    gap: 0.95rem;
+    padding: 0 0 1.15rem;
+  }
+
+  body.home .hp-story {
+    min-height: 23.25rem;
+    border-radius: 22px;
+  }
+
+  body.home .hp-story img {
+    object-position: 78% 42%;
+  }
+
+  body.home .hp-story-copy {
+    min-height: 23.25rem;
+    justify-content: flex-end;
+    padding: 1.45rem 48% 1.5rem 1.25rem;
+    background: linear-gradient(90deg, rgba(16, 14, 12, 0.82) 0%, rgba(16, 14, 12, 0.58) 40%, rgba(16, 14, 12, 0.14) 68%, transparent 100%);
+  }
+
+  body.home .hp-story h2 {
+    font-size: clamp(1.55rem, 6.4vw, 1.9rem);
+  }
+
+  body.home .hp-story p {
+    font-size: 0.92rem;
+  }
+
+  body.home .hp-safety {
+    padding: 1.45rem 1.2rem 1.25rem;
+    border-radius: 22px;
+  }
+
+  body.home .hp-reassurance {
+    min-height: 0;
+    margin: 0 0 0.85rem;
+  }
+
+  body.home .hp-reassurance-inner {
+    text-align: left;
+    min-height: 0;
+    padding-block: 1.45rem 1.25rem;
+    gap: 1.15rem;
+  }
+
+  body.home .hp-reassurance-copy p {
+    max-width: 36ch;
+  }
+
+  body.home .hp-reassurance-points {
+    gap: 0.45rem;
+  }
+
+  body.home .hp-reassurance-points li {
+    font-size: 0.82rem;
+  }
+
+  body.home .hp-footer {
+    padding: 0.35rem 0 1.05rem;
+  }
+
+  body.home .hp-footer-inner {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "brand script"
+      "links script"
+      "copy copy";
+    align-items: start;
+    gap: 0.05rem 0.75rem;
+    min-height: 0;
+  }
+
+  body.home .hp-footer nav {
+    justify-content: flex-start;
+    gap: 0.1rem 0.95rem;
+  }
+
+  body.home .hp-copyright {
+    text-align: left;
+    font-size: 0.8rem;
+  }
+
+  body.home .hp-script-footer {
+    font-size: 1.18rem;
+    border-left: 0;
+    padding: 0.15rem 0 0;
+    transform: rotate(-8deg);
+    align-self: start;
+  }
+}
+
+@media (max-width: 390px) {
+  body.home .hp-hero-inner {
+    grid-template-columns: minmax(0, 1.6fr) minmax(112px, 0.75fr);
+  }
+
+  body.home .hp-hero h1 {
+    font-size: 1.52rem;
   }
 
   body.home .hp-trust {
-    grid-template-columns: 1fr;
-    text-align: left;
+    font-size: 0.74rem;
   }
 
-  body.home .hp-trust li {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.7rem;
-    padding: 0;
-    border-left: 0;
+  body.home .hp-trust strong {
+    font-size: 0.82rem;
+  }
+
+  body.home .hp-brand-tag {
+    font-size: 0.68rem;
+  }
+}
+
+@media (max-width: 320px) {
+  body.home .hp-brand-tag {
+    white-space: normal;
+    max-width: 18ch;
+  }
+
+  body.home .hp-hero-inner {
+    grid-template-columns: minmax(0, 1.22fr) minmax(104px, 0.72fr);
+    grid-template-areas:
+      "copy visual"
+      "lede visual"
+      "cta cta"
+      "trust trust";
+  }
+
+  body.home .hp-hero-scene {
+    width: 54%;
+    height: 58%;
+  }
+
+  body.home .hp-story-copy {
+    padding: 1.25rem 1.1rem 1.2rem;
+    background: linear-gradient(180deg, rgba(18, 16, 14, 0.16) 0%, rgba(18, 16, 14, 0.62) 52%, rgba(18, 16, 14, 0.8) 100%);
   }
 }
 
