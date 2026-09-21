@@ -64,7 +64,7 @@
         <section class="screen" id="screen-situation" data-step="situation">
           <form id="form-situation">
             <fieldset class="choice-list">
-              <legend id="legend-situation" tabindex="-1"><h1 class="screen-title">What best describes the phone?</h1></legend>
+              <legend id="legend-situation"><h1 class="screen-title">What best describes the phone?</h1></legend>
               <p class="plan-intro">First, tell us what happened. We'll use your answer to guide you to the safest next step.</p>
               <label class="choice">
                 <input type="radio" name="situation" value="nearby" required>
@@ -116,7 +116,7 @@
         <section class="screen" id="screen-platform" data-step="platform" hidden>
           <form id="form-platform">
             <fieldset class="choice-list">
-              <legend id="legend-platform" tabindex="-1"><h1 class="screen-title">What kind of phone is missing?</h1></legend>
+              <legend id="legend-platform"><h1 class="screen-title">What kind of phone is missing?</h1></legend>
               <label class="choice"><input type="radio" name="platform" value="iphone" required> iPhone</label>
               <label class="choice"><input type="radio" name="platform" value="android"> Android</label>
               <label class="choice"><input type="radio" name="platform" value="unsure"> Not sure</label>
@@ -131,9 +131,9 @@
         <section class="screen" id="screen-currentDevice" data-step="currentDevice" hidden>
           <form id="form-currentDevice">
             <fieldset class="choice-list">
-              <legend id="legend-currentDevice" tabindex="-1"><h1 class="screen-title">What are you using now?</h1></legend>
-              <label class="choice"><input type="radio" name="currentDevice" value="trusted" required> My trusted device</label>
-              <label class="choice"><input type="radio" name="currentDevice" value="borrowed"> A device from someone I trust</label>
+              <legend id="legend-currentDevice"><h1 class="screen-title">What device are you using to access LostPhones right now?</h1></legend>
+              <label class="choice"><input type="radio" name="currentDevice" value="trusted" required> My own phone, tablet, or computer</label>
+              <label class="choice"><input type="radio" name="currentDevice" value="borrowed"> Someone else's phone, tablet, or computer</label>
               <label class="choice"><input type="radio" name="currentDevice" value="public"> A public or shared device</label>
             </fieldset>
             <div class="flow-nav">
@@ -146,7 +146,7 @@
         <section class="screen" id="screen-question" data-step="question" hidden>
           <form id="form-question">
             <fieldset class="choice-list">
-              <legend id="legend-question" tabindex="-1"><h1 class="screen-title"></h1></legend>
+              <legend id="legend-question"><h1 class="screen-title"></h1></legend>
               <p id="question-help"></p>
               <div id="question-choices"></div>
             </fieldset>
@@ -159,26 +159,36 @@
 
         <section class="screen action-card" id="screen-action" data-step="action" hidden>
           <div class="emergency-layout">
-            <aside class="progress-rail" id="progress-rail" hidden>
-              <p class="kicker" id="progress-kicker">You are making progress</p>
-              <div id="progress-stages"></div>
-            </aside>
-
-            <div>
+            <div class="action-col">
               <p class="status-pill" id="journey-status" hidden></p>
               <div class="action-surface">
-                <p class="kicker" id="action-kicker">Current step</p>
+                <div class="action-progress" id="action-progress-head">
+                  <p class="action-step-label" id="action-step-label">STEP 1 OF 3</p>
+                  <div class="segmented-progress" id="action-journey-progress" data-steps="3">
+                    <span class="segment is-current" data-journey="1"></span>
+                    <span class="segment" data-journey="2"></span>
+                    <span class="segment" data-journey="3"></span>
+                  </div>
+                </div>
+                <p class="kicker action-kicker" id="action-kicker">Current step</p>
                 <div class="awaiting-banner" id="awaiting-banner" hidden>
                   <p id="awaiting-copy">Apple Find Devices opened in a new tab. When you finish there, return here and choose I am back.</p>
                   <button class="btn btn-primary" type="button" id="im-back">I am back</button>
                 </div>
                 <h1 class="screen-title" id="action-title" tabindex="-1"></h1>
-                <p id="action-reason"></p>
+                <p class="action-reason" id="action-reason"></p>
                 <ol class="action-steps" id="action-steps"></ol>
                 <p id="action-instruction" hidden></p>
-                <p class="safety-note caution panel" id="action-caution"></p>
-                <p class="leaving-note" id="leaving-note" hidden></p>
+                <div class="action-caution" id="action-caution" hidden>
+                  <span class="action-caution-mark" aria-hidden="true">!</span>
+                  <div class="action-caution-copy">
+                    <strong id="action-caution-title"></strong>
+                    <p id="action-caution-body"></p>
+                  </div>
+                </div>
                 <div class="primary-cta-slot sticky-cta" id="action-controls"></div>
+                <p class="action-keep-open" id="action-keep-open" hidden>The official service will open in a new tab. Keep this page open.</p>
+                <p class="leaving-note" id="leaving-note" hidden></p>
                 <div id="outcome-box" hidden>
                   <h2 class="meta-label" id="outcome-heading" tabindex="-1">What did you find?</h2>
                   <p id="return-prompt"></p>
@@ -265,6 +275,27 @@
                 </div>
               </details>
             </div>
+
+            <aside class="progress-rail" id="progress-rail" hidden>
+              <div class="progress-rail-head">
+                <h2 id="progress-kicker">You're making progress</h2>
+                <p class="progress-rail-lede">Small steps. Brighter days ahead.</p>
+              </div>
+              <div id="progress-stages"></div>
+              <div class="action-help-card" id="action-help" hidden>
+                <span class="action-help-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.2 11.1c.7.5 1.2 1.4 1.2 2.3h4c0-.9.5-1.8 1.2-2.3A6 6 0 0 0 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <div>
+                  <strong id="action-help-title">Can't hear the sound?</strong>
+                  <p id="action-help-copy">If you don't hear it, we'll help you try other options next.</p>
+                </div>
+                <span class="action-help-chevron" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </div>
+              <p class="action-quote" aria-hidden="true">“You're in the right place.<br>We'll guide you from here.”</p>
+            </aside>
           </div>
         </section>
       </div>

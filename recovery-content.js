@@ -167,11 +167,11 @@
     }),
     Object.freeze({
       id: 'currentDevice',
-      title: 'What device are you using now?',
+      title: 'What device are you using to access LostPhones right now?',
       help: 'LostPhones never assumes you can reach the missing phone from here.',
       choices: Object.freeze([
-        Object.freeze({ id: 'trusted', label: 'My trusted computer or another phone of mine' }),
-        Object.freeze({ id: 'borrowed', label: 'A device from someone I trust' }),
+        Object.freeze({ id: 'trusted', label: 'My own phone, tablet, or computer' }),
+        Object.freeze({ id: 'borrowed', label: "Someone else's phone, tablet, or computer" }),
         Object.freeze({ id: 'public', label: 'A public or shared device' })
       ])
     }),
@@ -392,8 +392,15 @@
       applicableSituations: ['nearby'],
       applicableConditions: 'First locate step when the iPhone may be nearby. Uses Apple Find Devices only.',
       title: 'Play a sound on the iPhone through Apple Find Devices',
-      reason: 'A sound can help you find an iPhone that is in the same area without assuming you can unlock it from here.',
+      progressDetail: 'Play a sound on your iPhone',
+      reason: 'A sound can help you find an iPhone that’s nearby, without needing to unlock it.',
       instruction: 'Open Apple Find Devices in a new tab and sign in with the Apple Account used on the iPhone. Select that iPhone and play a sound. Keep LostPhones available and return here after you try. If you cannot hear it, LostPhones will help you locate and secure it next.',
+      instructionSteps: Object.freeze([
+        Object.freeze({ icon: 'open', title: 'Open Apple Find Devices', body: 'It will open in a new tab.' }),
+        Object.freeze({ icon: 'device', title: 'Sign in with your Apple Account', body: 'Use the account on your missing iPhone.' }),
+        Object.freeze({ icon: 'sound', title: 'Select your iPhone and play a sound', body: "You'll hear a sound if it's in the same area." }),
+        Object.freeze({ icon: 'return', title: 'Come back to LostPhones', body: 'Keep this page open and tell us what happened.' })
+      ]),
       caution: 'This computer cannot ring the missing iPhone by itself. Use Apple’s official Find Devices page.',
       officialProvider: 'Apple',
       officialUrl: OFFICIAL_URLS.appleFind,
@@ -411,8 +418,15 @@
       applicableSituations: ['nearby'],
       applicableConditions: 'First locate step when the Android phone may be nearby. Uses Google Find Hub only.',
       title: 'Play a sound on the Android phone through Google Find Hub',
-      reason: 'A sound can help you find an Android phone that is in the same area without assuming you can unlock it from here.',
+      progressDetail: 'Play a sound on your phone',
+      reason: 'A sound can help you find an Android phone that’s nearby, without needing to unlock it.',
       instruction: 'Open Google Find Hub in a new tab and sign in with the Google Account used on the phone. Select that phone and play a sound. Keep LostPhones available and return here after you try. If you cannot hear it, LostPhones will help you locate and secure it next.',
+      instructionSteps: Object.freeze([
+        Object.freeze({ icon: 'open', title: 'Open Google Find Hub', body: 'It will open in a new tab.' }),
+        Object.freeze({ icon: 'device', title: 'Sign in with your Google Account', body: 'Use the account on your missing phone.' }),
+        Object.freeze({ icon: 'sound', title: 'Select your phone and play a sound', body: "You'll hear a sound if it's in the same area." }),
+        Object.freeze({ icon: 'return', title: 'Come back to LostPhones', body: 'Keep this page open and tell us what happened.' })
+      ]),
       caution: 'This computer cannot ring the missing phone by itself. Use Google’s official Find Hub page.',
       officialProvider: 'Google',
       officialUrl: OFFICIAL_URLS.googleFind,

@@ -74,7 +74,7 @@ if (/aria-label="Primary"/.test(recoveryHtml) && /Preparedness/.test(recoveryHtm
 }
 if (!/What best describes the phone\?/.test(recoveryHtml)) fail('Situation legend is missing.');
 if (!/What kind of phone is missing\?/.test(recoveryHtml)) fail('Platform legend is missing.');
-if (!/What are you using now\?/.test(recoveryHtml)) fail('Current-device legend is missing.');
+if (!/What device are you using to access LostPhones right now\?/.test(recoveryHtml)) fail('Current-device legend is missing.');
 if (!/<dialog[\s\S]*id="reset-dialog"/.test(recoveryHtml)) fail('Native reset dialog is missing.');
 if (!/Continue later/.test(recoveryHtml)) fail('Resume controls must sit behind Continue later.');
 if (!/View full recovery plan/.test(recoveryHtml)) fail('Detailed plan disclosure is missing.');

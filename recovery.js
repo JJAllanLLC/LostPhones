@@ -61,6 +61,37 @@
     { id: 'review', label: 'Review and finish', ids: ['report-and-document', 'erase-device-decision', 'recovery-replacement-transition'] }
   ];
 
+  const CONSUMER_STAGES = [
+    {
+      id: 'find',
+      label: 'Find or secure phone',
+      kicker: 'Find your phone',
+      fallback: 'Locate or secure the missing phone',
+      ids: PROGRESS_STAGES[0].ids.concat(PROGRESS_STAGES[1].ids)
+    },
+    {
+      id: 'protect',
+      label: 'Protect access',
+      kicker: 'Protect access',
+      fallback: 'Secure your account',
+      ids: PROGRESS_STAGES[2].ids
+    },
+    {
+      id: 'review',
+      label: 'Review and finish',
+      kicker: 'Review and finish',
+      fallback: 'Check your results and next steps',
+      ids: PROGRESS_STAGES[3].ids
+    }
+  ];
+
+  const STEP_ICONS = {
+    open: '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.2" stroke="currentColor" stroke-width="1.8"/><path d="M14.7 9.3 11.2 10.8 9.3 14.7l3.5-1.5 1.9-3.9Z" fill="currentColor"/></svg>',
+    device: '<svg viewBox="0 0 24 24" fill="none"><rect x="8" y="3.5" width="8" height="17" rx="1.8" stroke="currentColor" stroke-width="1.9"/><path d="M11 17.6h2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
+    sound: '<svg viewBox="0 0 24 24" fill="none"><path d="M4.6 9.6v4.8h3.3L12.6 18V6L7.9 9.6H4.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15.5 9.1a3.5 3.5 0 0 1 0 5.8M17.8 7a6.5 6.5 0 0 1 0 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    return: '<svg viewBox="0 0 24 24" fill="none"><path d="M19 12H7.5M11.5 7.5 7 12l4.5 4.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+
   const questionSteps = {
     situation: 'Question 1 of 3',
     platform: 'Question 2 of 3',
@@ -151,9 +182,10 @@
     }
     setTriageProgress(step);
 
-    const focusId = focusTargets[step];
-    const focusNode = document.getElementById(focusId);
-    if (focusNode) focusNode.focus();
+    if (step === 'action') {
+      const focusNode = document.getElementById('action-title');
+      if (focusNode) focusNode.focus();
+    }
   }
 
   function pushHistory(step) {
@@ -236,36 +268,82 @@
     return 'Later';
   }
 
-  function renderProgress(currentId, complete) {
+  function shortActionDetail(record) {
+    if (!record) return '';
+    if (record.progressDetail) return record.progressDetail;
+    if (!record.title) return '';
+    return record.title.split(' through ')[0];
+  }
+
+  function setActionTitle(el, text) {
+    if (!el) return;
+    el.textContent = '';
+    const parts = String(text || '').split(' through ');
+    if (parts.length === 2) {
+      el.appendChild(document.createTextNode(parts[0]));
+      el.appendChild(document.createElement('br'));
+      el.appendChild(document.createTextNode('through ' + parts[1]));
+      return;
+    }
+    el.textContent = text || '';
+  }
+
+  function stageDetail(stage, status, record) {
+    if (status === 'Current' && record) return shortActionDetail(record);
+    if (stage.id === 'protect') {
+      return state.answers.platform === 'android' ? 'Secure your Google account' : 'Secure your Apple account';
+    }
+    if (stage.id === 'find' && record && stage.ids.indexOf(record.actionId) !== -1) return shortActionDetail(record);
+    return stage.fallback;
+  }
+
+  function renderProgress(currentId, complete, record) {
     const rail = document.getElementById('progress-rail');
     const stagesEl = document.getElementById('progress-stages');
     const kicker = document.getElementById('progress-kicker');
+    const stepLabel = document.getElementById('action-step-label');
+    const bar = document.getElementById('action-journey-progress');
+    const actionKicker = document.getElementById('action-kicker');
     if (!rail || !stagesEl) return;
     stagesEl.innerHTML = '';
-    let doneCount = 0;
-    let currentLabel = '';
-    PROGRESS_STAGES.forEach(function (stage) {
-      const status = stageStatus(stage, currentId);
-      if (status === 'Done') doneCount += 1;
-      if (status === 'Current') currentLabel = stage.label;
+    let currentIndex = 0;
+    CONSUMER_STAGES.forEach(function (stage, index) {
+      const status = complete ? (index < CONSUMER_STAGES.length - 1 ? 'Done' : 'Current') : stageStatus(stage, currentId);
+      if (status === 'Current') currentIndex = index;
+      if (status === 'Done' && index >= currentIndex && !complete) currentIndex = index;
       const row = document.createElement('div');
       row.className = 'progress-stage';
       if (status === 'Done') row.classList.add('is-done');
       if (status === 'Current') row.classList.add('is-current');
       if (status === 'Needs attention') row.classList.add('is-attention');
-      const name = document.createElement('span');
+      const num = document.createElement('span');
+      num.className = 'progress-stage-num';
+      num.textContent = String(index + 1);
+      const copy = document.createElement('div');
+      copy.className = 'progress-stage-copy';
+      const name = document.createElement('strong');
       name.textContent = stage.label;
-      const meta = document.createElement('span');
-      meta.className = 'progress-stage-status';
-      meta.textContent = status;
-      row.appendChild(name);
-      row.appendChild(meta);
+      const detail = document.createElement('span');
+      detail.textContent = stageDetail(stage, status, record);
+      copy.appendChild(name);
+      copy.appendChild(detail);
+      row.appendChild(num);
+      row.appendChild(copy);
       stagesEl.appendChild(row);
     });
-    kicker.textContent = complete
-      ? 'You are safer now'
-      : (doneCount ? (doneCount + ' safety area' + (doneCount === 1 ? '' : 's') + ' completed') : 'You are making progress');
-    if (currentLabel && !complete) kicker.textContent += '. Current: ' + currentLabel;
+    if (kicker) kicker.textContent = complete ? 'You are safer now' : "You're making progress";
+    if (stepLabel) {
+      stepLabel.hidden = false;
+      stepLabel.textContent = 'STEP ' + (currentIndex + 1) + ' OF 3';
+    }
+    if (bar) {
+      bar.querySelectorAll('.segment').forEach(function (seg) {
+        const n = Number(seg.getAttribute('data-journey'));
+        seg.classList.toggle('is-current', n === currentIndex + 1);
+        seg.classList.toggle('is-done', n < currentIndex + 1);
+      });
+    }
+    if (actionKicker) actionKicker.textContent = CONSUMER_STAGES[currentIndex].kicker;
     rail.hidden = false;
   }
 
@@ -412,22 +490,99 @@
       .slice(0, 4);
   }
 
-  function renderSteps(text) {
+  function renderSteps(source) {
     const list = document.getElementById('action-steps');
     const fallback = document.getElementById('action-instruction');
     list.innerHTML = '';
-    const steps = splitSteps(text);
-    if (!steps.length) {
+    const record = source && typeof source === 'object' ? source : null;
+    const text = record ? record.instruction : source;
+    const structured = record && record.instructionSteps && record.instructionSteps.length
+      ? record.instructionSteps
+      : splitSteps(text).map(function (step, index) {
+        const icons = ['open', 'device', 'sound', 'return'];
+        return { icon: icons[index] || 'open', title: step, body: '' };
+      });
+    if (!structured.length) {
       fallback.hidden = false;
-      fallback.textContent = text;
+      fallback.textContent = text || '';
+      list.hidden = true;
       return;
     }
     fallback.hidden = true;
-    steps.forEach(function (step) {
+    list.hidden = false;
+    structured.forEach(function (step, index) {
       const li = document.createElement('li');
-      li.textContent = step;
+      const num = document.createElement('span');
+      num.className = 'action-step-num';
+      num.textContent = String(index + 1);
+      const icon = document.createElement('span');
+      icon.className = 'action-step-icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.innerHTML = STEP_ICONS[step.icon] || STEP_ICONS.open;
+      const copy = document.createElement('span');
+      copy.className = 'action-step-copy';
+      const title = document.createElement('strong');
+      title.textContent = step.title;
+      copy.appendChild(title);
+      if (step.body) {
+        const body = document.createElement('span');
+        body.textContent = step.body;
+        copy.appendChild(body);
+      }
+      li.appendChild(num);
+      li.appendChild(icon);
+      li.appendChild(copy);
       list.appendChild(li);
     });
+  }
+
+  function deviceNoun() {
+    return window.matchMedia('(max-width: 959px)').matches ? 'phone' : 'computer';
+  }
+
+  function presentCaution(text) {
+    return String(text || '').replace(/\bThis (computer|phone) cannot\b/i, 'This ' + deviceNoun() + ' cannot');
+  }
+
+  let lastCaution = '';
+
+  function renderCaution(text) {
+    if (arguments.length) lastCaution = text || '';
+    const box = document.getElementById('action-caution');
+    const title = document.getElementById('action-caution-title');
+    const body = document.getElementById('action-caution-body');
+    const presented = presentCaution(lastCaution);
+    if (!box || !title) return;
+    if (!presented) {
+      box.hidden = true;
+      return;
+    }
+    const parts = presented.split('. ');
+    const heading = parts.shift() || presented;
+    title.textContent = /[.!?]$/.test(heading) ? heading : heading + '.';
+    if (body) {
+      const rest = parts.join('. ').trim();
+      body.textContent = rest;
+      body.hidden = !rest;
+    }
+    box.hidden = false;
+  }
+
+  function renderHelp(record) {
+    const card = document.getElementById('action-help');
+    if (!card) return;
+    const sound = record && record.boundedOutcomes && record.boundedOutcomes.some(function (outcome) {
+      return outcome.id === 'not_heard';
+    });
+    if (!sound) {
+      card.hidden = true;
+      return;
+    }
+    const title = document.getElementById('action-help-title');
+    const copy = document.getElementById('action-help-copy');
+    if (title) title.textContent = "Can't hear the sound?";
+    if (copy) copy.textContent = "If you don't hear it, we'll help you try other options next.";
+    card.hidden = false;
   }
 
   function externalLink(href, label, leavingText, actionId) {
@@ -436,12 +591,19 @@
     link.href = href;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.textContent = label;
+    const labelEl = document.createElement('span');
+    labelEl.textContent = label;
+    link.appendChild(labelEl);
+    const icon = document.createElement('span');
+    icon.className = 'external-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M14 5h5v5M19 5 10 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 13.5V18a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18V6.5A1.5 1.5 0 0 1 6 5h4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+    link.appendChild(icon);
     const sr = document.createElement('span');
     sr.className = 'live-region';
     sr.textContent = ' Opens in a new tab';
     link.appendChild(sr);
-    if (leavingText) link.setAttribute('aria-describedby', 'leaving-note');
+    if (leavingText) link.setAttribute('aria-describedby', 'action-keep-open');
     link.addEventListener('click', function () {
       const result = logic.startExternalAction(state, actionId);
       if (result.ok) {
@@ -547,8 +709,8 @@
     const record = view.action;
     const title = document.getElementById('action-title');
     const reason = document.getElementById('action-reason');
-    const caution = document.getElementById('action-caution');
     const leaving = document.getElementById('leaving-note');
+    const keepOpen = document.getElementById('action-keep-open');
     const support = document.getElementById('support-note');
     const supportDetails = document.getElementById('support-details');
     const controls = document.getElementById('action-controls');
@@ -559,20 +721,22 @@
 
     controls.innerHTML = '';
     leaving.hidden = true;
+    if (keepOpen) keepOpen.hidden = true;
     supportDetails.hidden = true;
     document.getElementById('outcome-box').hidden = true;
     complete.hidden = true;
 
     if (!record) {
       document.getElementById('action-kicker').textContent = 'Summary';
-      title.textContent = statusLabel(state.status) || 'You are safer now';
+      setActionTitle(title, statusLabel(state.status) || 'You are safer now');
       reason.textContent = 'You are safer now. The immediate risk is under control. Here is what is secure and what can wait.';
       renderSteps('Use the free summary below. Print or save it before considering the optional PDF.');
-      caution.textContent = 'LostPhones still will not ask for passwords, codes, or account details.';
+      renderCaution('LostPhones still will not ask for passwords, codes, or account details.');
       awaiting.hidden = true;
+      renderHelp(null);
       renderCompleteSummary();
       renderPrivacy(content.privacyGuidance[state.answers.currentDevice]);
-      renderProgress(null, true);
+      renderProgress(null, true, null);
       renderPlan(true);
       renderResume();
       renderPaidOffer();
@@ -582,15 +746,16 @@
     }
 
     document.getElementById('action-kicker').textContent = 'Current step';
-    title.textContent = record.title;
+    setActionTitle(title, record.title);
     if (record.actionId === 'apple-auth-fallback' || record.actionId === 'google-auth-fallback') {
       const service = record.nextServiceName || (record.actionId.indexOf('apple') === 0 ? 'Apple Account Recovery' : 'Google Account Recovery');
       reason.textContent = 'You could not sign in, but you still have a safe next step. Use ' + service + ', then come back here.';
     } else {
       reason.textContent = record.reason;
     }
-    renderSteps(record.instruction);
-    caution.textContent = record.caution;
+    renderSteps(record);
+    renderCaution(record.caution);
+    renderHelp(record);
     why.textContent = record.reason;
     renderPrivacy(content.privacyGuidance[state.answers.currentDevice]);
 
@@ -602,8 +767,9 @@
     }
 
     if (!awaitingReturn && record.leavingLabel && (record.officialUrl || record.requiresExternalReturn)) {
-      leaving.textContent = (record.nextServiceName || 'The official service') + ' will open in a new tab. Keep this page open and come back when you finish.';
-      leaving.hidden = false;
+      leaving.textContent = record.leavingLabel;
+      leaving.hidden = true;
+      if (keepOpen) keepOpen.hidden = false;
     }
 
     if (record.supportSourceUrl) {
@@ -661,7 +827,7 @@
       if (heading) heading.focus();
     };
 
-    renderProgress(record.actionId, false);
+    renderProgress(record.actionId, false, record);
     renderPlan(false);
     renderResume();
     hidePaidOffer();
@@ -696,10 +862,10 @@
     if (!view || !view.ok) {
       state.step = 'action';
       showScreen('action');
-      document.getElementById('action-title').textContent = 'We need a complete answer set';
+      setActionTitle(document.getElementById('action-title'), 'We need a complete answer set');
       document.getElementById('action-reason').textContent = 'LostPhones will not guess the next step from incomplete or invalid answers.';
       renderSteps('Go back and choose one option on each screen.');
-      document.getElementById('action-caution').textContent = 'No official recovery service was selected.';
+      renderCaution('No official recovery service was selected.');
       hidePaidOffer();
       announce('The recovery answers are incomplete. No action was guessed.');
       return;
@@ -909,6 +1075,15 @@
     window.addEventListener('resize', function () {
       if (window.matchMedia('(min-width: 960px)').matches) setOpen(false);
     });
+  })();
+
+  (function bindCautionViewport() {
+    const media = window.matchMedia('(max-width: 959px)');
+    const refresh = function () {
+      if (lastCaution) renderCaution();
+    };
+    if (media.addEventListener) media.addEventListener('change', refresh);
+    else if (media.addListener) media.addListener(refresh);
   })();
 
   function boot() {

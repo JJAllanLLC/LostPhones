@@ -27,7 +27,7 @@ if (!/href="recovery\.html"/.test(indexHtml) || !/Start My Recovery/.test(indexH
 const requiredQuestions = [
   ['situation', ['nearby', 'lost', 'stolen', 'unsure'], 'What best describes the phone?'],
   ['platform', ['iphone', 'android', 'unsure'], 'What kind of phone is missing?'],
-  ['currentDevice', ['trusted', 'borrowed', 'public'], 'What are you using now?']
+  ['currentDevice', ['trusted', 'borrowed', 'public'], 'What device are you using to access LostPhones right now?']
 ];
 
 for (const [name, values, legend] of requiredQuestions) {
