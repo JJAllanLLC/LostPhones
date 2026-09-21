@@ -404,3 +404,192 @@ test('erase is not a stabilization prerequisite', () => {
   assert.equal(logic.isEraseAvailable(view.state), true);
 });
 
+test('B01 unsafe stays in safety until the person confirms', () => {
+  let view = triage('stolen', 'iphone', 'trusted');
+  view = logic.answerQuestion(view.state, 'safety', 'unsafe');
+  assertAction(view, 'personal-safety');
+  assert.equal(view.action.officialUrl, null);
+  assert.equal(view.action.requiresExternalReturn, false);
+  assert.equal(view.action.nextServiceName, null);
+  assert.match(view.action.caution, /Never confront|Do not confront/i);
+  assert.match(view.action.instruction, /Do not travel|do not travel/i);
+
+  view = logic.recordOutcome(view.state, 'personal-safety', 'still_unsafe');
+  assertAction(view, 'personal-safety');
+  assert.equal(view.state.answers.safety, 'unsafe');
+  assert.notEqual(view.actionId, 'apple-locate-device');
+  assert.notEqual(view.actionId, 'apple-mark-lost');
+
+  view = logic.recordOutcome(view.state, 'personal-safety', 'safe');
+  assert.equal(view.state.answers.safety, 'safe');
+  assert.equal(view.state.actions['personal-safety'].status, 'completed');
+  assertAction(view, 'apple-locate-device');
+});
+
+test('B01 located-unsafe confirmation then next official action', () => {
+  let view = triage('lost', 'iphone', 'trusted');
+  view = logic.recordOutcome(view.state, 'apple-locate-device', 'located_unsafe');
+  view = logic.answerQuestion(view.state, 'safety', 'unsafe');
+  assertAction(view, 'personal-safety');
+  view = logic.recordOutcome(view.state, 'personal-safety', 'still_unsafe');
+  assertAction(view, 'personal-safety');
+  view = logic.recordOutcome(view.state, 'personal-safety', 'safe');
+  assertAction(view, 'apple-mark-lost');
+});
+
+test('B02 true official URL handoff versus manual no-URL actions', () => {
+  const locate = content.getAction('apple-locate-device', 'iphone');
+  const carrier = content.getAction('protect-mobile-line', 'iphone');
+  const financial = content.getAction('protect-financial-accounts', 'android');
+  assert.equal(content.isOfficialUrl(locate.officialUrl), true);
+  assert.equal(content.isManualExternalAction(locate), false);
+  assert.equal(content.isOfficialUrl(carrier.officialUrl), false);
+  assert.equal(content.isOfficialUrl(financial.officialUrl), false);
+  assert.equal(content.isManualExternalAction(carrier), true);
+  assert.equal(content.isManualExternalAction(financial), true);
+  assert.match(carrier.instruction, /official app or website/i);
+  assert.match(financial.returnPrompt, /bank or card issuer/i);
+  assert.notEqual(carrier.officialUrl, '#');
+  assert.notEqual(financial.officialUrl, '#');
+
+  let view = triage('lost', 'iphone', 'trusted');
+  const opened = logic.startExternalAction(view.state, 'apple-locate-device');
+  assert.equal(opened.ok, true);
+  assert.equal(opened.awaitingReturn, true);
+  assert.equal(opened.state.awaitingExternalReturnActionId, 'apple-locate-device');
+  view = logic.recordOutcome(opened.state, 'apple-locate-device', 'not_found');
+  assert.equal(view.state.awaitingExternalReturnActionId, null);
+  assertAction(view, 'apple-mark-lost');
+
+  const manualStart = logic.startExternalAction(view.state, 'protect-mobile-line');
+  assert.equal(manualStart.ok, false);
+  assert.equal(view.state.awaitingExternalReturnActionId, null);
+});
+
+test('B02 manual carrier and financial return outcomes stay internal', () => {
+  let view = triage('stolen', 'iphone', 'trusted');
+  view = logic.answerQuestion(view.state, 'safety', 'safe');
+  view = logic.recordOutcome(view.state, 'apple-locate-device', 'not_found');
+  view = logic.recordOutcome(view.state, 'apple-mark-lost', 'marked');
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  assertAction(view, 'protect-mobile-line');
+  assert.equal(view.action.officialUrl, null);
+  const refused = logic.startExternalAction(view.state, 'protect-mobile-line');
+  assert.equal(refused.ok, false);
+  view = logic.recordOutcome(view.state, 'protect-mobile-line', 'cannot_access_carrier');
+  assert.equal(view.state.actions['protect-mobile-line'].status, 'blocked');
+  assertAction(view, 'protect-financial-accounts');
+  assert.equal(view.action.officialUrl, null);
+  view = logic.recordOutcome(view.state, 'protect-financial-accounts', 'secured');
+  assert.equal(view.state.status, 'stabilized_with_blockers');
+});
+
+test('B03 unknown platform can still identify iPhone', () => {
+  let view = triage('lost', 'unsure', 'trusted');
+  assertAction(view, 'identify-platform');
+  view = logic.recordOutcome(view.state, 'identify-platform', 'iphone');
+  assert.equal(view.state.answers.platform, 'iphone');
+  assertAction(view, 'apple-locate-device');
+});
+
+test('B03 unknown platform can still identify Android', () => {
+  let view = triage('lost', 'unsure', 'trusted');
+  assertAction(view, 'identify-platform');
+  view = logic.recordOutcome(view.state, 'identify-platform', 'android');
+  assert.equal(view.state.answers.platform, 'android');
+  assertAction(view, 'google-locate-device');
+});
+
+test('B03 unknown platform still-cannot-tell uses provider-neutral fallback', () => {
+  let view = triage('lost', 'unsure', 'trusted');
+  assertAction(view, 'identify-platform');
+  view = logic.recordOutcome(view.state, 'identify-platform', 'still_unsure');
+  assert.equal(view.state.answers.platform, 'unsure');
+  assert.equal(view.state.actions['identify-platform'].status, 'completed');
+  assertAction(view, 'protect-mobile-line');
+  assert.match(view.action.reason, /do not require knowing/i);
+  assert.equal(view.action.officialUrl, null);
+  view = logic.recordOutcome(view.state, 'protect-mobile-line', 'secured');
+  assertAction(view, 'protect-primary-account');
+  assert.equal(view.action.title, 'Protect the account connected to the missing phone');
+  assert.doesNotMatch(view.action.title, /Apple|Google/);
+  assert.equal(view.action.officialUrl, null);
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  assertAction(view, 'report-and-document');
+  assert.match(view.action.instruction, /IMEI|serial/i);
+  view = logic.recordOutcome(view.state, 'report-and-document', 'skipped_for_now');
+  assert.equal(view.type, 'complete');
+  assert.equal(view.state.status, 'stabilized_with_blockers');
+  assert.notEqual(view.state.currentActionId, 'identify-platform');
+});
+
+test('B03 public/shared device keeps privacy rules on the neutral fallback', () => {
+  let view = triage('lost', 'unsure', 'public');
+  view = logic.recordOutcome(view.state, 'identify-platform', 'still_unsure');
+  assertAction(view, 'protect-mobile-line');
+  assert.equal(view.state.answers.currentDevice, 'public');
+  assert.equal(view.state.privacyMode, 'memory-only');
+  assert.equal(content.privacyGuidance.public.id, 'public');
+  assert.ok(content.privacyGuidance.public.items.some((item) => /will not save a resume token/i.test(item)));
+});
+
+test('H01 recovered and low-risk stabilized journeys keep erase ineligible', () => {
+  let recovered = triage('lost', 'iphone', 'trusted');
+  recovered = logic.recordOutcome(recovered.state, 'apple-locate-device', 'located_safe');
+  recovered = logic.answerQuestion(recovered.state, 'recovered', 'yes');
+  recovered = logic.recordOutcome(recovered.state, 'recovered-device-security-check', 'in_hand_safe');
+  recovered = logic.answerQuestion(recovered.state, 'unlockRisk', 'probably_not');
+  recovered = logic.answerQuestion(recovered.state, 'suspiciousActivity', 'no');
+  assert.ok(recovered.state.status === 'recovered' || recovered.state.status === 'stabilized');
+  assert.equal(logic.isEraseAvailable(recovered.state), false);
+  assert.equal(recovered.eraseAvailable, false);
+  const recoveredReview = logic.reviewErase(recovered.state);
+  assert.notEqual(recoveredReview.questionId, 'eraseAcknowledge');
+
+  let lowRisk = triage('lost', 'iphone', 'trusted');
+  lowRisk = logic.recordOutcome(lowRisk.state, 'apple-locate-device', 'not_found');
+  lowRisk = logic.recordOutcome(lowRisk.state, 'apple-mark-lost', 'marked');
+  lowRisk = logic.recordOutcome(lowRisk.state, 'protect-primary-account', 'secured');
+  assert.equal(logic.isEraseAvailable(lowRisk.state), false);
+  assert.ok(lowRisk.state.status === 'stabilized' || lowRisk.state.status === 'stabilized_with_blockers' || lowRisk.type === 'complete');
+});
+
+test('H01 risk-eligible erase remains available after reversible steps', () => {
+  let view = triage('stolen', 'iphone', 'trusted');
+  view = logic.answerQuestion(view.state, 'safety', 'safe');
+  view = logic.recordOutcome(view.state, 'apple-locate-device', 'not_found');
+  view = logic.recordOutcome(view.state, 'apple-mark-lost', 'marked');
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  view = logic.recordOutcome(view.state, 'protect-mobile-line', 'secured');
+  view = logic.recordOutcome(view.state, 'protect-financial-accounts', 'secured');
+  assert.equal(logic.isEraseAvailable(view.state), true);
+  assert.equal(view.eraseAvailable, true);
+});
+
+test('H03 find service unavailable defers same-provider tasks and continues independently', () => {
+  let view = triage('lost', 'iphone', 'trusted');
+  view = logic.recordOutcome(view.state, 'apple-locate-device', 'service_unavailable');
+  assert.equal(view.state.actions['apple-locate-device'].status, 'blocked');
+  assert.equal(view.state.actions['apple-locate-device'].blockedReason, 'service_unavailable');
+  assert.equal(view.state.actions['apple-mark-lost'].status, 'blocked');
+  assert.equal(view.state.actions['apple-mark-lost'].blockedReason, 'waiting_for_provider');
+  assert.notEqual(view.state.actions['apple-locate-device'].status, 'completed');
+  assert.notEqual(view.state.actions['apple-mark-lost'].status, 'completed');
+  assert.notEqual(view.actionId, 'apple-mark-lost');
+  assertAction(view, 'protect-primary-account');
+
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  assertAction(view, 'protect-mobile-line');
+  assert.equal(view.state.actions['apple-mark-lost'].status, 'blocked');
+
+  const retry = logic.clone(view.state);
+  retry.actions['apple-locate-device'] = {
+    status: 'pending',
+    outcome: null,
+    blockedReason: null,
+    updatedAt: Date.now()
+  };
+  const resumed = logic.evaluate(retry);
+  assertAction(resumed, 'apple-locate-device');
+});
+

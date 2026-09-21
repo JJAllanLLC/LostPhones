@@ -251,17 +251,10 @@ body.emergency-shell .recovery-card {
   backdrop-filter: blur(10px);
 }
 
-body.emergency-shell .recovery-progress[hidden],
-body.emergency-shell .segmented-progress[hidden],
-body.emergency-shell .triage-step[hidden],
-body.emergency-shell .action-help-card[hidden],
-body.emergency-shell .action-caution[hidden],
-body.emergency-shell .more-item[hidden],
-body.emergency-shell .quiet-action[hidden],
-body.emergency-shell .plan-panel[hidden],
-body.emergency-shell .progress-rail[hidden],
-body.emergency-shell .awaiting-banner[hidden] {
+body.emergency-shell [hidden] {
   display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 body.emergency-shell .recovery-progress {

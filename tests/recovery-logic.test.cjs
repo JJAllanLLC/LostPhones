@@ -32,7 +32,9 @@ test('stolen iPhone → personal-safety action with iPhone context', () => {
   assert.equal(result.ok, true);
   assert.equal(result.actionId, 'personal-safety');
   assert.equal(result.content.platform, 'iphone');
-  assert.equal(result.content.nextServiceName, 'Apple Find Devices');
+  assert.equal(result.content.officialUrl, null);
+  assert.equal(result.content.nextServiceName, null);
+  assert.equal(result.content.requiresExternalReturn, false);
   assert.match(result.content.instruction, /Apple Find Devices/);
   assert.match(result.content.instruction, /Never confront|Do not confront/i);
 });
@@ -56,7 +58,9 @@ test('stolen Android → personal-safety action with Android context', () => {
   assert.equal(result.ok, true);
   assert.equal(result.actionId, 'personal-safety');
   assert.equal(result.content.platform, 'android');
-  assert.equal(result.content.nextServiceName, 'Google Find Hub');
+  assert.equal(result.content.officialUrl, null);
+  assert.equal(result.content.nextServiceName, null);
+  assert.equal(result.content.requiresExternalReturn, false);
   assert.match(result.content.instruction, /Google Find Hub/);
 });
 

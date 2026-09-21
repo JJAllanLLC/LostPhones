@@ -94,6 +94,18 @@ if (!/Needs another route/.test(recoveryJs) || !/Not needed/.test(recoveryJs)) {
 }
 if (!/EXCEPTION_OUTCOMES/.test(recoveryJs)) fail('Outcome grouping must remain presentation-only in recovery.js.');
 if (!/PROGRESS_STAGES/.test(recoveryJs)) fail('Compact progress stages are missing.');
+if (!/I’m somewhere safe now/.test(recoveryJs)) fail('Personal safety must use an internal confirmation control.');
+if (!/I finished in the official app or site/.test(recoveryJs)) fail('Manual carrier/financial actions need an internal completion control.');
+if (!/Protect the account connected to the missing phone/.test(recoveryJs)) fail('Unknown-platform progress copy is missing.');
+if (!/Retry later/.test(recoveryJs)) fail('Provider-unavailable tasks must show Retry later.');
+if (/officialUrl \|\| record\.supportSourceUrl \|\| '#'/.test(recoveryJs) || /href\s*=\s*['"]#['"]/.test(recoveryJs)) {
+  fail('Recovery UI must not use href="#" fake handoffs.');
+}
+
+const recoveryShell = read('recovery-shell.css');
+if (!/body\.emergency-shell \[hidden\][\s\S]{0,120}display:\s*none\s*!important/.test(recoveryShell)) {
+  fail('Hidden recovery content must be globally suppressed.');
+}
 
 if (!/#17324[Dd]/.test(recoveryCss) || !/#2[Ee]5[Ff]8[Aa]/.test(recoveryCss)) fail('Visual tokens for navy and interactive blue are missing.');
 if (!/#2[Dd]6[Aa]4[Ff]/.test(recoveryCss) || !/#9[Aa]5[Aa]00/.test(recoveryCss) || !/#9[Bb]2[Cc]2[Cc]/.test(recoveryCss)) {

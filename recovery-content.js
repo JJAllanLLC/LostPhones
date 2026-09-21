@@ -309,17 +309,17 @@
       applicableConditions: 'Asked first when theft is possible, or when a location looks unsafe. Never skipped for stolen phones until the person is safe.',
       title: 'Move to safety before using any phone-recovery service',
       reason: 'If the iPhone may have been stolen, personal safety comes before Find Devices, location checks, or travel.',
-      instruction: 'Get to a place where you feel safe. If you may be in immediate danger, contact local emergency services. Do not confront a suspected thief and do not travel to a displayed location. Once you are safe, Apple Find Devices can be the next official service.',
+      instruction: 'Get to a place where you feel safe. If you may be in immediate danger, contact local emergency services. Do not confront a suspected thief and do not travel to a displayed location. Confirm here when you are safe. Apple Find Devices can be the next official service after that confirmation.',
       caution: 'Never confront a suspected thief. Do not go looking for the phone.',
-      officialProvider: 'Apple',
-      officialUrl: OFFICIAL_URLS.appleFind,
+      officialProvider: null,
+      officialUrl: null,
       supportSourceUrl: OFFICIAL_URLS.appleLostSupport,
-      primaryControlLabel: 'I’m somewhere safe',
-      leavingLabel: 'After you are safe, you can leave LostPhones for Apple Find Devices.',
+      primaryControlLabel: null,
+      leavingLabel: null,
       planLane: 'now',
-      nextServiceName: 'Apple Find Devices',
+      nextServiceName: null,
       boundedOutcomes: Object.freeze([
-        { id: 'safe', label: 'I am somewhere safe now' },
+        { id: 'safe', label: 'I’m somewhere safe now' },
         { id: 'still_unsafe', label: 'I still need to get to safety' }
       ])
     }),
@@ -330,17 +330,17 @@
       applicableConditions: 'Asked first when theft is possible, or when a location looks unsafe. Never skipped for stolen phones until the person is safe.',
       title: 'Move to safety before using any phone-recovery service',
       reason: 'If the phone may have been stolen, personal safety comes before Find Hub, location checks, or travel.',
-      instruction: 'Get to a place where you feel safe. If you may be in immediate danger, contact local emergency services. Do not confront a suspected thief and do not travel to a displayed location. Once you are safe, Google Find Hub can be the next official service.',
+      instruction: 'Get to a place where you feel safe. If you may be in immediate danger, contact local emergency services. Do not confront a suspected thief and do not travel to a displayed location. Confirm here when you are safe. Google Find Hub can be the next official service after that confirmation.',
       caution: 'Never confront a suspected thief. Do not go looking for the phone.',
-      officialProvider: 'Google',
-      officialUrl: OFFICIAL_URLS.googleFind,
+      officialProvider: null,
+      officialUrl: null,
       supportSourceUrl: OFFICIAL_URLS.googleLostSupport,
-      primaryControlLabel: 'I’m somewhere safe',
-      leavingLabel: 'After you are safe, you can leave LostPhones for Google Find Hub.',
+      primaryControlLabel: null,
+      leavingLabel: null,
       planLane: 'now',
-      nextServiceName: 'Google Find Hub',
+      nextServiceName: null,
       boundedOutcomes: Object.freeze([
-        { id: 'safe', label: 'I am somewhere safe now' },
+        { id: 'safe', label: 'I’m somewhere safe now' },
         { id: 'still_unsafe', label: 'I still need to get to safety' }
       ])
     }),
@@ -351,17 +351,17 @@
       applicableConditions: 'Asked first when theft is possible and the missing phone type is still unknown.',
       title: 'Move to safety before using any phone-recovery service',
       reason: 'If the phone may have been stolen, personal safety comes first. LostPhones will not guess which company’s recovery service to use yet.',
-      instruction: 'Get to a place where you feel safe. If you may be in immediate danger, contact local emergency services. Do not confront a suspected thief and do not travel to a displayed location. After you are safe, identify whether the missing phone is an iPhone or Android before using an official recovery service.',
+      instruction: 'Get to a place where you feel safe. If you may be in immediate danger, contact local emergency services. Do not confront a suspected thief and do not travel to a displayed location. Confirm here when you are safe. After that, identify whether the missing phone is an iPhone or Android before using an official recovery service.',
       caution: 'Never confront a suspected thief. Do not go looking for the phone.',
       officialProvider: null,
       officialUrl: null,
       supportSourceUrl: null,
-      primaryControlLabel: 'I’m somewhere safe',
+      primaryControlLabel: null,
       leavingLabel: null,
       planLane: 'now',
       nextServiceName: null,
       boundedOutcomes: Object.freeze([
-        { id: 'safe', label: 'I am somewhere safe now' },
+        { id: 'safe', label: 'I’m somewhere safe now' },
         { id: 'still_unsafe', label: 'I still need to get to safety' }
       ])
     }),
@@ -372,7 +372,7 @@
       applicableConditions: 'Shown when the missing phone type is unknown. LostPhones does not infer platform from this browser.',
       title: 'Identify whether the missing phone is an iPhone or Android',
       reason: 'The official recovery service depends on the missing phone, not on the browser you are using now.',
-      instruction: 'Look for clues about the missing phone itself: its case, charging cable, previous screenshots, a box, a receipt, or how the owner used it. Apple devices use Apple Find Devices. Android devices use Google Find Hub. LostPhones will not guess from this browser.',
+      instruction: 'Look for clues about the missing phone itself: its case, charging cable, previous screenshots, a box, a receipt, or how the owner used it. Apple devices use Apple Find Devices. Android devices use Google Find Hub. LostPhones will not guess from this browser. If you still cannot tell, LostPhones can still help with steps that do not require knowing the phone type.',
       caution: 'Do not assume the missing phone matches this computer or borrowed phone.',
       officialProvider: null,
       officialUrl: null,
@@ -594,19 +594,38 @@
       boundedOutcomes: PROTECT_ACCOUNT_OUTCOMES
     }),
     record({
+      actionId: 'protect-primary-account',
+      platform: 'unsure',
+      applicableSituations: ['nearby', 'lost', 'stolen', 'unsure'],
+      applicableConditions: 'Provider-neutral fallback when the missing phone type still cannot be identified. Uses the official site for the account connected to the missing phone — never a guessed Apple or Google destination.',
+      title: 'Protect the account connected to the missing phone',
+      reason: 'LostPhones can still help without knowing whether the missing phone is an iPhone or Android. Review the primary email or account associated with the missing phone on that provider’s official site only.',
+      instruction: 'Open the official website or app for the primary email or account used on the missing phone. Review sign-in and security settings there. Return here when you have finished or if you are blocked. Never type a password or verification code into LostPhones. LostPhones will not guess Apple or Google.',
+      caution: 'Use only the account provider’s official site. Do not enter account details here.',
+      officialProvider: null,
+      officialUrl: null,
+      supportSourceUrl: null,
+      primaryControlLabel: null,
+      leavingLabel: 'Use the official account site, then return to LostPhones.',
+      returnPrompt: 'When you are back from the official account site, choose the closest result. LostPhones does not assume the account is secure.',
+      requiresExternalReturn: true,
+      planLane: 'next',
+      boundedOutcomes: PROTECT_ACCOUNT_OUTCOMES
+    }),
+    record({
       actionId: 'protect-mobile-line',
       platform: 'iphone',
       applicableSituations: ['stolen', 'unsure', 'lost'],
       applicableConditions: 'When theft, verification risk, or line risk exists. Users must use the carrier’s official app, website, or bill — never an unofficial directory.',
       title: 'Protect the mobile line through the official carrier',
       reason: 'A stolen or missing iPhone can be used to intercept calls, texts, or account-recovery codes on that number.',
-      instruction: 'Use the carrier’s official app, website, or the contact details on a recent bill or SIM pack. Ask the carrier to protect the line. Keep LostPhones available and return afterward. LostPhones does not keep a list of carriers and does not need the phone number.',
+      instruction: 'Use your carrier’s official app or website. Return here when you have finished or if you are blocked. LostPhones does not keep a list of carriers and does not need the phone number.',
       caution: 'Do not give the number or account PIN to LostPhones or to anyone who contacts you unexpectedly.',
       officialProvider: null,
       officialUrl: null,
       supportSourceUrl: null,
       primaryControlLabel: null,
-      leavingLabel: 'Use the carrier’s official app or website in another tab, then return to LostPhones.',
+      leavingLabel: 'Use the carrier’s official app or website, then return to LostPhones.',
       returnPrompt: 'When you are back from the carrier, tell LostPhones whether the line was protected. LostPhones never stores the phone number.',
       requiresExternalReturn: true,
       planLane: 'next',
@@ -619,13 +638,32 @@
       applicableConditions: 'When theft, verification risk, or line risk exists. Users must use the carrier’s official app, website, or bill — never an unofficial directory.',
       title: 'Protect the mobile line through the official carrier',
       reason: 'A stolen or missing Android phone can be used to intercept calls, texts, or account-recovery codes on that number.',
-      instruction: 'Use the carrier’s official app, website, or the contact details on a recent bill or SIM pack. Ask the carrier to protect the line. Keep LostPhones available and return afterward. LostPhones does not keep a list of carriers and does not need the phone number.',
+      instruction: 'Use your carrier’s official app or website. Return here when you have finished or if you are blocked. LostPhones does not keep a list of carriers and does not need the phone number.',
       caution: 'Do not give the number or account PIN to LostPhones or to anyone who contacts you unexpectedly.',
       officialProvider: null,
       officialUrl: null,
       supportSourceUrl: null,
       primaryControlLabel: null,
-      leavingLabel: 'Use the carrier’s official app or website in another tab, then return to LostPhones.',
+      leavingLabel: 'Use the carrier’s official app or website, then return to LostPhones.',
+      returnPrompt: 'When you are back from the carrier, tell LostPhones whether the line was protected. LostPhones never stores the phone number.',
+      requiresExternalReturn: true,
+      planLane: 'next',
+      boundedOutcomes: PROTECT_LINE_OUTCOMES
+    }),
+    record({
+      actionId: 'protect-mobile-line',
+      platform: 'unsure',
+      applicableSituations: ['nearby', 'lost', 'stolen', 'unsure'],
+      applicableConditions: 'Provider-neutral fallback when the missing phone type still cannot be identified. Users must use the carrier’s official app, website, or bill — never an unofficial directory.',
+      title: 'Protect the mobile line through the official carrier',
+      reason: 'LostPhones can still help with actions that do not require knowing whether the missing phone is an iPhone or Android. Start by protecting the mobile line through the official carrier if that line may still be at risk.',
+      instruction: 'Use your carrier’s official app or website. Return here when you have finished or if you are blocked. LostPhones does not keep a list of carriers and does not need the phone number.',
+      caution: 'Do not give the number or account PIN to LostPhones or to anyone who contacts you unexpectedly.',
+      officialProvider: null,
+      officialUrl: null,
+      supportSourceUrl: null,
+      primaryControlLabel: null,
+      leavingLabel: 'Use the carrier’s official app or website, then return to LostPhones.',
       returnPrompt: 'When you are back from the carrier, tell LostPhones whether the line was protected. LostPhones never stores the phone number.',
       requiresExternalReturn: true,
       planLane: 'next',
@@ -645,7 +683,7 @@
       supportSourceUrl: null,
       primaryControlLabel: null,
       leavingLabel: 'Use official bank or card sites in another tab, then return to LostPhones.',
-      returnPrompt: 'When you are back, choose the closest result. Do not enter financial details here.',
+      returnPrompt: 'When you return from your bank or card issuer, choose the closest result. Do not enter financial details here.',
       requiresExternalReturn: true,
       planLane: 'next',
       boundedOutcomes: PROTECT_FINANCIAL_OUTCOMES
@@ -664,7 +702,26 @@
       supportSourceUrl: null,
       primaryControlLabel: null,
       leavingLabel: 'Use official bank or card sites in another tab, then return to LostPhones.',
-      returnPrompt: 'When you are back, choose the closest result. Do not enter financial details here.',
+      returnPrompt: 'When you return from your bank or card issuer, choose the closest result. Do not enter financial details here.',
+      requiresExternalReturn: true,
+      planLane: 'next',
+      boundedOutcomes: PROTECT_FINANCIAL_OUTCOMES
+    }),
+    record({
+      actionId: 'protect-financial-accounts',
+      platform: 'unsure',
+      applicableSituations: ['nearby', 'lost', 'stolen', 'unsure'],
+      applicableConditions: 'Provider-neutral fallback when wallets, payment apps, saved cards, or suspicious activity may be involved and the phone type is still unknown. Use official bank or card apps only.',
+      title: 'Protect banks and cards through official apps or sites',
+      reason: 'If the missing phone had wallets, payment apps, or saved cards, review those accounts on the bank or card issuer’s official app or website. This does not require knowing whether the phone is an iPhone or Android.',
+      instruction: 'Open each bank or card issuer’s official app or website, or use the number on the back of the card or on a statement. Review recent activity there. Return here when you have finished or if you are blocked. Do not enter card numbers, balances, or transaction details into LostPhones.',
+      caution: 'LostPhones is not a bank and does not keep a financial directory.',
+      officialProvider: null,
+      officialUrl: null,
+      supportSourceUrl: null,
+      primaryControlLabel: null,
+      leavingLabel: 'Use official bank or card sites, then return to LostPhones.',
+      returnPrompt: 'When you return from your bank or card issuer, choose the closest result. Do not enter financial details here.',
       requiresExternalReturn: true,
       planLane: 'next',
       boundedOutcomes: PROTECT_FINANCIAL_OUTCOMES
@@ -698,6 +755,23 @@
       officialProvider: null,
       officialUrl: null,
       supportSourceUrl: OFFICIAL_URLS.googleLostSupport,
+      primaryControlLabel: null,
+      leavingLabel: null,
+      planLane: 'later',
+      boundedOutcomes: REPORT_OUTCOMES
+    }),
+    record({
+      actionId: 'report-and-document',
+      platform: 'unsure',
+      applicableSituations: ['nearby', 'lost', 'stolen', 'unsure'],
+      applicableConditions: 'Provider-neutral fallback after independent protections when the missing phone type still cannot be identified. Does not block a safe pause. No IMEI, serial, passwords, codes, location, or incident narrative are stored.',
+      title: 'Gather ownership clues that may help identify the phone later',
+      reason: 'If you still cannot tell whether the missing phone is an iPhone or Android, keep ownership clues in your own notes. That can help identify the platform later without storing details here.',
+      instruction: 'In your own notes, not in LostPhones, keep clues such as a box, receipt, charging cable, case, or how the owner used the phone. Do not paste IMEI, serial numbers, passwords, codes, exact location, or a story into this page. You can pause and return later if the platform still cannot be confirmed.',
+      caution: 'Do not delay safety or account protection for paperwork. LostPhones will not guess Apple or Google.',
+      officialProvider: null,
+      officialUrl: null,
+      supportSourceUrl: null,
       primaryControlLabel: null,
       leavingLabel: null,
       planLane: 'later',
@@ -856,7 +930,7 @@
     device_offline: 'The official service reported the phone offline. Location may still update later. This does not count as secured.',
     service_unavailable: 'The official service was unavailable. Try again from this page when you can. The step is not complete.',
     cannot_access_carrier: 'The carrier could not be reached through its official app or site yet. The line-protection step stays visible and is not complete.',
-    waiting_for_provider: 'You are waiting on Apple, Google, a carrier, or a bank. That blocked step stays in Next until it finishes.',
+    waiting_for_provider: 'This official service could not be finished yet. Try again later. The step is not complete.',
     needs_owner: 'Only the phone owner can finish this step. It stays visible and is not complete.',
     unsafe_to_retrieve: 'Do not retrieve the phone from an unsafe place. Safety comes first, and this step is not complete.',
     could_not_secure_device: 'The phone could not be marked lost or locked. This security step is not complete.'
@@ -880,6 +954,20 @@
     return Object.freeze(Object.values(OFFICIAL_URLS));
   }
 
+  function isOfficialUrl(url) {
+    if (typeof url !== 'string' || !url) return false;
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === 'https:';
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function isManualExternalAction(action) {
+    return !!(action && action.requiresExternalReturn && !isOfficialUrl(action.officialUrl));
+  }
+
   function isExternalAction(actionId) {
     return EXTERNAL_ACTION_IDS.indexOf(actionId) !== -1;
   }
@@ -898,6 +986,8 @@
     getAction,
     getQuestion,
     getApprovedOfficialUrls,
+    isOfficialUrl,
+    isManualExternalAction,
     isExternalAction
   };
 });

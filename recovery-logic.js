@@ -116,6 +116,65 @@
     return null;
   }
 
+  function findProviderActionIds(platform) {
+    if (platform === 'iphone') return ['apple-play-sound', 'apple-locate-device', 'apple-mark-lost'];
+    if (platform === 'android') return ['google-play-sound', 'google-locate-device', 'google-mark-lost'];
+    return [];
+  }
+
+  function isUnknownPlatformFallback(state) {
+    return state.answers.platform === 'unsure'
+      && actionRecord(state, 'identify-platform').outcome === 'still_unsure';
+  }
+
+  function isFindServiceUnavailable(state) {
+    return findProviderActionIds(state.answers.platform).some((id) => {
+      const rec = actionRecord(state, id);
+      return rec.blockedReason === 'service_unavailable' || rec.outcome === 'service_unavailable';
+    });
+  }
+
+  function deferFindProviderActions(state) {
+    if (!isFindServiceUnavailable(state)) return;
+    findProviderActionIds(state.answers.platform).forEach((id) => {
+      if (isOpen(state, id)) {
+        markAction(state, id, {
+          status: 'blocked',
+          outcome: 'waiting_for_provider',
+          blockedReason: 'waiting_for_provider'
+        });
+      }
+    });
+  }
+
+  function applyUnknownPlatformFallback(state) {
+    [
+      'apple-play-sound',
+      'google-play-sound',
+      'apple-locate-device',
+      'google-locate-device',
+      'apple-mark-lost',
+      'google-mark-lost',
+      'apple-auth-fallback',
+      'google-auth-fallback',
+      'erase-device-decision'
+    ].forEach((id) => {
+      if (isOpen(state, id) && statusOf(state, id) === 'pending') {
+        setNotApplicable(state, id);
+      }
+    });
+  }
+
+  function releaseFindRetry(state, completedFindId) {
+    findProviderActionIds(state.answers.platform).forEach((id) => {
+      if (id === completedFindId) return;
+      const rec = actionRecord(state, id);
+      if (rec.status === 'blocked' && rec.blockedReason === 'waiting_for_provider') {
+        markAction(state, id, { status: 'pending', outcome: null, blockedReason: null });
+      }
+    });
+  }
+
   function markAction(state, actionId, fields) {
     const record = actionRecord(state, actionId);
     Object.keys(fields).forEach((key) => {
@@ -189,7 +248,7 @@
 
   function needsPrimaryAccount(state) {
     const answers = state.answers;
-    if (answers.platform === 'unsure') return false;
+    if (answers.platform === 'unsure') return isUnknownPlatformFallback(state);
     if (answers.recovered === 'yes' && !hasCompromiseSignal(state) && answers.situation !== 'stolen' && answers.suspiciousActivity !== 'unsure' && answers.unlockRisk !== 'unsure') {
       return false;
     }
@@ -203,7 +262,7 @@
 
   function needsMobileLine(state) {
     const answers = state.answers;
-    if (answers.platform === 'unsure') return false;
+    if (answers.platform === 'unsure') return isUnknownPlatformFallback(state);
     if (answers.recovered === 'yes' && answers.situation !== 'stolen' && !hasCompromiseSignal(state) && answers.verificationAccess !== 'no') {
       return false;
     }
@@ -221,7 +280,7 @@
 
   function needsFinancial(state) {
     const answers = state.answers;
-    if (answers.platform === 'unsure') return false;
+    if (answers.platform === 'unsure' && !isUnknownPlatformFallback(state)) return false;
     if (answers.financialExposure === 'no' && answers.suspiciousActivity !== 'yes') return false;
     if (answers.recovered === 'yes' && answers.situation !== 'stolen' && answers.financialExposure !== 'yes' && answers.suspiciousActivity !== 'yes' && answers.suspiciousActivity !== 'unsure') {
       return false;
@@ -237,7 +296,7 @@
     const platform = state.answers.platform;
     const locate = locateId(platform);
     const mark = markLostId(platform);
-    if (!locate || !mark) return false;
+    if (!locate || !mark) return isUnknownPlatformFallback(state);
     const locateOk = isFinished(state, locate) || isBlocked(state, locate);
     const markOk = isFinished(state, mark) || isBlocked(state, mark);
     return locateOk && markOk;
@@ -361,7 +420,8 @@
     const safe = userIsSafe(next);
     const deviceHandled = answers.recovered === 'yes'
       || answers.deviceSecured === 'yes'
-      || (reversibleExhausted(next) && stillMissing(next));
+      || (reversibleExhausted(next) && stillMissing(next))
+      || isUnknownPlatformFallback(next);
     const primaryNeeded = needsPrimaryAccount(next);
     const lineNeeded = needsMobileLine(next);
     const financialNeeded = needsFinancial(next);
@@ -399,7 +459,8 @@
     }
 
     const blockers = primaryBlocked || lineBlocked || financialBlocked || locateBlocked || markBlocked || authBlocked
-      || isBlocked(next, 'personal-safety');
+      || isBlocked(next, 'personal-safety')
+      || isUnknownPlatformFallback(next);
 
     if (answers.recovered === 'yes' && !foundPathRisk(next) && !blockers) {
       next.status = 'recovered';
@@ -470,12 +531,19 @@
     if (!answers.currentDevice) return questionView(next, 'currentDevice');
 
     syncPlatformActions(next);
+    deferFindProviderActions(next);
 
     if (next.awaitingExternalReturnActionId) {
-      const view = actionView(next, next.awaitingExternalReturnActionId);
-      view.awaitingReturn = true;
-      view.state.step = 'awaiting-return';
-      return view;
+      const waitingId = next.awaitingExternalReturnActionId;
+      const waitingAction = content.getAction(waitingId, answers.platform) || content.getAction(waitingId, 'unsure');
+      if (!waitingAction || !content.isOfficialUrl(waitingAction.officialUrl)) {
+        next.awaitingExternalReturnActionId = null;
+      } else {
+        const view = actionView(next, waitingId);
+        view.awaitingReturn = true;
+        view.state.step = 'awaiting-return';
+        return view;
+      }
     }
 
     if (needsSafetyGate(next)) {
@@ -506,6 +574,7 @@
     const locate = locateId(answers.platform);
     const mark = markLostId(answers.platform);
     const auth = authFallbackId(answers.platform);
+    const findUnavailable = isFindServiceUnavailable(next);
 
     const signInBlocked = answers.accountAccess === 'no'
       || answers.verificationAccess === 'no'
@@ -518,20 +587,51 @@
       return actionView(next, auth);
     }
 
-    if (answers.situation === 'nearby' && sound && isOpen(next, sound) && stillMissing(next)) {
+    if (answers.situation === 'nearby' && sound && isOpen(next, sound) && stillMissing(next) && !findUnavailable) {
       return actionView(next, sound);
     }
 
-    if (locate && isOpen(next, locate) && stillMissing(next)) {
+    if (locate && isOpen(next, locate) && stillMissing(next) && !findUnavailable) {
       return actionView(next, locate);
     }
 
-    if (mark && isOpen(next, mark) && stillMissing(next) && (locate ? !isOpen(next, locate) : true)) {
+    if (mark && isOpen(next, mark) && stillMissing(next) && !findUnavailable && (locate ? !isOpen(next, locate) : true)) {
       const locateBlockedForAuth = locate && isBlocked(next, locate) && isSignInBlock(actionRecord(next, locate).blockedReason);
       const soundBlockedForAuth = sound && isBlocked(next, sound) && isSignInBlock(actionRecord(next, sound).blockedReason);
       if (!locateBlockedForAuth && !soundBlockedForAuth) {
         return actionView(next, mark);
       }
+    }
+
+    if (isUnknownPlatformFallback(next)) {
+      if (needsMobileLine(next) && isOpen(next, 'protect-mobile-line')) {
+        return actionView(next, 'protect-mobile-line');
+      }
+      if (needsPrimaryAccount(next) && isOpen(next, 'protect-primary-account')) {
+        if (signInBlocked) {
+          markAction(next, 'protect-primary-account', {
+            status: 'blocked',
+            outcome: 'cannot_sign_in',
+            blockedReason: 'cannot_sign_in'
+          });
+        } else {
+          return actionView(next, 'protect-primary-account');
+        }
+      }
+      if (needsFinancial(next) && answers.financialExposure == null && answers.situation !== 'stolen') {
+        return questionView(next, 'financialExposure');
+      }
+      if (needsFinancial(next) && isOpen(next, 'protect-financial-accounts')) {
+        return actionView(next, 'protect-financial-accounts');
+      }
+      if (stillMissing(next) && isOpen(next, 'report-and-document')) {
+        return actionView(next, 'report-and-document');
+      }
+      const unknownAssessed = assessStabilization(next);
+      if (!isEraseAvailable(unknownAssessed.state) && isOpen(unknownAssessed.state, 'erase-device-decision') && statusOf(unknownAssessed.state, 'erase-device-decision') === 'pending') {
+        setNotApplicable(unknownAssessed.state, 'erase-device-decision');
+      }
+      return completeView(unknownAssessed.state);
     }
 
     if (needsPrimaryAccount(next) && isOpen(next, 'protect-primary-account')) {
@@ -777,6 +877,9 @@
         answers.recovered = 'no';
         answers.safety = answers.safety === 'safe' ? 'unsure' : answers.safety;
       }
+      if (outcomeId === 'service_unavailable') {
+        deferFindProviderActions(state);
+      }
       return;
     }
 
@@ -797,7 +900,8 @@
         markAction(state, actionId, { status: 'completed', outcome: outcomeId, blockedReason: null });
         syncPlatformActions(state);
       } else {
-        markAction(state, actionId, { status: 'active', outcome: outcomeId, blockedReason: null });
+        markAction(state, actionId, { status: 'completed', outcome: 'still_unsure', blockedReason: null });
+        applyUnknownPlatformFallback(state);
       }
       return;
     }
@@ -809,6 +913,7 @@
       } else {
         markAction(state, actionId, { status: 'completed', outcome: outcomeId, blockedReason: null });
       }
+      releaseFindRetry(state, actionId);
       return;
     }
 
@@ -822,6 +927,7 @@
       } else {
         markAction(state, actionId, { status: 'completed', outcome: outcomeId, blockedReason: null });
       }
+      releaseFindRetry(state, actionId);
       return;
     }
 
@@ -948,7 +1054,7 @@
     if (!action) {
       return { ok: false, error: 'missing-action', message: 'No approved action is available.' };
     }
-    if (!action.requiresExternalReturn && !action.officialUrl) {
+    if (!content.isOfficialUrl(action.officialUrl)) {
       return { ok: false, error: 'invalid-state', message: 'This action does not open an official service.' };
     }
     markAction(next, actionId, { status: 'active', outcome: null, blockedReason: actionRecord(next, actionId).blockedReason });

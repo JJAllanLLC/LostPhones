@@ -63,9 +63,19 @@ for (const actionId of requiredActions) {
   if (!action.title || !action.instruction) fail('Missing approved copy: ' + actionId);
   if (!action.lastReviewed || !action.owner || !action.reviewTrigger) fail('Missing review metadata: ' + actionId);
   if (!action.boundedOutcomes || !action.boundedOutcomes.length) fail('Missing bounded outcomes: ' + actionId);
-  if (!action.sourceUrl && !action.officialUrl && !action.supportSourceUrl && actionId.indexOf('protect-mobile') === -1 && actionId.indexOf('protect-financial') === -1 && actionId !== 'identify-platform' && !(actionId === 'personal-safety' && action.platform === 'unsure')) {
+  if (!action.sourceUrl && !action.officialUrl && !action.supportSourceUrl && actionId.indexOf('protect-mobile') === -1 && actionId.indexOf('protect-financial') === -1 && actionId !== 'identify-platform' && actionId !== 'personal-safety' && !(actionId === 'protect-primary-account' && action.platform === 'unsure') && !(actionId === 'report-and-document' && action.platform === 'unsure')) {
     fail('Missing official/source URL: ' + actionId);
   }
+}
+
+content.actions.forEach((action) => {
+  if (action.officialUrl && !content.isOfficialUrl(action.officialUrl)) {
+    fail('officialUrl must be https: ' + action.actionId + '/' + action.platform);
+  }
+});
+
+if (typeof content.isOfficialUrl !== 'function' || !content.isOfficialUrl(content.OFFICIAL_URLS.appleFind) || content.isOfficialUrl('#') || content.isOfficialUrl('javascript:alert(1)')) {
+  fail('isOfficialUrl must accept https destinations and reject fake hrefs.');
 }
 
 if (schema.SCHEMA_VERSION !== 2) {

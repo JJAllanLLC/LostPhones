@@ -258,6 +258,9 @@
   function planStatusText(item) {
     if (item.status === 'completed') return 'Done';
     if (item.status === 'blocked') {
+      if (item.blockedReason === 'service_unavailable' || item.blockedReason === 'waiting_for_provider') {
+        return 'Retry later';
+      }
       if (/apple|iphone/i.test(item.actionId || item.title || '')) return 'Waiting on Apple';
       if (/google|android/i.test(item.actionId || item.title || '')) return 'Waiting on Google';
       return 'Needs another route';
@@ -304,6 +307,7 @@
   function stageDetail(stage, status, record) {
     if (status === 'Current' && record) return shortActionDetail(record);
     if (stage.id === 'protect') {
+      if (state.answers.platform === 'unsure') return 'Protect the account connected to the missing phone';
       return state.answers.platform === 'android' ? 'Secure your Google account' : 'Secure your Apple account';
     }
     if (stage.id === 'find' && record && stage.ids.indexOf(record.actionId) !== -1) return shortActionDetail(record);
@@ -611,7 +615,25 @@
     });
   }
 
+  function hasOfficialDestination(record) {
+    return !!(record && content.isOfficialUrl(record.officialUrl));
+  }
+
+  function isManualExternal(record) {
+    return !!(record && record.requiresExternalReturn && !hasOfficialDestination(record));
+  }
+
+  function internalControl(label, className, onClick) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = className;
+    button.textContent = label;
+    button.addEventListener('click', onClick);
+    return button;
+  }
+
   function externalLink(href, label, leavingText, actionId) {
+    if (!content.isOfficialUrl(href)) return null;
     const link = document.createElement('a');
     link.className = 'btn btn-primary';
     link.href = href;
@@ -741,11 +763,23 @@
     });
     const eraseStatus = state.actions['erase-device-decision'] && state.actions['erase-device-decision'].status;
     const canErase = logic.isEraseAvailable(state) && eraseStatus !== 'completed' && eraseStatus !== 'active';
-    eraseSlot.hidden = !canErase;
-    eraseSlot.textContent = 'Review erase option';
-    eraseSlot.onclick = function () {
-      applyView(logic.reviewErase(state), true);
-    };
+    if (canErase) {
+      eraseSlot.hidden = false;
+      eraseSlot.removeAttribute('disabled');
+      eraseSlot.removeAttribute('aria-hidden');
+      eraseSlot.removeAttribute('tabindex');
+      eraseSlot.textContent = 'Review erase option';
+      eraseSlot.onclick = function () {
+        applyView(logic.reviewErase(state), true);
+      };
+    } else {
+      eraseSlot.hidden = true;
+      eraseSlot.setAttribute('disabled', 'disabled');
+      eraseSlot.setAttribute('aria-hidden', 'true');
+      eraseSlot.tabIndex = -1;
+      eraseSlot.textContent = 'Review erase option';
+      eraseSlot.onclick = null;
+    }
     box.hidden = false;
   }
 
@@ -812,9 +846,11 @@
     if (whyLede) whyLede.textContent = whyLedeText(record);
     renderPrivacy(content.privacyGuidance[state.answers.currentDevice]);
 
-    const awaitingReturn = !!view.awaitingReturn;
+    const officialHandoff = hasOfficialDestination(record);
+    const awaitingReturn = !!(view.awaitingReturn && officialHandoff);
     if (awaitingReturn) showingOutcomes = true;
-    const returnMode = !!(awaitingReturn || showingOutcomes);
+    const returnMode = awaitingReturn;
+    const manualOutcomeMode = !!(showingOutcomes && isManualExternal(record));
     document.body.setAttribute('data-recovery-return', returnMode ? '1' : '0');
     if (moreDetails) {
       if (returnMode) moreDetails.open = false;
@@ -831,57 +867,72 @@
       renderHelp(null);
     }
 
-    if (!awaitingReturn && record.leavingLabel && (record.officialUrl || record.requiresExternalReturn)) {
+    if (!awaitingReturn && record.leavingLabel && officialHandoff) {
       leaving.textContent = record.leavingLabel;
       leaving.hidden = true;
       if (keepOpen) keepOpen.hidden = returnMode;
+    } else if (keepOpen) {
+      keepOpen.hidden = true;
     }
 
     const supportLede = document.getElementById('support-lede');
     if (supportLede) supportLede.textContent = sourceLedeText(record);
-    if (record.supportSourceUrl || record.officialUrl) {
-      const supportLink = document.createElement('a');
-      supportLink.href = record.supportSourceUrl || record.officialUrl;
-      supportLink.target = '_blank';
-      supportLink.rel = 'noopener noreferrer';
-      supportLink.textContent = record.supportSourceUrl
-        ? 'Official support article (opens in a new tab)'
-        : (record.primaryControlLabel || 'Official service') + ' (opens in a new tab)';
-      support.textContent = '';
-      support.appendChild(supportLink);
-      supportDetails.hidden = false;
+    if (record.supportSourceUrl || officialHandoff) {
+      const supportHref = record.supportSourceUrl || record.officialUrl;
+      if (content.isOfficialUrl(supportHref)) {
+        const supportLink = document.createElement('a');
+        supportLink.href = supportHref;
+        supportLink.target = '_blank';
+        supportLink.rel = 'noopener noreferrer';
+        supportLink.textContent = record.supportSourceUrl
+          ? 'Official support article (opens in a new tab)'
+          : (record.primaryControlLabel || 'Official service') + ' (opens in a new tab)';
+        support.textContent = '';
+        support.appendChild(supportLink);
+        supportDetails.hidden = false;
+      }
     }
 
     if (!returnMode) {
-      if (record.officialUrl && record.primaryControlLabel) {
-        controls.appendChild(externalLink(record.officialUrl, record.primaryControlLabel, record.leavingLabel, record.actionId));
-      } else if (record.requiresExternalReturn) {
-        const opened = document.createElement('button');
-        opened.type = 'button';
-        opened.className = 'btn btn-primary';
-        opened.textContent = 'I’ve opened the official app or website';
-        opened.addEventListener('click', function () {
-          const result = logic.startExternalAction(state, record.actionId);
-          if (result.ok) {
-            showingOutcomes = false;
-            applyView(result, false);
-          }
-        });
-        controls.appendChild(opened);
+      if (record.actionId === 'personal-safety') {
+        controls.appendChild(internalControl('I’m somewhere safe now', 'btn btn-primary', function () {
+          showingOutcomes = false;
+          applyView(logic.recordOutcome(state, 'personal-safety', 'safe'), true);
+        }));
+        controls.appendChild(internalControl('I still need to get to safety', 'btn btn-secondary', function () {
+          showingOutcomes = false;
+          applyView(logic.recordOutcome(state, 'personal-safety', 'still_unsafe'), true);
+        }));
+      } else if (officialHandoff && record.primaryControlLabel) {
+        const official = externalLink(record.officialUrl, record.primaryControlLabel, record.leavingLabel, record.actionId);
+        if (official) controls.appendChild(official);
+      } else if (isManualExternal(record)) {
+        if (manualOutcomeMode) {
+          renderOutcomes(record, false);
+        } else {
+          controls.appendChild(internalControl('I finished in the official app or site', 'btn btn-primary', function () {
+            showingOutcomes = true;
+            renderAction(view);
+            announce(record.returnPrompt || 'Choose the closest result.');
+          }));
+        }
       } else if (record.boundedOutcomes && record.boundedOutcomes.length) {
         renderOutcomes(record, false);
       }
 
-      if (record.secondaryOfficialUrl) {
-        controls.appendChild(externalLink(record.secondaryOfficialUrl, record.secondaryOfficialLabel, record.secondaryLeavingLabel, record.actionId));
+      if (record.secondaryOfficialUrl && content.isOfficialUrl(record.secondaryOfficialUrl)) {
+        const secondary = externalLink(record.secondaryOfficialUrl, record.secondaryOfficialLabel, record.secondaryLeavingLabel, record.actionId);
+        if (secondary) controls.appendChild(secondary);
       }
     }
 
     if (returnMode) {
-      const again = externalLink(record.officialUrl || record.supportSourceUrl || '#', 'Open again', record.leavingLabel, record.actionId);
-      again.className = 'return-again';
-      if (againSlot) againSlot.appendChild(again);
-      else controls.appendChild(again);
+      const again = externalLink(record.officialUrl, 'Open again', record.leavingLabel, record.actionId);
+      if (again) {
+        again.className = 'return-again';
+        if (againSlot) againSlot.appendChild(again);
+        else controls.appendChild(again);
+      }
       renderOutcomes(record, true);
     }
 
