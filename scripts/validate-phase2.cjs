@@ -82,18 +82,28 @@ if (/localStorage|sessionStorage|document\.cookie/.test(storageHaystack)) {
   fail('Storage APIs are used. Phase 2 must remain memory-only.');
 }
 
-if (!/User-agent:\s*\*\s*Disallow:\s*\//i.test(robots.replace(/\n/g, '\n'))) {
-  const collapsed = robots.replace(/\r/g, '');
-  if (!/User-agent: \*\nDisallow: \//.test(collapsed)) {
-    fail('robots.txt must still block crawling.');
-  }
+if (/User-agent:\s*\*\s*Disallow:\s*\//i.test(robots.replace(/\n/g, ' '))) {
+  fail('robots.txt must not globally disallow all production crawling.');
+}
+if (!/Disallow:\s*\/recovery\.html/.test(robots) || !/Disallow:\s*\/preparedness\.html/.test(robots) || !/Disallow:\s*\/recovery-plan-success\.html/.test(robots)) {
+  fail('robots.txt must keep sensitive recovery routes disallowed.');
+}
+if (/name="robots"[^>]*noindex/i.test(indexHtml)) {
+  fail('Homepage must be indexable in production.');
 }
 
-const robotsHeader = vercel.headers
-  .flatMap((block) => block.headers)
-  .find((header) => header.key === 'X-Robots-Tag');
-if (!robotsHeader || robotsHeader.value !== 'noindex, nofollow, noarchive') {
-  fail('vercel.json must still send X-Robots-Tag: noindex, nofollow, noarchive');
+const globalHeaders = vercel.headers.find((block) => block.source === '/(.*)' && !block.has);
+if (!globalHeaders) fail('Global security headers are missing.');
+if (globalHeaders.headers.some((header) => header.key === 'X-Robots-Tag')) {
+  fail('Global X-Robots-Tag must not noindex production.');
+}
+const previewRobots = vercel.headers.find((block) => block.source === '/(.*)' && block.has && /vercel/.test(JSON.stringify(block.has)));
+if (!previewRobots || !previewRobots.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, nofollow, noarchive')) {
+  fail('Vercel preview/staging hosts must remain noindex.');
+}
+const recoveryRobots = vercel.headers.find((block) => block.source === '/recovery.html');
+if (!recoveryRobots || !recoveryRobots.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, nofollow, noarchive')) {
+  fail('Recovery route must remain noindex.');
 }
 
 if (vercel.domains || /lostphones\.com/.test(JSON.stringify(vercel.rewrites || [])) === false && false) {

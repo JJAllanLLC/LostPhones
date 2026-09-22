@@ -135,37 +135,88 @@ test('dismissal preserves the free recovery experience', () => {
   assert.ok(planView.now.length + planView.next.length + planView.later.length > 0);
 });
 
-test('checkout config rejects missing, live, and malformed keys and always uses the test price', () => {
+test('checkout config separates live and test Stripe environments', () => {
+  const testPrice = plan.KNOWN_TEST_PRICE_ID;
+  const prodPrice = 'price_1ProdPlaceholderSafety000';
   assert.equal(plan.getCheckoutConfig({}).error, 'missing-config');
   assert.equal(plan.getCheckoutConfig({
     STRIPE_SECRET_KEY: 'sk_live_example',
-    STRIPE_RECOVERY_PLAN_PRICE_ID: 'price_1Sbsnf6SN9rpiA041qTi745y',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: testPrice,
     SITE_URL: plan.STAGING_ORIGIN
   }).error, 'live-key');
   assert.equal(plan.getCheckoutConfig({
     STRIPE_SECRET_KEY: 'rk_live_example',
-    STRIPE_RECOVERY_PLAN_PRICE_ID: 'price_1Sbsnf6SN9rpiA041qTi745y',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: testPrice,
     SITE_URL: plan.STAGING_ORIGIN
   }).error, 'live-key');
   assert.equal(plan.getCheckoutConfig({
     STRIPE_SECRET_KEY: 'not-a-key',
-    STRIPE_RECOVERY_PLAN_PRICE_ID: 'price_1Sbsnf6SN9rpiA041qTi745y',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: testPrice,
     SITE_URL: plan.STAGING_ORIGIN
   }).error, 'malformed-config');
   assert.equal(plan.getCheckoutConfig({
-    STRIPE_SECRET_KEY: 'sk_test_example',
-    STRIPE_RECOVERY_PLAN_PRICE_ID: 'price_1Sbsnf6SN9rpiA041qTi745y',
+    STRIPE_SECRET_KEY: 'sk_live_example',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: prodPrice,
     SITE_URL: 'http://localhost:3000'
-  }).error, 'malformed-config');
-  const ok = plan.getCheckoutConfig({
+  }).error, 'live-key');
+  const staging = plan.getCheckoutConfig({
     STRIPE_SECRET_KEY: 'sk_test_example',
-    STRIPE_RECOVERY_PLAN_PRICE_ID: 'price_1Sbsnf6SN9rpiA041qTi745y',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: testPrice,
     SITE_URL: plan.STAGING_ORIGIN
   });
-  assert.equal(ok.ok, true);
-  const params = plan.buildCheckoutSessionParams(ok.siteUrl, ok.priceId, 'opaque-token-value');
+  assert.equal(staging.ok, true);
+  assert.equal(staging.environment, 'preview');
+  const local = plan.getCheckoutConfig({
+    STRIPE_SECRET_KEY: 'sk_test_example',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: testPrice,
+    SITE_URL: 'http://localhost:3000'
+  });
+  assert.equal(local.ok, true);
+  assert.equal(local.environment, 'local');
+  const production = plan.getCheckoutConfig({
+    STRIPE_SECRET_KEY: 'sk_live_example',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: prodPrice,
+    SITE_URL: plan.PRODUCTION_ORIGIN
+  });
+  assert.equal(production.ok, true);
+  assert.equal(production.environment, 'production');
+  assert.equal(plan.getCheckoutConfig({
+    STRIPE_SECRET_KEY: 'sk_test_example',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: testPrice,
+    SITE_URL: plan.PRODUCTION_ORIGIN
+  }).error, 'test-key');
+  assert.equal(plan.getCheckoutConfig({
+    STRIPE_SECRET_KEY: 'sk_live_example',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: testPrice,
+    SITE_URL: plan.PRODUCTION_ORIGIN
+  }).error, 'test-price');
+  assert.equal(plan.getCheckoutConfig({
+    STRIPE_SECRET_KEY: 'sk_live_example',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: prodPrice,
+    SITE_URL: 'https://lostphones-v2-staging.vercel.app'
+  }).error, 'live-key');
+  assert.equal(plan.getCheckoutConfig({
+    STRIPE_SECRET_KEY: 'sk_live_example',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: prodPrice,
+    SITE_URL: 'https://www.lostphones.com'
+  }).error, 'malformed-config');
+  assert.equal(plan.getCheckoutConfig({
+    STRIPE_SECRET_KEY: 'sk_live_example',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: prodPrice,
+    SITE_URL: 'http://lostphones.com'
+  }).error, 'malformed-config');
+  assert.equal(plan.getCheckoutConfig({
+    STRIPE_SECRET_KEY: 'sk_live_example',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: prodPrice,
+    SITE_URL: ''
+  }).error, 'missing-config');
+  assert.equal(plan.getCheckoutConfig({
+    STRIPE_SECRET_KEY: 'sk_live_example',
+    SITE_URL: plan.PRODUCTION_ORIGIN
+  }).error, 'missing-config');
+  const params = plan.buildCheckoutSessionParams(staging.siteUrl, staging.priceId, 'opaque-token-value');
   assert.equal(params.mode, 'payment');
-  assert.equal(params.line_items[0].price, 'price_1Sbsnf6SN9rpiA041qTi745y');
+  assert.equal(params.line_items[0].price, testPrice);
   assert.equal(params.line_items[0].quantity, 1);
   assert.equal(Object.prototype.hasOwnProperty.call(params, 'payment_method_types'), false);
   assert.equal(params.success_url, plan.STAGING_ORIGIN + '/recovery-plan-success.html?session_id={CHECKOUT_SESSION_ID}');

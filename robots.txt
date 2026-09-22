@@ -1,6 +1,12 @@
-# STAGING ONLY: this robots.txt MUST be removed or conditioned safely
-# before any future production launch.
-# Pair with vercel.json X-Robots-Tag: noindex, nofollow, noarchive
-# (also staging-only and mandatory to remove or condition before production).
+# Production robots. Staging and Vercel preview hosts also send
+# X-Robots-Tag: noindex, nofollow, noarchive.
 User-agent: *
-Disallow: /
+Allow: /
+
+Disallow: /recovery.html
+Disallow: /preparedness.html
+Disallow: /recovery-plan-success.html
+Disallow: /success.html
+Disallow: /imei-success.html
+Disallow: /api/
+Disallow: /private/

@@ -140,11 +140,17 @@ const referrer = recoveryHeaders.headers.find((header) => header.key === 'Referr
 if (!referrer || referrer.value !== 'no-referrer') {
   fail('Recovery route must send Referrer-Policy: no-referrer.');
 }
-const robotsHeader = vercel.headers
-  .flatMap((block) => block.headers)
-  .find((header) => header.key === 'X-Robots-Tag');
-if (!robotsHeader || robotsHeader.value !== 'noindex, nofollow, noarchive') {
-  fail('X-Robots-Tag noindex/nofollow/noarchive must remain.');
+const recoveryRobotsHeader = recoveryHeaders.headers.find((header) => header.key === 'X-Robots-Tag');
+if (!recoveryRobotsHeader || recoveryRobotsHeader.value !== 'noindex, nofollow, noarchive') {
+  fail('Recovery route must remain noindex/nofollow/noarchive.');
+}
+const globalHeaders = vercel.headers.find((block) => block.source === '/(.*)' && !block.has);
+if (globalHeaders && globalHeaders.headers.some((header) => header.key === 'X-Robots-Tag')) {
+  fail('Global X-Robots-Tag must not noindex production.');
+}
+const previewRobots = vercel.headers.find((block) => block.source === '/(.*)' && block.has && /vercel/.test(JSON.stringify(block.has)));
+if (!previewRobots || !previewRobots.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, nofollow, noarchive')) {
+  fail('Preview/staging hosts must remain noindex.');
 }
 
 const haystack = [

@@ -16,7 +16,12 @@
   const content = contentDep || (typeof require === 'function' ? require('./recovery-content.js') : null);
   const sessionCore = typeof require === 'function' ? require('./recovery-session-core.js') : null;
 
+  const PRODUCTION_ORIGIN = 'https://lostphones.com';
   const STAGING_ORIGIN = 'https://lostphones-v2-staging.vercel.app';
+  const KNOWN_TEST_PRICE_ID = 'price_1Sbsnf6SN9rpiA041qTi745y';
+  // Stripe price IDs do not encode live/test mode. Production rejects this known
+  // staging test price; remaining live-vs-test price confirmation is a Phase 6
+  // runtime config check in the Stripe dashboard.
   const PRODUCT_ID = 'recovery-complete-plan';
   const PRODUCT_VALUE = 8.95;
   const AMOUNT_TOTAL = 895;
@@ -119,21 +124,104 @@
     return isPaidOfferEligible(state) && !dismissed;
   }
 
+  function normalizeSiteUrl(raw) {
+    if (!raw || typeof raw !== 'string') return '';
+    return raw.replace(/\/$/, '');
+  }
+
+  function parseSiteUrl(raw) {
+    try {
+      return new URL(normalizeSiteUrl(raw));
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function hostnameOf(value) {
+    return String(value || '').toLowerCase();
+  }
+
+  function isProductionHostname(hostname) {
+    const host = hostnameOf(hostname);
+    return host === 'lostphones.com' || host === 'www.lostphones.com';
+  }
+
+  function isPreviewHostname(hostname) {
+    return hostnameOf(hostname).endsWith('.vercel.app');
+  }
+
+  function isLocalHostname(hostname) {
+    const host = hostnameOf(hostname);
+    return host === 'localhost' || host === '127.0.0.1';
+  }
+
+  function stripeKeyMode(secretKey) {
+    const key = String(secretKey || '');
+    if (key.indexOf('sk_live_') === 0 || key.indexOf('rk_live_') === 0) return 'live';
+    if (key.indexOf('sk_test_') === 0 || key.indexOf('rk_test_') === 0) return 'test';
+    return 'malformed';
+  }
+
+  function requestHostname(headers) {
+    const raw = headers && (headers.host || headers.Host);
+    if (!raw || typeof raw !== 'string') return '';
+    return hostnameOf(raw.split(':')[0]);
+  }
+
+  function siteUrlMatchesRequest(siteUrl, headers) {
+    const parsed = parseSiteUrl(siteUrl);
+    const requestHost = requestHostname(headers);
+    if (!parsed || !requestHost) return false;
+    const siteHost = hostnameOf(parsed.hostname);
+    if (siteHost === requestHost) return true;
+    return isProductionHostname(siteHost) && isProductionHostname(requestHost);
+  }
+
   function getCheckoutConfig(env) {
     const source = env || (typeof process !== 'undefined' ? process.env : {});
     const secretKey = source.STRIPE_SECRET_KEY;
     const priceId = source.STRIPE_RECOVERY_PLAN_PRICE_ID;
-    const siteUrl = source.SITE_URL;
+    const siteUrl = normalizeSiteUrl(source.SITE_URL);
     if (!secretKey || !priceId || !siteUrl) return reject('missing-config');
-    if (secretKey.indexOf('sk_live_') === 0 || secretKey.indexOf('rk_live_') === 0) {
-      return reject('live-key');
-    }
-    if (secretKey.indexOf('sk_test_') !== 0 && secretKey.indexOf('rk_test_') !== 0) {
-      return reject('malformed-config');
-    }
-    if (siteUrl !== STAGING_ORIGIN) return reject('malformed-config');
+
+    const parsed = parseSiteUrl(siteUrl);
+    if (!parsed || parsed.username || parsed.password || parsed.hash) return reject('malformed-config');
     if (priceId.indexOf('price_') !== 0) return reject('malformed-config');
-    return { ok: true, secretKey: secretKey, priceId: priceId, siteUrl: siteUrl };
+
+    const hostname = hostnameOf(parsed.hostname);
+    const keyMode = stripeKeyMode(secretKey);
+    if (keyMode === 'malformed') return reject('malformed-config');
+
+    if (isProductionHostname(hostname)) {
+      if (parsed.protocol !== 'https:') return reject('malformed-config');
+      if (siteUrl !== PRODUCTION_ORIGIN) return reject('malformed-config');
+      if (keyMode !== 'live') return reject('test-key');
+      if (priceId === KNOWN_TEST_PRICE_ID) return reject('test-price');
+      return {
+        ok: true,
+        secretKey: secretKey,
+        priceId: priceId,
+        siteUrl: siteUrl,
+        environment: 'production'
+      };
+    }
+
+    if (isPreviewHostname(hostname) || isLocalHostname(hostname)) {
+      if (keyMode !== 'test') return reject('live-key');
+      if (isPreviewHostname(hostname) && parsed.protocol !== 'https:') return reject('malformed-config');
+      if (isLocalHostname(hostname) && parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        return reject('malformed-config');
+      }
+      return {
+        ok: true,
+        secretKey: secretKey,
+        priceId: priceId,
+        siteUrl: siteUrl,
+        environment: isLocalHostname(hostname) ? 'local' : 'preview'
+      };
+    }
+
+    return reject('malformed-config');
   }
 
   function purchaseRedisKey(token) {
@@ -397,8 +485,10 @@
 
     const config = getCheckoutConfig(deps && deps.env);
     if (!config.ok) {
-      const status = config.error === 'live-key' ? 503 : 503;
-      return jsonResponse(status, { ok: false, error: config.error });
+      return jsonResponse(503, { ok: false, error: config.error });
+    }
+    if (!siteUrlMatchesRequest(config.siteUrl, req.headers || {})) {
+      return jsonResponse(503, { ok: false, error: 'host-mismatch' });
     }
     if (!deps || !deps.redis || !deps.stripe) {
       return jsonResponse(503, { ok: false, error: 'unavailable' });
@@ -448,6 +538,9 @@
     if (!config.ok || !deps || !deps.redis || !deps.stripe) {
       return jsonResponse(503, { ok: false, error: 'unavailable' });
     }
+    if (!siteUrlMatchesRequest(config.siteUrl, req.headers || {})) {
+      return jsonResponse(503, { ok: false, error: 'host-mismatch' });
+    }
 
     let session;
     try {
@@ -490,7 +583,9 @@
   }
 
   return {
+    PRODUCTION_ORIGIN,
     STAGING_ORIGIN,
+    KNOWN_TEST_PRICE_ID,
     PRODUCT_ID,
     PRODUCT_VALUE,
     AMOUNT_TOTAL,

@@ -29,6 +29,7 @@ const requiredFiles = [
   'tests/analytics-events.test.cjs',
   'tests/recovery-plan-core.test.cjs',
   'tests/recovery-plan-api.test.cjs',
+  'tests/production-readiness.test.cjs',
   'scripts/validate-phase4.cjs',
   'api/create-checkout-session.js',
   'checkout.js',
@@ -73,14 +74,17 @@ if (/localStorage|sessionStorage|document\.cookie/.test(recoveryJs + recoveryHtm
 }
 
 const core = read('recovery-plan-core.js');
-if (!core.includes('https://lostphones-v2-staging.vercel.app')) {
-  fail('SITE_URL must be validated against the exact staging origin.');
+if (!core.includes('https://lostphones.com') || !core.includes('https://lostphones-v2-staging.vercel.app')) {
+  fail('SITE_URL must be validated against production and staging origins.');
 }
 if (!core.includes('recovery-plan:v1:') || !core.includes('604800')) {
   fail('Purchase context must use recovery-plan:v1:<hash> and a 604800-second TTL.');
 }
-if (!core.includes('sk_live_') || !core.includes('rk_live_')) {
-  fail('Checkout config must reject live Stripe keys.');
+if (!core.includes('sk_live_') || !core.includes('rk_live_') || !core.includes('sk_test_')) {
+  fail('Checkout config must separate live and test Stripe keys.');
+}
+if (!core.includes('test-key') || !core.includes('live-key') || !core.includes('test-price')) {
+  fail('Checkout config must fail closed on mixed Stripe environments.');
 }
 if (/payment_method_types\s*:/.test(core)) {
   fail('Checkout must omit payment_method_types.');
@@ -138,9 +142,19 @@ if (!pkg.scripts['validate:phase4']) fail('validate:phase4 script is missing.');
 if (!/preparedness-logic\.test\.cjs/.test(pkg.scripts.test)) fail('npm test must include Phase 4 tests.');
 
 const vercel = JSON.parse(read('vercel.json'));
-const robotsHeader = vercel.headers.flatMap((block) => block.headers).find((header) => header.key === 'X-Robots-Tag');
-if (!robotsHeader || robotsHeader.value !== 'noindex, nofollow, noarchive') {
-  fail('X-Robots-Tag noindex/nofollow/noarchive must remain.');
+const globalHeaders = vercel.headers.find((block) => block.source === '/(.*)' && !block.has);
+if (globalHeaders && globalHeaders.headers.some((header) => header.key === 'X-Robots-Tag')) {
+  fail('Global X-Robots-Tag must not noindex production.');
+}
+['/preparedness.html', '/recovery-plan-success.html'].forEach((source) => {
+  const block = vercel.headers.find((item) => item.source === source);
+  if (!block || !block.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, nofollow, noarchive')) {
+    fail('Sensitive route must remain noindex: ' + source);
+  }
+});
+const previewRobots = vercel.headers.find((block) => block.source === '/(.*)' && block.has && /vercel/.test(JSON.stringify(block.has)));
+if (!previewRobots || !previewRobots.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, nofollow, noarchive')) {
+  fail('Preview/staging hosts must remain noindex.');
 }
 const originalRedirect = vercel.redirects.find((item) => item.has && item.has[0] && item.has[0].value === 'www.lostphones.com');
 if (!originalRedirect) fail('Phase 1 production host redirect was altered.');

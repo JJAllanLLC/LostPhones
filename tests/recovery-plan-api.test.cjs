@@ -86,6 +86,17 @@ test('checkout rejects missing, live, and malformed configuration', async () => 
   });
   assert.equal(live.body.error, 'live-key');
 
+  const mixed = await plan.handleCheckout(sameOriginReq({ state: stabilize() }), {
+    env: Object.assign({}, TEST_ENV, {
+      STRIPE_SECRET_KEY: 'sk_live_example',
+      STRIPE_RECOVERY_PLAN_PRICE_ID: 'price_1ProdPlaceholderSafety000',
+      SITE_URL: 'https://lostphones.com'
+    }),
+    redis: redis,
+    stripe: stripeFromSession(null)
+  });
+  assert.equal(mixed.body.error, 'host-mismatch');
+
   const hostSpoof = await plan.handleCheckout({
     method: 'POST',
     headers: {
@@ -100,6 +111,41 @@ test('checkout rejects missing, live, and malformed configuration', async () => 
     stripe: stripeFromSession(null)
   });
   assert.equal(hostSpoof.body.error, 'malformed-config');
+});
+
+test('production checkout accepts a live key on the production host only', async () => {
+  const redis = sessionCore.createMemoryRedis();
+  const prodEnv = {
+    STRIPE_SECRET_KEY: 'sk_live_placeholder',
+    STRIPE_RECOVERY_PLAN_PRICE_ID: 'price_1ProdPlaceholderSafety000',
+    SITE_URL: 'https://lostphones.com'
+  };
+  const stripe = {
+    checkout: {
+      sessions: {
+        create: async (params) => {
+          assert.equal(params.line_items[0].price, prodEnv.STRIPE_RECOVERY_PLAN_PRICE_ID);
+          assert.equal(params.success_url.indexOf('https://lostphones.com/'), 0);
+          return { id: 'cs_live_paid', url: 'https://checkout.stripe.com/c/pay/cs_live_paid' };
+        }
+      }
+    }
+  };
+  const result = await plan.handleCheckout({
+    method: 'POST',
+    headers: {
+      host: 'lostphones.com',
+      origin: 'https://lostphones.com',
+      'sec-fetch-site': 'same-origin'
+    },
+    body: { state: stabilize() }
+  }, {
+    env: prodEnv,
+    redis: redis,
+    stripe: stripe
+  });
+  assert.equal(result.status, 200);
+  assert.equal(result.body.ok, true);
 });
 
 test('checkout uses the configured test price, quantity 1, and isolated metadata', async () => {

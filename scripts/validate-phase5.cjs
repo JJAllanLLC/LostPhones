@@ -61,6 +61,9 @@ if (/Get your first recommended step in about 60 seconds/.test(indexHtml)) {
 if (!/Start My Recovery/.test(indexHtml) || !/href="recovery\.html"/.test(indexHtml)) {
   fail('Homepage primary CTA must remain Start My Recovery.');
 }
+if (/name="robots"[^>]*noindex/i.test(indexHtml)) {
+  fail('Homepage must be indexable in production.');
+}
 if (!/Protect your phone/.test(indexHtml) || !/Build My Safety Plan/.test(indexHtml)) {
   fail('Homepage preparedness section is missing.');
 }
