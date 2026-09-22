@@ -1,4 +1,7 @@
 (function () {
+  if (window.LostPhonesAnalytics && typeof window.LostPhonesAnalytics.init === 'function') {
+    window.LostPhonesAnalytics.init();
+  }
   var toggle = document.getElementById('hp-menu-toggle');
   var nav = document.getElementById('hp-nav');
   if (!toggle || !nav) return;

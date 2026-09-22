@@ -154,8 +154,8 @@ const haystack = [
   read('recovery-logic.js'),
   read('recovery-content.js')
 ].join('\n');
-if (/buy\.stripe\.com|js\.stripe\.com|G-KQTTP3KMKN|clarity\.ms|indexnow/i.test(haystack)) {
-  fail('Analytics, IndexNow, or Stripe must not be activated on the recovery journey.');
+if (/buy\.stripe\.com|js\.stripe\.com|G-KQTTP3KMKN|G-VQ8XCGGXN7|uivo0q97p5|clarity\.ms|indexnow/i.test(haystack)) {
+  fail('Analytics IDs, IndexNow, or Stripe must not be activated inside recovery markup or recovery logic.');
 }
 if (/openai|anthropic|react|next\/|createRoot/.test(haystack)) {
   fail('Phase 3 must stay static HTML/CSS/JavaScript.');

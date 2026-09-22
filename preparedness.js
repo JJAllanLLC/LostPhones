@@ -6,10 +6,13 @@
   const app = document.getElementById('preparedness-app');
   if (!logic || !content || !app) return;
 
+  if (analytics && typeof analytics.init === 'function') {
+    analytics.init();
+  }
+
   let state = logic.createInitialState();
   const historyStack = ['orientation'];
   let started = false;
-  let completed = false;
 
   function announce(message) {
     document.getElementById('status-live').textContent = message;
@@ -127,12 +130,6 @@
     link.textContent = record.commercialType === 'amazon_associate'
       ? 'Browse ' + record.title.toLowerCase() + ' on Amazon'
       : 'Open official ' + record.providerName + ' guide';
-    link.addEventListener('click', function () {
-      track('preparedness_recommendation_clicked', {
-        recommendationId: record.id,
-        commercialType: record.commercialType
-      });
-    });
     article.appendChild(heading);
     article.appendChild(copy);
     article.appendChild(link);
@@ -143,10 +140,6 @@
       article.appendChild(disclosure);
     }
     parent.appendChild(article);
-    track('preparedness_recommendation_displayed', {
-      recommendationId: record.id,
-      commercialType: record.commercialType
-    });
   }
 
   function renderResults() {
@@ -184,13 +177,9 @@
       leadOfficial.forEach(function (record) {
         appendRecommendation(first, record, true);
       });
-      if (lead.kind === 'needs_setup') track('preparedness_gap_identified', { category: lead.categoryId });
     }
 
     const remainingIds = logic.remainingCategories(state, lead && lead.categoryId);
-    remainingIds.forEach(function (id) {
-      if (state.results[id] === 'needs_setup') track('preparedness_gap_identified', { category: id });
-    });
     const remainingOfficial = split.official.filter(function (record) {
       return !lead || record.gap !== lead.categoryId;
     });
@@ -277,10 +266,6 @@
 
     showScreen('results');
     announce('Your safety plan is ready.');
-    if (!completed) {
-      completed = true;
-      track('preparedness_completed');
-    }
   }
 
   function applyView(view) {
@@ -308,7 +293,9 @@
     historyStack.length = 0;
     historyStack.push('orientation');
     started = false;
-    completed = false;
+    if (analytics && typeof analytics.resetPrevention === 'function') {
+      analytics.resetPrevention();
+    }
     showScreen('orientation');
     announce('Preparedness started over.');
   }
@@ -331,7 +318,7 @@
   document.getElementById('begin-preparedness').addEventListener('click', function () {
     if (!started) {
       started = true;
-      track('preparedness_started');
+      track('prevention_started');
     }
     applyView(logic.evaluate(state));
   });
@@ -356,9 +343,6 @@
   });
 
   showScreen('orientation');
-  if (document.referrer && /recovery\.html/.test(document.referrer)) {
-    track('preparedness_return_engagement');
-  }
 
   (function bindPrepMenu() {
     const toggle = document.getElementById('prep-menu-toggle');

@@ -332,13 +332,16 @@ test('emergency recovery logic is independent of the commercial registry', () =>
   assert.equal(view.actionId, 'apple-locate-device');
 });
 
-test('analytics allowlists events and properties and stays local-only', () => {
-  const ok = analytics.track('preparedness_started');
+test('preparedness uses prevention_started only and rejects obsolete events', () => {
+  analytics.resetForTests();
+  const ok = analytics.track('prevention_started');
   assert.equal(ok.ok, true);
-  assert.equal(ok.event.transport, 'local-only');
-  assert.equal(analytics.track('unknown_event').ok, false);
-  assert.equal(analytics.track('preparedness_gap_identified', { category: 'screen_protection', extra: true }).ok, false);
+  assert.notEqual(ok.event.transport, 'ga4');
+  assert.equal(analytics.track('preparedness_started').ok, false);
+  assert.equal(analytics.track('preparedness_gap_identified', { category: 'screen_protection' }).ok, false);
   assert.equal(analytics.track('preparedness_recommendation_clicked', { recommendationId: 'case-search-amazon', url: 'https://example.com' }).ok, false);
-  assert.equal(analytics.track('recovery_checkout_started', { productId: analytics.PRODUCT_ID, value: analytics.PRODUCT_VALUE, sessionId: 'cs_test' }).ok, false);
-  assert.equal(analytics.track('recovery_paid_offer_viewed', { status: 'stabilized' }).ok, true);
+  const source = fs.readFileSync(path.join(__dirname, '..', 'preparedness.js'), 'utf8');
+  assert.match(source, /prevention_started/);
+  assert.equal(source.includes('preparedness_started'), false);
+  assert.equal(source.includes('preparedness_return_engagement'), false);
 });

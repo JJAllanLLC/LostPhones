@@ -57,8 +57,14 @@ if (stripeNeedle.test(indexHtml) || stripeNeedle.test(recoveryHtml)) {
   fail('Stripe scripts or payment links must not appear on the homepage or recovery page.');
 }
 
-if (/googletagmanager|google-analytics|G-KQTTP3KMKN|clarity\.ms|uivo0q97p5/i.test(indexHtml + recoveryHtml)) {
-  fail('Analytics or Clarity scripts must not appear on the new homepage or recovery page.');
+if (/googletagmanager|google-analytics|G-KQTTP3KMKN|G-VQ8XCGGXN7|clarity\.ms|uivo0q97p5/i.test(indexHtml + recoveryHtml)) {
+  fail('GA4 and Clarity snippets must not be hardcoded on the homepage or recovery page.');
+}
+if (!/analytics-events\.js/.test(indexHtml) || indexHtml.indexOf('analytics-events.js') > indexHtml.indexOf('homepage.js')) {
+  fail('Homepage must load analytics-events.js before homepage.js.');
+}
+if (!/analytics-events\.js/.test(recoveryHtml) || recoveryHtml.indexOf('analytics-events.js') > recoveryHtml.indexOf('recovery.js')) {
+  fail('Recovery page must load analytics-events.js before recovery.js.');
 }
 
 if (/<textarea|<input[^>]*(type="text"|type="search"|type="email"|type="password"|type="tel"|type="number")/i.test(recoveryHtml)) {

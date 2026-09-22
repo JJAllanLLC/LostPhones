@@ -26,6 +26,7 @@ const requiredFiles = [
   'api/recovery-plan-checkout.js',
   'api/recovery-plan-pdf.js',
   'tests/preparedness-logic.test.cjs',
+  'tests/analytics-events.test.cjs',
   'tests/recovery-plan-core.test.cjs',
   'tests/recovery-plan-api.test.cjs',
   'scripts/validate-phase4.cjs',
@@ -172,8 +173,21 @@ if (!legacy.includes('STRIPE_IMEI_PRICE_ID') || !legacy.includes('metadata: { im
 }
 
 const analytics = read('analytics-events.js');
-if (!analytics.includes("transport: 'local-only'") && !analytics.includes('local-only')) {
-  fail('Analytics must remain local-only by default.');
+if (!analytics.includes('G-VQ8XCGGXN7')) fail('GA4 measurement ID is missing.');
+if (!analytics.includes('uivo0q97p5')) fail('Clarity project ID is missing.');
+if (!/send_page_view:\s*false/.test(analytics)) fail('GA4 must disable automatic page views.');
+if (!analytics.includes('lostphones.com') || !analytics.includes('www.lostphones.com')) {
+  fail('Production host gating is missing.');
+}
+if (!/vercel\.app/.test(analytics) && !/isProductionHost/.test(analytics)) {
+  fail('Analytics must stay disabled outside the production hosts.');
+}
+if (!/function init\s*\(/.test(analytics)) fail('Analytics must expose init().');
+if (!analytics.includes('lostphones.analytics.pendingOfficialHandoff')) {
+  fail('Official-service return marker is missing.');
+}
+if (/clarity\(\s*['"]identify|clarity\(\s*['"]set/.test(analytics)) {
+  fail('Clarity must not receive custom tags or user IDs.');
 }
 
 console.log('validate:phase4 passed');

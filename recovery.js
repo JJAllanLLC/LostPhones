@@ -24,7 +24,6 @@
   let state = logic.createInitialState();
   let historyStack = ['situation'];
   let showingOutcomes = false;
-  let offerTracked = false;
   let resetReturnFocus = null;
 
   const EXCEPTION_OUTCOMES = {
@@ -250,14 +249,9 @@
       hidePaidOffer();
       return;
     }
-    if (!offerTracked) {
-      offerTracked = true;
-      track('recovery_stabilization_reached', { status: state.stabilizationStatus });
-      track('recovery_paid_offer_eligible', { status: state.stabilizationStatus });
-    }
     if (planCore.shouldRenderOffer(state, planClient && planClient.isDismissed())) {
       panel.hidden = false;
-      track('recovery_paid_offer_viewed', { status: state.stabilizationStatus });
+      track('pdf_offer_viewed');
     } else {
       hidePaidOffer();
     }
@@ -641,7 +635,7 @@
     return button;
   }
 
-  function externalLink(href, label, leavingText, actionId) {
+  function externalLink(href, label, leavingText, actionId, officialProvider) {
     if (!content.isOfficialUrl(href)) return null;
     const link = document.createElement('a');
     link.className = 'btn btn-primary';
@@ -662,6 +656,9 @@
     link.appendChild(sr);
     if (leavingText) link.setAttribute('aria-describedby', 'action-keep-open');
     link.addEventListener('click', function () {
+      if (analytics && typeof analytics.noteOfficialServiceOpened === 'function') {
+        analytics.noteOfficialServiceOpened({ actionId: actionId, officialProvider: officialProvider });
+      }
       const result = logic.startExternalAction(state, actionId);
       if (result.ok) {
         showingOutcomes = false;
@@ -700,6 +697,7 @@
     button.appendChild(copy);
     button.appendChild(chevron);
     button.addEventListener('click', function () {
+      track('outcome_selected', { outcome_category: outcome.id });
       const result = logic.recordOutcome(state, action.actionId, outcome.id);
       showingOutcomes = false;
       applyView(result, true);
@@ -957,14 +955,16 @@
       if (record.actionId === 'personal-safety') {
         controls.appendChild(internalControl('I’m somewhere safe now', 'btn btn-primary', function () {
           showingOutcomes = false;
+          track('outcome_selected', { outcome_category: 'safe' });
           applyView(logic.recordOutcome(state, 'personal-safety', 'safe'), true);
         }));
         controls.appendChild(internalControl('I still need to get to safety', 'btn btn-secondary', function () {
           showingOutcomes = false;
+          track('outcome_selected', { outcome_category: 'still_unsafe' });
           applyView(logic.recordOutcome(state, 'personal-safety', 'still_unsafe'), true);
         }));
       } else if (officialHandoff && record.primaryControlLabel) {
-        const official = externalLink(record.officialUrl, record.primaryControlLabel, record.leavingLabel, record.actionId);
+        const official = externalLink(record.officialUrl, record.primaryControlLabel, record.leavingLabel, record.actionId, record.officialProvider);
         if (official) controls.appendChild(official);
       } else if (isManualExternal(record)) {
         if (manualOutcomeMode) {
@@ -981,13 +981,13 @@
       }
 
       if (record.secondaryOfficialUrl && content.isOfficialUrl(record.secondaryOfficialUrl)) {
-        const secondary = externalLink(record.secondaryOfficialUrl, record.secondaryOfficialLabel, record.secondaryLeavingLabel, record.actionId);
+        const secondary = externalLink(record.secondaryOfficialUrl, record.secondaryOfficialLabel, record.secondaryLeavingLabel, record.actionId, record.officialProvider);
         if (secondary) controls.appendChild(secondary);
       }
     }
 
     if (returnMode) {
-      const again = externalLink(record.officialUrl, 'Open again', record.leavingLabel, record.actionId);
+      const again = externalLink(record.officialUrl, 'Open again', record.leavingLabel, record.actionId, record.officialProvider);
       if (again) {
         again.className = 'return-again';
         if (againSlot) againSlot.appendChild(again);
@@ -1061,6 +1061,20 @@
     state = view.state;
     if (persist) persistIfPossible();
 
+    if (view.type === 'action') {
+      const answers = state.answers || {};
+      track('triage_completed', {
+        platform_category: answers.platform,
+        incident_category: answers.situation,
+        device_context: answers.currentDevice
+      });
+      if (state.stabilizationStatus === 'recovered' || state.stabilizationStatus === 'stabilized') {
+        track('stabilization_reached', { stabilization_type: 'complete' });
+      } else if (state.stabilizationStatus === 'stabilized_with_blockers') {
+        track('stabilization_reached', { stabilization_type: 'blockers_remaining' });
+      }
+    }
+
     if (view.type === 'question') {
       pushHistory('question:' + view.questionId);
       if (view.questionId === 'situation' || view.questionId === 'platform' || view.questionId === 'currentDevice') {
@@ -1082,7 +1096,9 @@
       state = logic.createInitialState();
       historyStack = ['situation'];
       showingOutcomes = false;
-      offerTracked = false;
+      if (analytics && typeof analytics.resetRecoveryAttempt === 'function') {
+        analytics.resetRecoveryAttempt();
+      }
       app.querySelectorAll('input[type="radio"]').forEach(function (input) {
         input.checked = false;
       });
@@ -1142,6 +1158,9 @@
       return;
     }
     const result = logic.answerQuestion(state, step, value);
+    if (step === 'situation' && result && result.ok) {
+      track('recovery_started');
+    }
     applyView(result, true);
   }
 
@@ -1184,12 +1203,13 @@
         }
         return;
       }
-      track('recovery_checkout_started', {
-        productId: analytics ? analytics.PRODUCT_ID : 'recovery-complete-plan',
-        value: analytics ? analytics.PRODUCT_VALUE : 8.95
-      });
       planClient.startCheckout(state).then(function (result) {
         if (result && result.ok && result.url) {
+          track('checkout_started', {
+            product: 'recovery_plan',
+            value: analytics && analytics.PRODUCT_VALUE ? analytics.PRODUCT_VALUE : 8.95,
+            currency: 'USD'
+          });
           window.location.href = result.url;
           return;
         }
@@ -1211,7 +1231,6 @@
     dismissPlan.addEventListener('click', function () {
       if (planClient) planClient.dismissOffer();
       hidePaidOffer();
-      track('recovery_paid_offer_dismissed', { status: state.stabilizationStatus });
       announce('Continuing with the free recovery plan. You can still protect your phone for next time.');
     });
   }
@@ -1330,6 +1349,12 @@
   })();
 
   function boot() {
+    if (session && typeof session.consumeResumeFragment === 'function') {
+      session.consumeResumeFragment();
+    }
+    if (analytics && typeof analytics.init === 'function') {
+      analytics.init();
+    }
     showScreen('situation');
     if (planClient && /[?&]checkout=cancelled/.test(window.location.search || '')) {
       const restored = planClient.restoreCheckoutState();
@@ -1344,8 +1369,7 @@
       }
     }
     if (!session) return;
-    const fragmentToken = session.consumeResumeFragment();
-    const stored = fragmentToken || session.loadPersistedToken('trusted');
+    const stored = session.getToken() || session.loadPersistedToken('trusted');
     if (!stored) return;
     session.read(stored).then(function (result) {
       if (!result || !result.ok || !result.state) {

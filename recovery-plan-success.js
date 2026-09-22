@@ -16,6 +16,10 @@
     window.history.replaceState(null, '', window.location.pathname);
   }
 
+  if (analytics && typeof analytics.init === 'function') {
+    analytics.init();
+  }
+
   function track(eventName, properties) {
     if (analytics && typeof analytics.track === 'function') {
       analytics.track(eventName, properties);
@@ -103,12 +107,13 @@
       URL.revokeObjectURL(url);
       showReady();
       retry.focus();
-      track('recovery_checkout_succeeded', {
-        productId: analytics ? analytics.PRODUCT_ID : 'recovery-complete-plan',
-        value: analytics ? analytics.PRODUCT_VALUE : 8.95
+      track('purchase_completed', {
+        product: 'recovery_plan',
+        value: analytics && analytics.PRODUCT_VALUE ? analytics.PRODUCT_VALUE : 8.95,
+        currency: 'USD'
       });
-      track('recovery_pdf_delivered', {
-        productId: analytics ? analytics.PRODUCT_ID : 'recovery-complete-plan'
+      track('pdf_downloaded', {
+        product: 'recovery_plan'
       });
     } catch (error) {
       showError();
