@@ -4,6 +4,7 @@
   "scripts": {
     "postbuild": "node scripts/indexnow.js",
     "test": "node --test tests/recovery-logic.test.cjs tests/recovery-journeys.test.cjs tests/recovery-session-schema.test.cjs tests/recovery-session-api.test.cjs tests/preparedness-logic.test.cjs tests/recovery-plan-core.test.cjs tests/recovery-plan-api.test.cjs tests/recovery-plan-success.test.cjs",
+    "test:e2e:staging": "playwright test --config=playwright.staging.config.cjs",
     "validate:phase2": "node scripts/validate-phase2.cjs",
     "validate:phase3": "node scripts/validate-phase3.cjs",
     "validate:phase4": "node scripts/validate-phase4.cjs",
@@ -14,5 +15,8 @@
     "@upstash/redis": "^1.38.4",
     "pdf-lib": "^1.17.1",
     "stripe": "^16.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
   }
 }
