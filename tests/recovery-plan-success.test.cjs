@@ -1,10 +1,10 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const logic = require('../recovery-logic.js');
 const plan = require('../recovery-plan-core.js');
-const pdf = require('../recovery-plan-pdf.js');
 const sessionCore = require('../recovery-session-core.js');
 
 const TEST_ENV = {
@@ -12,6 +12,9 @@ const TEST_ENV = {
   STRIPE_RECOVERY_PLAN_PRICE_ID: 'price_1Sbsnf6SN9rpiA041qTi745y',
   SITE_URL: 'https://lostphones-v2-staging.vercel.app'
 };
+
+const APPROVED_PDF_PATH = path.join(__dirname, '..', 'private/paid-downloads/LostPhones_Complete_Recovery_Protection_Plan_2026_Final.pdf');
+const APPROVED_PDF_SHA256 = '1a80adc26c0819ea54bb360e84e880e9240ad2f32edbad15d8cd9bfa370978fc';
 
 const successHtml = fs.readFileSync(path.join(__dirname, '..', 'recovery-plan-success.html'), 'utf8');
 const successJs = fs.readFileSync(path.join(__dirname, '..', 'recovery-plan-success.js'), 'utf8');
@@ -83,6 +86,7 @@ test('verified success copy, download again, private-file guidance, and free-pla
   assert.match(successJs, /\/api\/recovery-plan-pdf/);
   assert.match(successJs, /retry\.addEventListener\('click'/);
   assert.match(successJs, /sessionId: captured/);
+  assert.match(successHtml + successJs, /LostPhones_Complete_Recovery_Protection_Plan_2026\.pdf/);
 });
 
 test('missing, malformed, unpaid, wrong amount, wrong currency, and mismatched sessions never claim payment success', async () => {
@@ -117,7 +121,9 @@ test('missing, malformed, unpaid, wrong amount, wrong currency, and mismatched s
       env: TEST_ENV,
       redis: redis,
       stripe: stripe,
-      generatePdf: pdf.generatePdf
+      generatePdf: async () => {
+        throw new Error('runtime generation must not run');
+      }
     });
     assert.notEqual(result.status, 200, item.name);
     assert.equal(Buffer.isBuffer(result.body), false, item.name);
@@ -125,9 +131,12 @@ test('missing, malformed, unpaid, wrong amount, wrong currency, and mismatched s
   }
 });
 
-test('a verified successful test payment can generate the PDF for Download again', async () => {
+test('a verified successful test payment returns the same static PDF for Download again', async () => {
+  const stored = fs.readFileSync(APPROVED_PDF_PATH);
+  assert.equal(crypto.createHash('sha256').update(stored).digest('hex'), APPROVED_PDF_SHA256);
   const redis = sessionCore.createMemoryRedis();
   let createdToken;
+  let generated = 0;
   const stripe = {
     checkout: {
       sessions: {
@@ -148,20 +157,26 @@ test('a verified successful test payment can generate the PDF for Download again
     stripe: stripe
   });
   assert.equal(checkout.body.ok, true);
-  const first = await plan.handlePdf(sameOriginReq({ sessionId: 'cs_test_paid' }), {
+  const deps = {
     env: TEST_ENV,
     redis: redis,
     stripe: stripe,
-    generatePdf: pdf.generatePdf
-  });
-  const again = await plan.handlePdf(sameOriginReq({ sessionId: 'cs_test_paid' }), {
-    env: TEST_ENV,
-    redis: redis,
-    stripe: stripe,
-    generatePdf: pdf.generatePdf
-  });
+    generatePdf: async () => {
+      generated += 1;
+      throw new Error('runtime generation must not run');
+    }
+  };
+  const first = await plan.handlePdf(sameOriginReq({ sessionId: 'cs_test_paid' }), deps);
+  const again = await plan.handlePdf(sameOriginReq({ sessionId: 'cs_test_paid' }), deps);
+  assert.equal(generated, 0);
   assert.equal(first.status, 200);
   assert.equal(again.status, 200);
   assert.equal(first.headers['Content-Type'], 'application/pdf');
   assert.equal(again.headers['Content-Type'], 'application/pdf');
+  assert.equal(first.headers['Content-Disposition'], 'attachment; filename="LostPhones_Complete_Recovery_Protection_Plan_2026.pdf"');
+  assert.equal(again.headers['Content-Disposition'], first.headers['Content-Disposition']);
+  assert.equal(first.body.equals(stored), true);
+  assert.equal(again.body.equals(first.body), true);
+  assert.equal(crypto.createHash('sha256').update(first.body).digest('hex'), APPROVED_PDF_SHA256);
+  assert.equal(crypto.createHash('sha256').update(again.body).digest('hex'), APPROVED_PDF_SHA256);
 });

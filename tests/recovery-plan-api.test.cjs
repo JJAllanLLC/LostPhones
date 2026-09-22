@@ -1,9 +1,14 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const logic = require('../recovery-logic.js');
 const plan = require('../recovery-plan-core.js');
-const pdf = require('../recovery-plan-pdf.js');
 const sessionCore = require('../recovery-session-core.js');
+
+const APPROVED_PDF_PATH = path.join(__dirname, '..', 'private/paid-downloads/LostPhones_Complete_Recovery_Protection_Plan_2026_Final.pdf');
+const APPROVED_PDF_SHA256 = '1a80adc26c0819ea54bb360e84e880e9240ad2f32edbad15d8cd9bfa370978fc';
 
 const TEST_ENV = {
   STRIPE_SECRET_KEY: 'sk_test_placeholder',
@@ -159,16 +164,22 @@ test('forged, missing, open, unpaid, wrong-price, wrong-amount, wrong-currency, 
       env: TEST_ENV,
       redis: redis,
       stripe: stripe,
-      generatePdf: pdf.generatePdf
+      generatePdf: async () => {
+        throw new Error('runtime generation must not run');
+      }
     });
     assert.notEqual(result.status, 200, JSON.stringify(session && session.status));
     assert.equal(Buffer.isBuffer(result.body), false);
   }
 });
 
-test('a verified successful test payment can generate the PDF', async () => {
+test('a verified successful test payment serves the approved static PDF', async () => {
+  const stored = fs.readFileSync(APPROVED_PDF_PATH);
+  assert.equal(crypto.createHash('sha256').update(stored).digest('hex'), APPROVED_PDF_SHA256);
+
   const redis = sessionCore.createMemoryRedis();
   let createdToken;
+  let generated = false;
   const stripe = {
     checkout: {
       sessions: {
@@ -193,13 +204,19 @@ test('a verified successful test payment can generate the PDF', async () => {
     env: TEST_ENV,
     redis: redis,
     stripe: stripe,
-    generatePdf: pdf.generatePdf
+    generatePdf: async () => {
+      generated = true;
+      throw new Error('runtime generation must not run');
+    }
   });
+  assert.equal(generated, false);
   assert.equal(result.status, 200);
   assert.equal(result.headers['Content-Type'], 'application/pdf');
+  assert.equal(result.headers['Content-Disposition'], 'attachment; filename="LostPhones_Complete_Recovery_Protection_Plan_2026.pdf"');
   assert.match(result.headers['Cache-Control'], /no-store/);
   assert.ok(Buffer.isBuffer(result.body));
-  assert.ok(result.body.length > 100);
+  assert.equal(result.body.equals(stored), true);
+  assert.equal(crypto.createHash('sha256').update(result.body).digest('hex'), APPROVED_PDF_SHA256);
 });
 
 test('checkout and PDF endpoints require same-origin POST', async () => {
@@ -217,8 +234,7 @@ test('checkout and PDF endpoints require same-origin POST', async () => {
   }, {
     env: TEST_ENV,
     redis: redis,
-    stripe: stripeFromSession(paidSession()),
-    generatePdf: pdf.generatePdf
+    stripe: stripeFromSession(paidSession())
   });
   assert.equal(cross.status, 403);
 });

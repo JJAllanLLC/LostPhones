@@ -96,7 +96,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'lostphones-recovery-plan.pdf';
+      link.download = 'LostPhones_Complete_Recovery_Protection_Plan_2026.pdf';
       document.body.appendChild(link);
       link.click();
       link.remove();

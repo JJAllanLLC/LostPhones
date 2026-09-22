@@ -23,6 +23,8 @@
   const CURRENCY = 'usd';
   const SESSION_TTL_SECONDS = 604800;
   const REDIS_KEY_PREFIX = 'recovery-plan:v1:';
+  const APPROVED_PDF_RELATIVE_PATH = 'private/paid-downloads/LostPhones_Complete_Recovery_Protection_Plan_2026_Final.pdf';
+  const APPROVED_PDF_DOWNLOAD_NAME = 'LostPhones_Complete_Recovery_Protection_Plan_2026.pdf';
   const ELIGIBLE_STATUSES = Object.freeze(['stabilized', 'stabilized_with_blockers']);
   const JSON_HEADERS = Object.freeze({
     'Cache-Control': 'no-store, private',
@@ -345,6 +347,26 @@
     return { ok: true, state: validated.state, createdAt: record.createdAt, expiresAt: record.expiresAt };
   }
 
+  function approvedPdfPath() {
+    if (typeof require !== 'function') return null;
+    const path = require('path');
+    return path.join(__dirname, APPROVED_PDF_RELATIVE_PATH);
+  }
+
+  function loadApprovedPdf() {
+    const filePath = approvedPdfPath();
+    if (!filePath || typeof require !== 'function') return reject('unavailable');
+    const fs = require('fs');
+    let bytes;
+    try {
+      bytes = fs.readFileSync(filePath);
+    } catch (error) {
+      return reject('unavailable');
+    }
+    if (!bytes || !bytes.length) return reject('unavailable');
+    return { ok: true, bytes: Buffer.from(bytes) };
+  }
+
   function jsonResponse(status, body) {
     return { status: status, headers: Object.assign({}, JSON_HEADERS), body: body };
   }
@@ -423,7 +445,7 @@
     }
 
     const config = getCheckoutConfig(deps && deps.env);
-    if (!config.ok || !deps || !deps.redis || !deps.stripe || typeof deps.generatePdf !== 'function') {
+    if (!config.ok || !deps || !deps.redis || !deps.stripe) {
       return jsonResponse(503, { ok: false, error: 'unavailable' });
     }
 
@@ -440,22 +462,25 @@
     const context = await loadPurchaseContext(deps.redis, verified.token, verified.sessionId, clock);
     if (!context.ok) return jsonResponse(403, { ok: false, error: 'unverified-session' });
 
-    const mapped = buildPdfModel(context.state, clock);
-    if (!mapped.ok) return jsonResponse(403, { ok: false, error: 'unverified-session' });
-
-    let bytes;
+    const loader = typeof deps.loadApprovedPdf === 'function' ? deps.loadApprovedPdf : loadApprovedPdf;
+    let loaded;
     try {
-      bytes = await deps.generatePdf(mapped.model);
+      loaded = await loader();
     } catch (error) {
       return jsonResponse(503, { ok: false, error: 'unavailable' });
     }
-    if (!bytes) return jsonResponse(503, { ok: false, error: 'unavailable' });
+    if (Buffer.isBuffer(loaded)) {
+      loaded = { ok: true, bytes: loaded };
+    }
+    if (!loaded || !loaded.ok || !loaded.bytes) return jsonResponse(503, { ok: false, error: 'unavailable' });
+    const bytes = Buffer.from(loaded.bytes);
+    if (!bytes.length) return jsonResponse(503, { ok: false, error: 'unavailable' });
 
     return {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="lostphones-recovery-plan.pdf"',
+        'Content-Disposition': 'attachment; filename="' + APPROVED_PDF_DOWNLOAD_NAME + '"',
         'Cache-Control': 'no-store, private',
         Pragma: 'no-cache',
         'Referrer-Policy': 'no-referrer'
@@ -472,6 +497,8 @@
     CURRENCY,
     SESSION_TTL_SECONDS,
     REDIS_KEY_PREFIX,
+    APPROVED_PDF_RELATIVE_PATH,
+    APPROVED_PDF_DOWNLOAD_NAME,
     ELIGIBLE_STATUSES,
     CLAIMS_CHECKLIST,
     BLANK_DATE_FIELDS,
@@ -489,6 +516,8 @@
     verifyPaidSession,
     storePurchaseContext,
     loadPurchaseContext,
+    approvedPdfPath,
+    loadApprovedPdf,
     handleCheckout,
     handlePdf
   };

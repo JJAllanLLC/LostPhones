@@ -6,6 +6,11 @@
       "permanent": true
     },
     {
+      "source": "/private/:path*",
+      "destination": "/404",
+      "permanent": false
+    },
+    {
       "source": "/:path*",
       "has": [
         {
@@ -154,5 +159,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/recovery-plan-pdf.js": {
+      "includeFiles": "private/paid-downloads/**"
+    }
+  }
 }

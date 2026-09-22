@@ -22,6 +22,7 @@ const requiredFiles = [
   'recovery-plan-success.js',
   'recovery-plan-core.js',
   'recovery-plan-pdf.js',
+  'private/paid-downloads/LostPhones_Complete_Recovery_Protection_Plan_2026_Final.pdf',
   'v2.css',
   'homepage.css',
   'homepage.js',
@@ -236,7 +237,9 @@ if (!/Protect My Phone for Next Time/.test(successHtml) || !/I[’']m done for n
 if (!/Return to my free plan/.test(successHtml) || !/Keep this file private/.test(successHtml)) {
   fail('Paid success must keep private-file guidance and the free-plan return.');
 }
-if (!/lostphones-recovery-plan\.pdf/.test(successHtml + successJs)) fail('PDF filename cue is missing.');
+if (!/LostPhones_Complete_Recovery_Protection_Plan_2026\.pdf/.test(successHtml + successJs + core)) {
+  fail('Paid download filename cue is missing.');
+}
 if (!/Download again/.test(successHtml)) fail('Persistent Download again control is missing.');
 if (!/replaceState/.test(successJs) || !/\/api\/recovery-plan-pdf/.test(successJs)) {
   fail('Success page must strip the session id and POST it to the PDF endpoint.');
@@ -245,6 +248,14 @@ if (!/data-download-state/.test(successHtml + successJs)) {
   fail('Paid success must gate visible copy on verification state.');
 }
 
+if (!fs.existsSync(path.join(root, 'private/paid-downloads/LostPhones_Complete_Recovery_Protection_Plan_2026_Final.pdf'))) {
+  fail('Approved static paid PDF is missing.');
+}
+if (!/loadApprovedPdf/.test(core)) fail('Paid fulfillment must load the approved static PDF.');
+if (/generatePdf\(mapped\.model\)/.test(core)) fail('Paid fulfillment must not generate a runtime PDF.');
+if (!/"source": "\/private\/:path\*"/.test(read('vercel.json'))) {
+  fail('Private paid PDF directory must not be a public download URL.');
+}
 if (!/Prepared for /.test(core) || !/platformArticle/.test(core)) {
   fail('PDF personalization must use the correct platform article.');
 }

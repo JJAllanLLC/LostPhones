@@ -32,7 +32,8 @@ const requiredFiles = [
   'api/create-checkout-session.js',
   'checkout.js',
   'success.html',
-  'LostPhones-Premium-Guide.pdf'
+  'LostPhones-Premium-Guide.pdf',
+  'private/paid-downloads/LostPhones_Complete_Recovery_Protection_Plan_2026_Final.pdf'
 ];
 
 for (const rel of requiredFiles) {
@@ -94,6 +95,10 @@ if (/console\.(log|info|debug|error)\([^)]*(body|state|token|session|pdf)/i.test
 }
 if (/STRIPE_WEBHOOK_SECRET/.test(checkoutApi + pdfApi + core + read('.env.example'))) {
   fail('Do not add STRIPE_WEBHOOK_SECRET.');
+}
+if (!/loadApprovedPdf/.test(core + pdfApi)) fail('Paid fulfillment must load the approved static PDF.');
+if (/generatePdf\(mapped\.model\)/.test(core) || /generatePdf: pdf\.generatePdf/.test(pdfApi)) {
+  fail('Paid fulfillment must not generate a runtime PDF.');
 }
 
 const successJs = read('recovery-plan-success.js');

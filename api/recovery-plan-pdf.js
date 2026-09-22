@@ -1,7 +1,6 @@
 const { Redis } = require('@upstash/redis');
 const Stripe = require('stripe');
 const core = require('../recovery-plan-core.js');
-const pdf = require('../recovery-plan-pdf.js');
 
 function noStore(res) {
   res.setHeader('Cache-Control', 'no-store, private');
@@ -16,6 +15,10 @@ function getRedis() {
   return new Redis({ url: url, token: token });
 }
 
+function loadApprovedPdf() {
+  return core.loadApprovedPdf();
+}
+
 export default async function handler(req, res) {
   noStore(res);
   const config = core.getCheckoutConfig(process.env);
@@ -23,7 +26,7 @@ export default async function handler(req, res) {
     env: process.env,
     redis: getRedis(),
     stripe: config.ok ? new Stripe(config.secretKey) : null,
-    generatePdf: pdf.generatePdf
+    loadApprovedPdf: loadApprovedPdf
   }, Date.now());
   Object.keys(result.headers).forEach((key) => {
     res.setHeader(key, result.headers[key]);
