@@ -60,14 +60,26 @@ if (/coming-later/.test(indexHtml)) {
 
 const recoveryHtml = read('recovery.html');
 const recoveryJs = read('recovery.js');
-if (!/Optional complete recovery PDF/.test(recoveryHtml)) {
+if (!/Your emergency is handled\. Don’t leave the rest to memory\./.test(recoveryHtml)) {
   fail('Paid offer title is missing.');
 }
-if (!/Download my complete recovery PDF — \$8\.95/.test(recoveryHtml)) {
+if (!/Get My Complete Recovery &amp; Protection Plan — \$8\.95/.test(recoveryHtml)) {
   fail('Paid offer CTA is missing.');
 }
-if (!/No thanks — continue free/.test(recoveryHtml)) {
+if (!/Continue with free recovery guidance/.test(recoveryHtml)) {
   fail('Paid offer dismiss copy is missing.');
+}
+if (!/My Complete Recovery &amp; Protection Plan/.test(recoveryHtml)) {
+  fail('Paid offer product name is missing.');
+}
+if (!/22 pages\. One-time purchase\. No subscription\. Yours to keep\./.test(recoveryHtml)) {
+  fail('Paid offer value line is missing.');
+}
+if (!/Instant download after purchase/.test(recoveryHtml)) {
+  fail('Paid offer download reassurance is missing.');
+}
+if (/Optional complete recovery PDF|Personalized recovery record|private copy of this journey/.test(recoveryHtml)) {
+  fail('Paid offer must not use session-copy or personalized PDF positioning.');
 }
 if (/localStorage|sessionStorage|document\.cookie/.test(recoveryJs + recoveryHtml)) {
   fail('recovery.js/html must not call storage APIs.');
