@@ -144,7 +144,7 @@ test.describe.serial('LostPhones staging paid recovery plan', () => {
 
     await expect(page.locator('body')).toHaveAttribute('data-download-state', 'success');
     await expect(page.locator('#download-title')).toHaveText('Payment confirmed');
-    await expect(page.locator('#download-copy')).toContainText('Your PDF is ready');
+    await expect(page.locator('#download-copy')).toHaveText('Your Complete Recovery & Protection Plan is ready.');
     await expect(page).not.toHaveURL(/session_id=/);
 
     const secondBytes = await assertPdfDownload(page, () => page.locator('#retry-download').click());

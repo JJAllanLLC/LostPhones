@@ -235,7 +235,7 @@ if (/<h1[^>]*>\s*Payment confirmed/.test(successHtml) || /Your PDF is ready/.tes
 }
 if (!/Checking your download/.test(successHtml)) fail('Paid success pending heading is missing.');
 if (!/We could not verify this download link\./.test(successJs)) fail('Unverified download copy is missing.');
-if (!/titleEl\.textContent = 'Payment confirmed'/.test(successJs) || !/Your PDF is ready/.test(successJs)) {
+if (!/titleEl\.textContent = 'Payment confirmed'/.test(successJs) || !/Your Complete Recovery & Protection Plan is ready\./.test(successJs)) {
   fail('Verified paid success copy is missing.');
 }
 if (!/emergency-shell/.test(successHtml) || !/recovery-shell\.css/.test(successHtml)) {
@@ -247,8 +247,14 @@ if (!/el\.inert = open/.test(successJs) || !/event\.key === 'Escape'/.test(succe
 if (!/Protect My Phone for Next Time/.test(successHtml) || !/I[’']m done for now/.test(successHtml)) {
   fail('Paid success page must keep the prevention transition.');
 }
-if (!/Return to my free plan/.test(successHtml) || !/Keep this file private/.test(successHtml)) {
-  fail('Paid success must keep private-file guidance and the free-plan return.');
+if (!/Return to my free plan/.test(successHtml) || !/Your 22-page guide includes recovery, account security, data protection, replacement, and preparedness guidance\./.test(successHtml)) {
+  fail('Paid success must keep handbook guidance and the free-plan return.');
+}
+if (!/Keep it somewhere easy to find if you need it again\./.test(successHtml) || !/YOUR RECOVERY PLAN/.test(successHtml)) {
+  fail('Paid success must use the handbook success hierarchy.');
+}
+if (/Keep this file private|private recovery record|Optional one-time download/.test(successHtml + successJs)) {
+  fail('Paid success must not use personalized recovery-record copy.');
 }
 if (!/LostPhones_Complete_Recovery_Protection_Plan_2026\.pdf/.test(successHtml + successJs + core)) {
   fail('Paid download filename cue is missing.');

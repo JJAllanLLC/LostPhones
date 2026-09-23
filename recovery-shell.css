@@ -2400,6 +2400,11 @@ body.emergency-shell.paid-success .paid-download {
 
 body.emergency-shell.paid-success .action-kicker {
   margin: 0;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rc-blue);
 }
 
 body.emergency-shell.paid-success .screen-title {
@@ -2424,12 +2429,29 @@ body.emergency-shell.paid-success .filename {
   font-weight: 650;
 }
 
+body.emergency-shell.paid-success .paid-success-freshness {
+  display: block;
+  margin-top: 0.22rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--rc-muted);
+}
+
 body.emergency-shell.paid-success .disclosure,
 body.emergency-shell.paid-success #download-complete {
   margin: 0;
   color: var(--rc-muted);
   font-size: 0.92rem;
   line-height: 1.4;
+}
+
+body.emergency-shell.paid-success #download-disclosure:not([hidden]) {
+  display: grid;
+  gap: 0.45rem;
+}
+
+body.emergency-shell.paid-success #download-disclosure p {
+  margin: 0;
 }
 
 body.emergency-shell.paid-success .prevention-transition {

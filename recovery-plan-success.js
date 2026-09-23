@@ -62,7 +62,7 @@
     setState('success');
     document.title = 'Payment confirmed | LostPhones';
     titleEl.textContent = 'Payment confirmed';
-    copyEl.textContent = 'Your PDF is ready. Keep this private recovery record somewhere safe.';
+    copyEl.textContent = 'Your Complete Recovery & Protection Plan is ready.';
     statusEl.textContent = '';
     statusEl.hidden = true;
     filenameEl.hidden = false;

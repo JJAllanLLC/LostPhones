@@ -74,14 +74,18 @@ test('paid success HTML stays pending until JS verifies the checkout session', (
   assert.match(successCss, /max-width: 959px/);
 });
 
-test('verified success copy, download again, private-file guidance, and free-plan return stay available', () => {
+test('verified success copy, download again, handbook guidance, and free-plan return stay available', () => {
   assert.match(successJs, /titleEl\.textContent = 'Payment confirmed'/);
-  assert.match(successJs, /Your PDF is ready/);
+  assert.match(successJs, /Your Complete Recovery & Protection Plan is ready\./);
+  assert.match(successHtml, /YOUR RECOVERY PLAN/);
   assert.match(successHtml, /Download again/);
-  assert.match(successHtml, /Keep this file private/);
+  assert.match(successHtml, /Your 22-page guide includes recovery, account security, data protection, replacement, and preparedness guidance\./);
+  assert.match(successHtml, /Keep it somewhere easy to find if you need it again\./);
+  assert.match(successHtml, /Updated for 2026/);
   assert.match(successHtml, /Return to my free plan/);
   assert.match(successHtml, /Protect My Phone for Next Time/);
   assert.match(successHtml, /I[’']m done for now/);
+  assert.equal(/Keep this file private|private recovery record|Optional one-time download/.test(successHtml + successJs), false);
   assert.match(successJs, /replaceState/);
   assert.match(successJs, /\/api\/recovery-plan-pdf/);
   assert.match(successJs, /retry\.addEventListener\('click'/);
