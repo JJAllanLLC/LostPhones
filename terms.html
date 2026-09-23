@@ -3,9 +3,6 @@
 <html lang="en">
 
 <head>
-  <!-- Staging isolation: production Google Analytics and Microsoft Clarity are disabled.
-       Do not send staging visits to production analytics. -->
-  <script>function gtag(){/* no-op: production analytics disabled in staging */}</script>
 
   <meta charset="UTF-8">
 
@@ -163,7 +160,7 @@
       <h2>One last thing before you go…</h2>
       <p>Don't leave empty-handed. Get the complete Premium PDF guide with all 10 steps, direct links, safety warnings, and critical must-do actions not shown on the site.</p>
       <div class="exit-intent-buttons">
-        <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="exit-intent-btn-primary" id="exitIntentYes" target="_self" onclick="event.preventDefault();gtag('event', 'purchase_intent', {'value': 8.95, 'currency': 'USD', 'button_location': 'guide_page'});">🔒 Yes, Secure My Data Now (Instant PDF)</a>
+        <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="exit-intent-btn-primary" id="exitIntentYes" target="_self" onclick="event.preventDefault();">🔒 Yes, Secure My Data Now (Instant PDF)</a>
         <button class="exit-intent-btn-secondary" id="exitIntentNo">No thanks, I'll risk it</button>
       </div>
     </div>
@@ -219,6 +216,9 @@
       }
     })();
   </script>
+
+  <script src="analytics-events.js"></script>
+  <script src="analytics-page-init.js"></script>
 
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>

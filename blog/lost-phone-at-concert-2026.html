@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Staging isolation: production Google Analytics and Microsoft Clarity are disabled.
-       Do not send staging visits to production analytics. -->
-  <script>function gtag(){/* no-op: production analytics disabled in staging */}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lost Phone at a Concert 2026: Guide | LostPhones.com</title>
@@ -250,7 +247,7 @@
         <h2>Want More? Get Our Full Recovery Kit PDF</h2>
         <p>Our free site guide covers the essentials, but for deeper 2026 tips (printable templates, concert-specific scripts for venue calls, advanced tracking hacks not online), grab our premium PDF for just $4.95. Instant download – extra peace when you need it most.</p>
         
-        <p><a title="Checkout disabled in staging" aria-disabled="true" href="#" class="button" onclick="event.preventDefault();gtag('event', 'purchase_intent', {'value': 4.95, 'currency': 'USD', 'button_location': 'blog_post'});" rel="noopener noreferrer">Get the Full Recovery Kit PDF – $4.95</a></p>
+        <p><a title="Checkout disabled in staging" aria-disabled="true" href="#" class="button" onclick="event.preventDefault();" rel="noopener noreferrer">Get the Full Recovery Kit PDF – $4.95</a></p>
         
         <p>At LostPhones.com, we're here to help you stay calm and secure – bookmark us for future peace, and share this guide if it helped. Wishing you safe concerts ahead!</p>
 
@@ -308,7 +305,7 @@
       <h2>One last thing before you go…</h2>
       <p>Don't leave empty-handed. Get the complete Premium PDF guide with all 10 steps, direct links, safety warnings, and critical must-do actions not shown on the site.</p>
       <div class="exit-intent-buttons">
-        <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="exit-intent-btn-primary" id="exitIntentYes" target="_self" onclick="event.preventDefault();gtag('event', 'purchase_intent', {'value': 4.95, 'currency': 'USD', 'button_location': 'blog_post'});" rel="noopener noreferrer">🔒 Yes, Secure My Data Now (Instant PDF)</a>
+        <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="exit-intent-btn-primary" id="exitIntentYes" target="_self" onclick="event.preventDefault();" rel="noopener noreferrer">🔒 Yes, Secure My Data Now (Instant PDF)</a>
         <button class="exit-intent-btn-secondary" id="exitIntentNo">No thanks, I'll risk it</button>
       </div>
     </div>
@@ -364,6 +361,9 @@
       }
     })();
   </script>
+
+  <script src="../analytics-events.js"></script>
+  <script src="../analytics-page-init.js"></script>
 
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>

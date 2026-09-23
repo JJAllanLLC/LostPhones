@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Staging isolation: production Google Analytics and Microsoft Clarity are disabled.
-       Do not send staging visits to production analytics. -->
-  <script>function gtag(){/* no-op: production analytics disabled in staging */}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AirTag Setup 2025: Never Lose Your Phone | LostPhones.com</title>
@@ -164,7 +161,7 @@
 
         <p>Prevention is the goal — but if it ever happens again, the Premium Guide has the hidden steps to protect your data and identity fast.</p>
 
-        <p><a title="Checkout disabled in staging" aria-disabled="true" href="#" class="button" onclick="event.preventDefault();gtag('event', 'purchase_intent', {'value': 8.95, 'currency': 'USD', 'button_location': 'blog_post'});" rel="noopener noreferrer">Get the Full Recovery Kit – Instant PDF</a></p>
+        <p><a title="Checkout disabled in staging" aria-disabled="true" href="#" class="button" onclick="event.preventDefault();" rel="noopener noreferrer">Get the Full Recovery Kit – Instant PDF</a></p>
         <p style="color:#666;font-size:15px;margin:12px 0;text-align:center;">
   30-Day Money-Back Guarantee
 </p>
@@ -227,7 +224,7 @@
       <h2>One last thing before you go…</h2>
       <p>Don't leave empty-handed. Get the complete Premium PDF guide with all 10 steps, direct links, safety warnings, and critical must-do actions not shown on the site.</p>
       <div class="exit-intent-buttons">
-        <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="exit-intent-btn-primary" id="exitIntentYes" target="_self" onclick="event.preventDefault();gtag('event', 'purchase_intent', {'value': 8.95, 'currency': 'USD', 'button_location': 'blog_post'});" rel="noopener noreferrer">🔒 Yes, Secure My Data Now (Instant PDF)</a>
+        <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="exit-intent-btn-primary" id="exitIntentYes" target="_self" onclick="event.preventDefault();" rel="noopener noreferrer">🔒 Yes, Secure My Data Now (Instant PDF)</a>
         <button class="exit-intent-btn-secondary" id="exitIntentNo">No thanks, I'll risk it</button>
       </div>
     </div>
@@ -283,6 +280,9 @@
       }
     })();
   </script>
+
+  <script src="../analytics-events.js"></script>
+  <script src="../analytics-page-init.js"></script>
 
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>

@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Staging isolation: production Google Analytics and Microsoft Clarity are disabled.
-       Do not send staging visits to production analytics. -->
-  <script>function gtag(){/* no-op: production analytics disabled in staging */}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instant Free IMEI Check | LostPhones.com</title>
@@ -718,6 +715,9 @@
     document.getElementById('verifyLostBtn').addEventListener('click', handleCheckout);
     document.getElementById('verifyBuyBtn').addEventListener('click', handleCheckout);
   </script>
+
+  <script src="analytics-events.js"></script>
+  <script src="analytics-page-init.js"></script>
 
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>

@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Staging isolation: production Google Analytics and Microsoft Clarity are disabled.
-       Do not send staging visits to production analytics. -->
-  <script>function gtag(){/* no-op: production analytics disabled in staging */}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lost Phone in Taxi/Uber 2026: What to Do | LostPhones.com</title>
@@ -226,7 +223,7 @@
         <p>For printable templates, exact message scripts, and extras not on the site – including advanced prevention strategies, insurance claim templates, and time-sensitive checklists – our Premium Lost Phone Recovery Kit has everything you need for complete peace of mind.</p>
         
         <p style="text-align: center;">
-          <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="button" onclick="event.preventDefault();gtag('event', 'purchase_intent', {'value': 4.95, 'currency': 'USD', 'button_location': 'blog_post'});" rel="noopener noreferrer">Get the Full Recovery Kit – Instant PDF ($4.95)</a>
+          <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="button" onclick="event.preventDefault();" rel="noopener noreferrer">Get the Full Recovery Kit – Instant PDF ($4.95)</a>
         </p>
         <p style="color:#666;font-size:15px;margin:12px 0;text-align:center;">
           30-Day Money-Back Guarantee
@@ -296,7 +293,7 @@
       <h2>One last thing before you go…</h2>
       <p>Don't leave empty-handed. Get the complete Premium PDF guide with all 10 steps, direct links, safety warnings, and critical must-do actions not shown on the site.</p>
       <div class="exit-intent-buttons">
-        <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="exit-intent-btn-primary" id="exitIntentYes" target="_self" onclick="event.preventDefault();gtag('event', 'purchase_intent', {'value': 4.95, 'currency': 'USD', 'button_location': 'blog_post'});" rel="noopener noreferrer">🔒 Yes, Secure My Data Now (Instant PDF)</a>
+        <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="exit-intent-btn-primary" id="exitIntentYes" target="_self" onclick="event.preventDefault();" rel="noopener noreferrer">🔒 Yes, Secure My Data Now (Instant PDF)</a>
         <button class="exit-intent-btn-secondary" id="exitIntentNo">No thanks, I'll risk it</button>
       </div>
     </div>
@@ -386,6 +383,9 @@
     ]
   }
   </script>
+
+  <script src="../analytics-events.js"></script>
+  <script src="../analytics-page-init.js"></script>
 
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>

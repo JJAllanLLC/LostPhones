@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Staging isolation: production Google Analytics and Microsoft Clarity are disabled.
-       Do not send staging visits to production analytics. -->
-  <script>function gtag(){/* no-op: production analytics disabled in staging */}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Report Lost/Stolen Phone to Carrier 2026 Guide | LostPhones.com</title>
@@ -275,7 +272,7 @@
 
         <p>If you want everything in one place — carrier contacts, scripts, and recovery checklists — grab the instant PDF:</p>
 
-        <p><a title="Checkout disabled in staging" aria-disabled="true" href="#" class="button" onclick="event.preventDefault();gtag('event', 'purchase_intent', {'value': 4.95, 'currency': 'USD', 'button_location': 'blog_post'});" rel="noopener noreferrer">Get the Full Recovery Kit – Instant PDF ($4.95)</a></p>
+        <p><a title="Checkout disabled in staging" aria-disabled="true" href="#" class="button" onclick="event.preventDefault();" rel="noopener noreferrer">Get the Full Recovery Kit – Instant PDF ($4.95)</a></p>
         <p style="color:#666;font-size:15px;margin:12px 0;text-align:center;">30-Day Money-Back Guarantee</p>
         <p style="color:#666; font-size:14px; text-align:center; margin:10px 0;">Trusted by 1,200+ people securing their data this month</p>
 
@@ -321,6 +318,9 @@
       <div style="color:#555; font-size:0.9rem; margin-top:30px;">© 2026 LostPhones. Operated by JJ ALLAN, LLC.</div>
     </div>
   </footer>
+
+  <script src="../analytics-events.js"></script>
+  <script src="../analytics-page-init.js"></script>
 
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>

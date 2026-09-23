@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Staging isolation: production Google Analytics and Microsoft Clarity are disabled.
-       Do not send staging visits to production analytics. -->
-  <script>function gtag(){/* no-op: production analytics disabled in staging */}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lost Phone at a Bar or Night Out (2026) | LostPhones.com</title>
@@ -260,7 +257,7 @@
         <h2>Want More? Get Our Full Recovery Kit PDF</h2>
         <p>Our <a href="../index.html">free site guide</a> covers the essentials, but for deeper 2026 tips (printable templates, bar-specific scripts for venue calls, advanced tracking hacks not online, dark venue search strategies), grab our premium PDF for just $4.95. Instant download – extra peace when you need it most.</p>
         
-        <p><a title="Checkout disabled in staging" aria-disabled="true" href="#" class="button" onclick="event.preventDefault();gtag('event', 'purchase_intent', {'value': 4.95, 'currency': 'USD', 'button_location': 'blog_post'});" rel="noopener noreferrer">Get the Full Recovery Kit PDF – $4.95</a></p>
+        <p><a title="Checkout disabled in staging" aria-disabled="true" href="#" class="button" onclick="event.preventDefault();" rel="noopener noreferrer">Get the Full Recovery Kit PDF – $4.95</a></p>
         
         <p>At LostPhones.com, we're here to help you stay calm and secure – bookmark us for future peace, and share this guide if it helped. Check out our <a href="index.html">more guides</a> for other scenarios like <a href="lost-phone-at-concert-2026.html">concerts</a>, <a href="lost-phone-in-hotel-room-2026.html">hotel rooms</a>, and <a href="lost-phone-uber-lyft-2025.html">rideshares</a>. Wishing you safe nights out ahead!</p>
 
@@ -318,7 +315,7 @@
       <h2>One last thing before you go…</h2>
       <p>Don't leave empty-handed. Get the complete Premium PDF guide with all 10 steps, direct links, safety warnings, and critical must-do actions not shown on the site.</p>
       <div class="exit-intent-buttons">
-        <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="exit-intent-btn-primary" id="exitIntentYes" target="_self" onclick="event.preventDefault();gtag('event', 'purchase_intent', {'value': 4.95, 'currency': 'USD', 'button_location': 'blog_post'});" rel="noopener noreferrer">🔒 Yes, Secure My Data Now (Instant PDF)</a>
+        <a title="Checkout disabled in staging" aria-disabled="true" href="#" class="exit-intent-btn-primary" id="exitIntentYes" target="_self" onclick="event.preventDefault();" rel="noopener noreferrer">🔒 Yes, Secure My Data Now (Instant PDF)</a>
         <button class="exit-intent-btn-secondary" id="exitIntentNo">No thanks, I'll risk it</button>
       </div>
     </div>
@@ -374,6 +371,9 @@
       }
     })();
   </script>
+
+  <script src="../analytics-events.js"></script>
+  <script src="../analytics-page-init.js"></script>
 
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>

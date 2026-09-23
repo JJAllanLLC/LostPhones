@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Staging isolation: production Google Analytics and Microsoft Clarity are disabled.
-       Do not send staging visits to production analytics. -->
-  <script>function gtag(){/* no-op: production analytics disabled in staging */}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thank You — Generating Your IMEI Report | LostPhones.com</title>
@@ -404,6 +401,9 @@
     // Get session_id from URL query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session_id');
+    if (window.history && typeof window.history.replaceState === 'function' && (window.location.search || window.location.hash)) {
+      window.history.replaceState(null, document.title, window.location.pathname);
+    }
     
     // DOM elements
     const loadingState = document.getElementById('loadingState');
@@ -527,6 +527,9 @@
       fetchIMEIReport();
     }
   </script>
+
+  <script src="analytics-events.js"></script>
+  <script src="analytics-page-init.js"></script>
 
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>

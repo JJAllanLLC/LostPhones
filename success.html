@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Staging isolation: production Google Analytics and Microsoft Clarity are disabled.
-       Do not send staging visits to production analytics. -->
-  <script>function gtag(){/* no-op: production analytics disabled in staging */}</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thank You – Your Guide is Ready | LostPhones.com</title>
@@ -76,21 +73,15 @@
   }
 </script>
 
-<script>
-  gtag('event', 'purchase', {
-    transaction_id: new Date().getTime().toString(), // unique ID (or pull from URL param if available)
-    value: 4.95,
-    currency: 'USD',
-    items: [
-      {
-        item_id: 'recovery_kit_pdf',
-        item_name: 'Full Recovery Kit PDF',
-        price: 4.95,
-        quantity: 1
-      }
-    ]
-  });
-</script>
+
+  <script>
+    if (window.history && typeof window.history.replaceState === 'function' && (window.location.search || window.location.hash)) {
+      window.history.replaceState(null, document.title, window.location.pathname);
+    }
+  </script>
+
+  <script src="analytics-events.js"></script>
+  <script src="analytics-page-init.js"></script>
 
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>
