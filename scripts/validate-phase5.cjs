@@ -95,10 +95,14 @@ if (!/criticalBlockerAcknowledged/.test(recoveryJs + recoveryHtml) && !/acknowle
   fail('Critical-blocker acknowledgment must persist on recovery state.');
 }
 if (!/Your emergency is handled\. Don’t leave the rest to memory\./.test(recoveryHtml)) fail('Optional offer title is missing.');
-if (!/Get My Complete Recovery &amp; Protection Plan — \$8\.95/.test(recoveryHtml)) fail('Offer CTA is missing.');
+if (!/Get My Complete Recovery &amp; Protection Plan[\s\S]*— \$8\.95/.test(recoveryHtml)) fail('Offer CTA is missing.');
 if (!/Continue with free recovery guidance/.test(recoveryHtml)) fail('Offer dismiss copy is missing.');
 if (!/My Complete Recovery &amp; Protection Plan/.test(recoveryHtml)) fail('Offer product name is missing.');
-if (!/22 pages\. One-time purchase\. No subscription\. Yours to keep\./.test(recoveryHtml)) fail('Offer value line is missing.');
+if (!/22 pages • Updated for 2026 • One-time purchase • No subscription • Yours to keep/.test(recoveryHtml)) fail('Offer value line is missing.');
+if (!/TAKE THE NEXT STEPS WITH YOU/.test(recoveryHtml)) fail('Offer eyebrow is missing.');
+if (!/Why this guide matters/.test(recoveryHtml)) fail('Offer editorial quote label is missing.');
+if (/LostPhones customer/.test(recoveryHtml)) fail('Offer must not fabricate customer attribution.');
+if (/Optional one-time download/.test(recoveryHtml)) fail('Offer must not use the old optional-download eyebrow.');
 if (!/Instant download after purchase/.test(recoveryHtml)) fail('Offer download reassurance is missing.');
 if (/Optional complete recovery PDF|Personalized recovery record|private copy of this journey/.test(recoveryHtml)) {
   fail('Offer must not use session-copy or personalized PDF positioning.');

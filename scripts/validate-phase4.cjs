@@ -63,7 +63,7 @@ const recoveryJs = read('recovery.js');
 if (!/Your emergency is handled\. Don’t leave the rest to memory\./.test(recoveryHtml)) {
   fail('Paid offer title is missing.');
 }
-if (!/Get My Complete Recovery &amp; Protection Plan — \$8\.95/.test(recoveryHtml)) {
+if (!/Get My Complete Recovery &amp; Protection Plan[\s\S]*— \$8\.95/.test(recoveryHtml)) {
   fail('Paid offer CTA is missing.');
 }
 if (!/Continue with free recovery guidance/.test(recoveryHtml)) {
@@ -72,8 +72,20 @@ if (!/Continue with free recovery guidance/.test(recoveryHtml)) {
 if (!/My Complete Recovery &amp; Protection Plan/.test(recoveryHtml)) {
   fail('Paid offer product name is missing.');
 }
-if (!/22 pages\. One-time purchase\. No subscription\. Yours to keep\./.test(recoveryHtml)) {
+if (!/22 pages • Updated for 2026 • One-time purchase • No subscription • Yours to keep/.test(recoveryHtml)) {
   fail('Paid offer value line is missing.');
+}
+if (!/TAKE THE NEXT STEPS WITH YOU/.test(recoveryHtml)) {
+  fail('Paid offer eyebrow is missing.');
+}
+if (!/Why this guide matters/.test(recoveryHtml)) {
+  fail('Paid offer editorial quote label is missing.');
+}
+if (/LostPhones customer/.test(recoveryHtml)) {
+  fail('Paid offer must not fabricate customer attribution.');
+}
+if (/Optional one-time download/.test(recoveryHtml)) {
+  fail('Paid offer must not use the old optional-download eyebrow.');
 }
 if (!/Instant download after purchase/.test(recoveryHtml)) {
   fail('Paid offer download reassurance is missing.');
