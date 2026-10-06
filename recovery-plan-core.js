@@ -231,12 +231,12 @@
     return REDIS_KEY_PREFIX + hash;
   }
 
-  function buildCheckoutSessionParams(siteUrl, priceId, contextToken) {
+  function buildCheckoutSessionParams(siteUrl, priceId, contextToken, cancelPath) {
     return {
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: siteUrl + '/recovery-plan-success.html?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url: siteUrl + '/recovery.html?checkout=cancelled',
+      cancel_url: siteUrl + (cancelPath || '/recovery.html?checkout=cancelled'),
       client_reference_id: contextToken,
       metadata: { purchaseContext: contextToken }
     };
@@ -401,7 +401,7 @@
     return { ok: true, token: token, sessionId: session.id };
   }
 
-  async function storePurchaseContext(redis, token, state, checkoutSessionId, nowMs) {
+  async function storePurchaseContext(redis, token, state, checkoutSessionId, nowMs, purchaseMode) {
     const key = purchaseRedisKey(token);
     const createdAt = nowMs;
     const expiresAt = createdAt + SESSION_TTL_SECONDS * 1000;
@@ -409,6 +409,7 @@
       createdAt: createdAt,
       expiresAt: expiresAt,
       checkoutSessionId: checkoutSessionId,
+      purchaseMode: purchaseMode === 'direct' ? 'direct' : 'recovery',
       state: state
     };
     const serialized = JSON.stringify(record);
@@ -429,6 +430,9 @@
       return reject('unverified-session');
     }
     if (record.checkoutSessionId !== checkoutSessionId) return reject('unverified-session');
+    if (record.purchaseMode === 'direct' && record.state === null) {
+      return { ok: true, purchaseMode: 'direct', state: null, createdAt: record.createdAt, expiresAt: record.expiresAt };
+    }
     const validated = schema.validatePersistedState(record.state);
     if (!validated.ok) return reject('unverified-session');
     if (!isPaidOfferEligible(validated.state)) return reject('unverified-session');
@@ -494,14 +498,20 @@
       return jsonResponse(503, { ok: false, error: 'unavailable' });
     }
 
-    const validated = schema.validatePersistedState(body.state);
+    const directPurchase = body.purchaseMode === 'direct' && Object.keys(body).length === 1;
+    const validated = directPurchase ? { ok: true, state: null } : schema.validatePersistedState(body.state);
     if (!validated.ok) return jsonResponse(400, { ok: false, error: validated.error || 'invalid-state' });
-    if (!isPaidOfferEligible(validated.state)) {
+    if (!directPurchase && !isPaidOfferEligible(validated.state)) {
       return jsonResponse(403, { ok: false, error: 'ineligible' });
     }
 
     const token = sessionCore.generateToken();
-    const params = buildCheckoutSessionParams(config.siteUrl, config.priceId, token);
+    const params = buildCheckoutSessionParams(
+      config.siteUrl,
+      config.priceId,
+      token,
+      directPurchase ? '/blog/?checkout=cancelled' : null
+    );
     if (!checkoutParamsAreIsolated(params, validated.state)) {
       return jsonResponse(500, { ok: false, error: 'unavailable' });
     }
@@ -516,7 +526,14 @@
       return jsonResponse(503, { ok: false, error: 'unavailable' });
     }
 
-    const stored = await storePurchaseContext(deps.redis, token, validated.state, session.id, clock);
+    const stored = await storePurchaseContext(
+      deps.redis,
+      token,
+      validated.state,
+      session.id,
+      clock,
+      directPurchase ? 'direct' : 'recovery'
+    );
     if (!stored.ok) return jsonResponse(503, { ok: false, error: 'unavailable' });
     return jsonResponse(200, { ok: true, url: session.url });
   }

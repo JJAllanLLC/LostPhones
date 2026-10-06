@@ -180,6 +180,34 @@ test('checkout uses the configured test price, quantity 1, and isolated metadata
   assert.equal(await redis.ttl(keys[0]), 604800);
 });
 
+test('direct article checkout uses the same price and stores a non-personalized purchase context', async () => {
+  const redis = sessionCore.createMemoryRedis();
+  let created;
+  const stripe = {
+    checkout: {
+      sessions: {
+        create: async (params) => {
+          created = params;
+          return { id: 'cs_test_direct', url: 'https://checkout.stripe.com/c/pay/cs_test_direct' };
+        }
+      }
+    }
+  };
+  const result = await plan.handleCheckout(sameOriginReq({ purchaseMode: 'direct' }), {
+    env: TEST_ENV,
+    redis: redis,
+    stripe: stripe
+  });
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.body, { ok: true, url: 'https://checkout.stripe.com/c/pay/cs_test_direct' });
+  assert.equal(created.line_items[0].price, TEST_ENV.STRIPE_RECOVERY_PLAN_PRICE_ID);
+  assert.equal(created.line_items[0].quantity, 1);
+  assert.equal(created.cancel_url, TEST_ENV.SITE_URL + '/blog/?checkout=cancelled');
+  const record = [...redis.store.values()][0].value;
+  assert.equal(record.purchaseMode, 'direct');
+  assert.equal(record.state, null);
+});
+
 test('forged, missing, open, unpaid, wrong-price, wrong-amount, wrong-currency, or mismatched sessions cannot generate a PDF', async () => {
   const redis = sessionCore.createMemoryRedis();
   const token = sessionCore.generateToken();
@@ -261,6 +289,42 @@ test('a verified successful test payment serves the approved static PDF', async 
   assert.equal(result.headers['Content-Disposition'], 'attachment; filename="LostPhones_Complete_Recovery_Protection_Plan_2026.pdf"');
   assert.match(result.headers['Cache-Control'], /no-store/);
   assert.ok(Buffer.isBuffer(result.body));
+  assert.equal(result.body.equals(stored), true);
+  assert.equal(crypto.createHash('sha256').update(result.body).digest('hex'), APPROVED_PDF_SHA256);
+});
+
+test('a verified direct article purchase serves the same approved static PDF', async () => {
+  const stored = fs.readFileSync(APPROVED_PDF_PATH);
+  const redis = sessionCore.createMemoryRedis();
+  let createdToken;
+  const stripe = {
+    checkout: {
+      sessions: {
+        create: async (params) => {
+          createdToken = params.client_reference_id;
+          return { id: 'cs_test_direct', url: 'https://checkout.stripe.com/c/pay/cs_test_direct' };
+        },
+        retrieve: async () => paidSession({
+          id: 'cs_test_direct',
+          client_reference_id: createdToken,
+          metadata: { purchaseContext: createdToken }
+        })
+      }
+    }
+  };
+  const checkout = await plan.handleCheckout(sameOriginReq({ purchaseMode: 'direct' }), {
+    env: TEST_ENV,
+    redis: redis,
+    stripe: stripe
+  });
+  assert.equal(checkout.body.ok, true);
+  const result = await plan.handlePdf(sameOriginReq({ sessionId: 'cs_test_direct' }), {
+    env: TEST_ENV,
+    redis: redis,
+    stripe: stripe,
+    loadApprovedPdf: async () => ({ ok: true, bytes: stored })
+  });
+  assert.equal(result.status, 200);
   assert.equal(result.body.equals(stored), true);
   assert.equal(crypto.createHash('sha256').update(result.body).digest('hex'), APPROVED_PDF_SHA256);
 });
