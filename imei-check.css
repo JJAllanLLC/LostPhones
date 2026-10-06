@@ -3,10 +3,14 @@ body.imei-page .imei-section,
 body.imei-page .imei-info,
 body.imei-page .imei-next { padding-inline: max(1.25rem, calc((100vw - 76rem) / 2)); }
 body.imei-page .imei-section {
+  position: relative; overflow: hidden;
   min-height: 42rem; padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem);
   background: linear-gradient(135deg, #f3eee5 0%, #fff 47%, #e7eef3 100%);
 }
-body.imei-page .imei-layout { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(22rem, .82fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: center; }
+body.imei-page .imei-banner { position: absolute; inset: 0 0 auto; height: clamp(16rem, 29vw, 24rem); margin: 0; overflow: hidden; }
+body.imei-page .imei-banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(244, 239, 230, .94) 0%, rgba(244, 239, 230, .72) 31%, rgba(231, 238, 243, .25) 68%, rgba(231, 238, 243, .78) 100%); }
+body.imei-page .imei-banner img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 54% 50%; }
+body.imei-page .imei-layout { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(22rem, .82fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: center; }
 body.imei-page .imei-hero { margin: 0; text-align: left; }
 body.imei-page .imei-hero h1 { max-width: 12ch; margin: .75rem 0 1.25rem; color: #17324d; font-size: clamp(2.7rem, 6vw, 5.25rem); line-height: .98; letter-spacing: -.055em; }
 body.imei-page .imei-subheadline { max-width: 39rem; margin: 0; color: #3d4a57; font-size: clamp(1.08rem, 2vw, 1.3rem); line-height: 1.65; }
@@ -42,6 +46,10 @@ body.imei-page .imei-info-grid article { min-height: 15rem; padding: clamp(1.5re
 body.imei-page .imei-info-grid span { color: #9a5a00; font-size: .75rem; font-weight: 800; letter-spacing: .14em; }
 body.imei-page .imei-info-grid h3 { margin: 1.2rem 0 .7rem; color: #17324d; font-size: 1.35rem; }
 body.imei-page .imei-info-grid p { margin: 0; color: #52606d; line-height: 1.65; }
+body.imei-page .imei-related { display: flex; flex-wrap: wrap; gap: .7rem 1.5rem; align-items: center; margin-top: 1.5rem; padding: 1.1rem 1.25rem; border: 1px solid #d9e1e8; border-radius: .8rem; background: #f8fafb; }
+body.imei-page .imei-related p { margin: 0 auto 0 0; color: #17324d; font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+body.imei-page .imei-related a { min-height: 2.75rem; display: inline-flex; align-items: center; color: #1d5e81; font-weight: 750; }
+body.imei-page .imei-related a:focus-visible { outline: 3px solid #d67a00; outline-offset: 3px; }
 body.imei-page .imei-next { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2rem, 7vw, 7rem); padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem); }
 body.imei-page .imei-next h2 { margin: .65rem 0 0; color: #17324d; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.08; letter-spacing: -.035em; }
 body.imei-page .imei-next > div:last-child { color: #3d4a57; font-size: 1.08rem; line-height: 1.7; }
@@ -52,11 +60,15 @@ body.imei-page .imei-next .hp-btn { margin-top: 1rem; }
 }
 @media (max-width: 767px) {
   body.imei-page .imei-section { min-height: auto; padding-top: 4.25rem; padding-bottom: 4.25rem; }
+  body.imei-page .imei-banner { height: 13rem; }
+  body.imei-page .imei-banner::after { background: linear-gradient(180deg, rgba(244, 239, 230, .58) 0%, rgba(244, 239, 230, .92) 84%, #f3eee5 100%); }
   body.imei-page .imei-next { grid-template-columns: 1fr; gap: 1.25rem; }
   body.imei-page .imei-info-heading { display: block; }
   body.imei-page .imei-info-heading > p:last-child { margin-top: 1.25rem; }
   body.imei-page .imei-info-grid { grid-template-columns: 1fr; }
   body.imei-page .imei-info-grid article { min-height: auto; }
+  body.imei-page .imei-related { align-items: stretch; flex-direction: column; }
+  body.imei-page .imei-related p { margin: 0; }
   body.imei-page .imei-container { padding: 1.35rem; }
 }
 @media (prefers-reduced-motion: reduce) { body.imei-page .btn-check-free { transition: none; } }
