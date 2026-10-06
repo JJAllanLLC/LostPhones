@@ -13,6 +13,7 @@ const preparednessHtml = read('preparedness.html');
 const successPaidHtml = read('recovery-plan-success.html');
 const successHtml = read('success.html');
 const privacyHtml = read('privacy.html');
+const blogIndexHtml = read('blog/index.html');
 const robots = read('robots.txt');
 const vercel = JSON.parse(read('vercel.json'));
 const analyticsSrc = read('analytics-events.js');
@@ -167,6 +168,21 @@ test('free IMEI check has no paid report or checkout entry', () => {
   assert.equal(fs.existsSync(path.join(root, 'api/create-imei-checkout-session.js')), false);
   assert.equal(fs.existsSync(path.join(root, 'api/create-checkout-session.js')), false);
   assert.equal(fs.existsSync(path.join(root, 'api/fetch-imei-report.js')), false);
+});
+
+test('homepage navigation exposes the browser-only free IMEI check', () => {
+  assert.match(indexHtml, /<a href="imei-check\.html">Free IMEI Check<\/a>/);
+});
+
+test('canonical blog index presents every article once in recovery or prevention cards', () => {
+  assert.match(blogIndexHtml, /<link rel="canonical" href="https:\/\/lostphones\.com\/blog\/">/);
+  assert.equal((blogIndexHtml.match(/class="blog-card"/g) || []).length, 17);
+  assert.match(blogIndexHtml, /id="recovery-guides-heading">Recovery guides<\/h2>/);
+  assert.match(blogIndexHtml, /id="protection-guides-heading">Protection &amp; prevention<\/h2>/);
+  blogStaticAnalyticsPages.slice(1).forEach((relative) => {
+    const filename = path.basename(relative).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.equal((blogIndexHtml.match(new RegExp(`href="${filename}"`, 'g')) || []).length, 1, relative);
+  });
 });
 
 test('only the approved GA and Clarity production identifiers are present', () => {
