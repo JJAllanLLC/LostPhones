@@ -7,6 +7,5 @@ Disallow: /recovery.html
 Disallow: /preparedness.html
 Disallow: /recovery-plan-success.html
 Disallow: /success.html
-Disallow: /imei-success.html
 Disallow: /api/
 Disallow: /private/

@@ -12,7 +12,6 @@ const recoveryHtml = read('recovery.html');
 const preparednessHtml = read('preparedness.html');
 const successPaidHtml = read('recovery-plan-success.html');
 const successHtml = read('success.html');
-const imeiSuccessHtml = read('imei-success.html');
 const privacyHtml = read('privacy.html');
 const robots = read('robots.txt');
 const vercel = JSON.parse(read('vercel.json'));
@@ -26,7 +25,6 @@ const rootStaticAnalyticsPages = [
   'privacy.html',
   'terms.html',
   'imei-check.html',
-  'imei-success.html',
   'success.html',
   'blog1.html',
   'replacement-phone-guide.html'
@@ -84,16 +82,15 @@ test('production robots no longer globally disallow all', () => {
   assert.match(robots, /Disallow:\s*\/preparedness\.html/);
   assert.match(robots, /Disallow:\s*\/recovery-plan-success\.html/);
   assert.match(robots, /Disallow:\s*\/success\.html/);
-  assert.match(robots, /Disallow:\s*\/imei-success\.html/);
   assert.match(robots, /Disallow:\s*\/api\//);
   assert.match(robots, /Disallow:\s*\/private\//);
 });
 
 test('sensitive pages remain noindex', () => {
-  [recoveryHtml, preparednessHtml, successPaidHtml, successHtml, imeiSuccessHtml].forEach((html) => {
+  [recoveryHtml, preparednessHtml, successPaidHtml, successHtml].forEach((html) => {
     assert.match(html, /noindex, nofollow, noarchive/);
   });
-  ['/recovery.html', '/preparedness.html', '/recovery-plan-success.html', '/success.html', '/imei-success.html'].forEach((source) => {
+  ['/recovery.html', '/preparedness.html', '/recovery-plan-success.html', '/success.html'].forEach((source) => {
     assert.equal(hasRobotsNoindex(headerBlock(source)), true, source);
   });
 });
@@ -120,8 +117,8 @@ test('analytics production-only host gating is unchanged', () => {
   assert.match(analyticsSrc, /send_page_view:\s*false/);
 });
 
-test('all 27 static pages use the shared analytics layer and initializer', () => {
-  assert.equal(staticAnalyticsPages.length, 27);
+test('all 26 static pages use the shared analytics layer and initializer', () => {
+  assert.equal(staticAnalyticsPages.length, 26);
   staticAnalyticsPages.forEach((relative) => {
     const html = read(relative);
     const prefix = relative.startsWith('blog/') ? '../' : '';
@@ -143,10 +140,10 @@ test('static initializer delegates only to the shared host-gated layer', () => {
   assert.equal(/hostname|location/.test(analyticsPageInitSrc), false);
 });
 
-test('all 31 public HTML pages have an approved shared analytics bootstrap', () => {
+test('all 30 public HTML pages have an approved shared analytics bootstrap', () => {
   const publicHtml = fs.readdirSync(root).filter((name) => name.endsWith('.html'))
     .concat(fs.readdirSync(path.join(root, 'blog')).filter((name) => name.endsWith('.html')).map((name) => `blog/${name}`));
-  assert.equal(publicHtml.length, 31);
+  assert.equal(publicHtml.length, 30);
   publicHtml.forEach((relative) => {
     assert.match(read(relative), /analytics-events\.js/, relative);
   });
@@ -157,11 +154,19 @@ test('all 31 public HTML pages have an approved shared analytics bootstrap', () 
 });
 
 test('legacy success tokens are removed before the shared initializer runs', () => {
-  [successHtml, imeiSuccessHtml].forEach((html) => {
+  [successHtml].forEach((html) => {
     assert.ok(html.indexOf('history.replaceState') > -1);
     assert.ok(html.indexOf('history.replaceState') < html.indexOf('analytics-page-init.js'));
   });
-  assert.ok(imeiSuccessHtml.indexOf("urlParams.get('session_id')") < imeiSuccessHtml.indexOf('history.replaceState'));
+});
+
+test('free IMEI check has no paid report or checkout entry', () => {
+  const imeiHtml = read('imei-check.html');
+  assert.equal(/\$0\.99|Full Verification Report|create-imei-checkout-session|fetch-imei-report|js\.stripe\.com/i.test(imeiHtml), false);
+  assert.equal(fs.existsSync(path.join(root, 'imei-success.html')), false);
+  assert.equal(fs.existsSync(path.join(root, 'api/create-imei-checkout-session.js')), false);
+  assert.equal(fs.existsSync(path.join(root, 'api/create-checkout-session.js')), false);
+  assert.equal(fs.existsSync(path.join(root, 'api/fetch-imei-report.js')), false);
 });
 
 test('only the approved GA and Clarity production identifiers are present', () => {

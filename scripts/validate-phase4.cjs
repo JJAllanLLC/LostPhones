@@ -31,7 +31,6 @@ const requiredFiles = [
   'tests/recovery-plan-api.test.cjs',
   'tests/production-readiness.test.cjs',
   'scripts/validate-phase4.cjs',
-  'api/create-checkout-session.js',
   'checkout.js',
   'success.html',
   'LostPhones-Premium-Guide.pdf',
@@ -205,10 +204,13 @@ if (/buy\.stripe\.com|js\.stripe\.com/i.test(indexHtml + recoveryHtml + prepared
   fail('Stripe.js must not be loaded on marketing or recovery pages.');
 }
 
-const legacy = read('api/create-checkout-session.js');
-if (!legacy.includes('STRIPE_IMEI_PRICE_ID') || !legacy.includes('metadata: { imei }')) {
-  fail('Legacy IMEI checkout must remain in place.');
+const imeiHtml = read('imei-check.html');
+if (/\$0\.99|Full Verification Report|create-imei-checkout-session|fetch-imei-report|js\.stripe\.com/i.test(imeiHtml)) {
+  fail('Retired paid IMEI report must not be offered publicly.');
 }
+['api/create-checkout-session.js', 'api/create-imei-checkout-session.js', 'api/fetch-imei-report.js', 'imei-success.html'].forEach((rel) => {
+  if (fs.existsSync(path.join(root, rel))) fail('Retired paid IMEI route remains public: ' + rel);
+});
 
 const analytics = read('analytics-events.js');
 if (!analytics.includes('G-VQ8XCGGXN7')) fail('GA4 measurement ID is missing.');

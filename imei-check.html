@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instant Free IMEI Check | LostPhones.com</title>
-  <meta name="description" content="Free IMEI check to identify your device model instantly. Get full verification report for only $0.99. Quick, secure, and reliable.">
+  <meta name="description" content="Use the free LostPhones IMEI check to identify basic device information directly in your browser. No payment or account required.">
   
   <!-- Open Graph / Social -->
   <meta property="og:title" content="Instant Free IMEI Check – Find Your Device Model">
-  <meta property="og:description" content="Free IMEI check to identify your device model instantly. Get full verification report for only $0.99.">
+  <meta property="og:description" content="Use the free LostPhones IMEI check to identify basic device information directly in your browser. No payment or account required.">
   <meta property="og:image" content="https://lostphones.com/assets/cover.jpg">
   <meta property="og:url" content="https://lostphones.com/imei-check.html">
   <meta property="og:type" content="website">
@@ -16,11 +16,10 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Instant Free IMEI Check – Find Your Device Model">
-  <meta name="twitter:description" content="Free IMEI check to identify your device model instantly. Get full verification report for only $0.99.">
+  <meta name="twitter:description" content="Use the free LostPhones IMEI check to identify basic device information directly in your browser. No payment or account required.">
   <meta name="twitter:image" content="https://lostphones.com/assets/cover.jpg">
   <link rel="canonical" href="https://lostphones.com/imei-check.html" />
   <link rel="stylesheet" href="style.css">
-  <script src="https://js.stripe.com/v3/"></script>
   <style>
     .imei-section {
       padding: 8rem 2rem 4rem;
@@ -187,131 +186,6 @@
       line-height: 1.6;
     }
     
-    .checkout-section {
-      text-align: center;
-      padding: 2rem;
-      background: white;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
-    }
-    
-    .checkout-section h2 {
-      color: #333;
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-    }
-    
-    .checkout-section p {
-      color: #666;
-      font-size: 1.1rem;
-      line-height: 1.7;
-      margin-bottom: 1.5rem;
-    }
-    
-    .btn-checkout {
-      background: #3b82f6;
-      color: white;
-      padding: 1.2rem 2rem;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-      transition: background 0.3s ease, transform 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    }
-    
-    .btn-checkout:hover {
-      background: #2563eb;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    }
-    
-    .btn-checkout:active {
-      transform: translateY(0);
-    }
-    
-    
-    .split-cards-section {
-      margin-top: 3rem;
-      padding: 0;
-    }
-    
-    .split-cards-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 2rem;
-      max-width: 100%;
-    }
-    
-    @media (min-width: 1024px) {
-      .split-cards-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-      }
-    }
-    
-    .split-card {
-      padding: 2.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      border: 1px solid #e0e0e0;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    
-    .split-card-blue {
-      background: #fafafa;
-    }
-    
-    .split-card-green {
-      background: #fafafa;
-    }
-    
-    .split-card h3 {
-      color: #333;
-      font-size: 1.5rem;
-      margin: 0;
-      line-height: 1.3;
-    }
-    
-    .split-card p {
-      color: #666;
-      font-size: 1.1rem;
-      line-height: 1.7;
-      margin: 0;
-      flex-grow: 1;
-    }
-    
-    .btn-verify-now {
-      background: #3b82f6;
-      color: white;
-      padding: 1.2rem 2rem;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-      align-self: flex-end;
-      margin-top: auto;
-    }
-    
-    .btn-verify-now:hover {
-      background: #2563eb;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    }
-    
-    .btn-verify-now:active {
-      transform: translateY(0);
-    }
-    
-    
     .error-message {
       background: #ffebee;
       border: 2px solid #ef5350;
@@ -324,34 +198,6 @@
     
     .error-message.show {
       display: block;
-    }
-    
-    .step-banner {
-      background: #f0f9ff;
-      border: 1px solid #bae6fd;
-      border-radius: 8px;
-      padding: 1.75rem 2rem;
-      margin-bottom: 2.5rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-    
-    .step-banner-content {
-      text-align: center;
-      color: #1e3a8a;
-      font-size: 1.1rem;
-      line-height: 1.8;
-    }
-    
-    .step-banner-content strong {
-      color: #1e40af;
-      font-weight: 600;
-    }
-    
-    .step-banner-arrow {
-      display: inline-block;
-      margin-left: 0.5rem;
-      font-size: 1.2rem;
-      color: #3b82f6;
     }
     
     @media (max-width: 768px) {
@@ -375,15 +221,6 @@
         font-size: 1rem;
       }
       
-      .checkout-section h2 {
-        font-size: 1.5rem;
-      }
-      
-      .btn-checkout {
-        padding: 1.2rem 2rem;
-        font-size: 1.2rem;
-        width: 100%;
-      }
     }
     
     @media (max-width: 480px) {
@@ -395,26 +232,6 @@
         font-size: 1.75rem;
       }
       
-      .checkout-section {
-        padding: 1.5rem 1rem;
-      }
-      
-      .split-card {
-        padding: 2rem 1.5rem;
-      }
-      
-      .split-card h3 {
-        font-size: 1.3rem;
-      }
-      
-      .split-card p {
-        font-size: 1rem;
-      }
-      
-      .btn-verify-now {
-        width: 100%;
-        align-self: stretch;
-      }
     }
   </style>
 </head>
@@ -466,13 +283,6 @@
           </button>
         </form>
         
-        <div class="step-banner" id="stepBanner">
-          <div class="step-banner-content">
-            <strong>Step 1:</strong> Enter your IMEI and click "Check Free" — it takes 2 seconds and instantly confirms your device. ✓<br>
-            <strong>Step 2:</strong> Unlock your full verification report for only $0.99 <span class="step-banner-arrow">↓</span>
-          </div>
-        </div>
-        
         <div class="result-box" id="resultBox">
           <div class="result-box-content">
             <div class="result-icon">✓</div>
@@ -483,33 +293,6 @@
           </div>
         </div>
         
-        <div class="checkout-section">
-          <h2>Get Full Verification Report – Only $0.99 Instant</h2>
-          <p>Unlock complete device information, verification status, carrier details, and more with our comprehensive IMEI report.</p>
-          <button class="btn-checkout" id="checkoutBtn">
-            Get Full Verification Report – Only $0.99
-          </button>
-        </div>
-        
-        <div class="split-cards-section">
-          <div class="split-cards-grid">
-            <div class="split-card split-card-blue">
-              <h3>Lost or Stolen Phone?</h3>
-              <p>Quickly check if your device has been reported lost/stolen or blacklisted.</p>
-              <button class="btn-verify-now" id="verifyLostBtn">
-                Verify Now →
-              </button>
-            </div>
-            
-            <div class="split-card split-card-green">
-              <h3>Buying a Used Phone?</h3>
-              <p>Avoid scams — verify it's not blacklisted or stolen before you buy.</p>
-              <button class="btn-verify-now" id="verifyBuyBtn">
-                Verify Now →
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   </div>
@@ -534,12 +317,6 @@
   </footer>
 
   <script>
-    const stripe = {
-      redirectToCheckout: async () => ({ error: { message: "Checkout is disabled in staging" } })
-    };
-    
-    let currentImei = '';
-    
     // IMEI model detection function using TAC (first 8 digits)
     function detectModel(imei) {
       // Remove any non-numeric characters
@@ -596,7 +373,6 @@
       const resultTitle = document.getElementById('resultTitle');
       const resultText = document.getElementById('resultText');
       const checkFreeBtn = document.getElementById('checkFreeBtn');
-      const checkoutBtn = document.getElementById('checkoutBtn');
       
       // Clear previous errors and results
       errorMessage.classList.remove('show');
@@ -610,9 +386,6 @@
         errorMessage.classList.add('show');
         return;
       }
-      
-      // Store IMEI for checkout
-      currentImei = imei;
       
       // Disable button during processing
       checkFreeBtn.disabled = true;
@@ -632,7 +405,7 @@
         } else {
           // Non-Apple device or unknown
           resultTitle.textContent = 'Device Detected';
-          resultText.textContent = 'Device detected, but model information requires full verification.';
+          resultText.textContent = 'This free browser check could not identify a specific model from the IMEI prefix.';
           resultBox.classList.add('show');
         }
         
@@ -641,79 +414,6 @@
       }, 300);
     });
     
-    // Shared checkout handler function
-    async function handleCheckout() {
-      // Read IMEI directly from input field
-      const imeiInput = document.getElementById('imeiInput');
-      const imei = imeiInput.value.trim().replace(/\D/g, '');
-      
-      if (!imei || imei.length !== 15) {
-        alert('Please enter and check your IMEI first.');
-        return;
-      }
-      
-      const checkoutBtn = document.getElementById('checkoutBtn');
-      const verifyLostBtn = document.getElementById('verifyLostBtn');
-      const verifyBuyBtn = document.getElementById('verifyBuyBtn');
-      
-      // Disable all checkout buttons
-      checkoutBtn.disabled = true;
-      verifyLostBtn.disabled = true;
-      verifyBuyBtn.disabled = true;
-      checkoutBtn.textContent = 'Processing...';
-      verifyLostBtn.textContent = 'Processing...';
-      verifyBuyBtn.textContent = 'Processing...';
-      
-      try {
-        // Call the API endpoint
-        const response = await fetch('/api/create-imei-checkout-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ imei: imei })
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to create checkout session');
-        }
-        
-        const data = await response.json();
-        
-        // Handle response - could be { id } or { url }
-        if (data.url) {
-          // Redirect to session URL
-          window.location.href = data.url;
-        } else if (data.id) {
-          // Use Stripe redirectToCheckout with session ID
-          const { error } = await stripe.redirectToCheckout({
-            sessionId: data.id
-          });
-          
-          if (error) {
-            throw error;
-          }
-        } else {
-          throw new Error('Invalid response from server');
-        }
-      } catch (error) {
-        console.error('Checkout error:', error);
-        alert('Unable to start checkout. Please try again.');
-        checkoutBtn.disabled = false;
-        verifyLostBtn.disabled = false;
-        verifyBuyBtn.disabled = false;
-        checkoutBtn.textContent = 'Get Full Verification Report – Only $0.99';
-        verifyLostBtn.textContent = 'Verify Now →';
-        verifyBuyBtn.textContent = 'Verify Now →';
-      }
-    }
-    
-    // Checkout button handler
-    document.getElementById('checkoutBtn').addEventListener('click', handleCheckout);
-    
-    // Verify buttons handlers
-    document.getElementById('verifyLostBtn').addEventListener('click', handleCheckout);
-    document.getElementById('verifyBuyBtn').addEventListener('click', handleCheckout);
   </script>
 
   <script src="analytics-events.js"></script>
@@ -724,4 +424,3 @@
 
 </body>
 </html>
-
