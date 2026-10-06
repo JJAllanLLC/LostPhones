@@ -1,0 +1,62 @@
+body.imei-page .imei-main { max-width: none; margin: 0; padding: 0; }
+body.imei-page .imei-section,
+body.imei-page .imei-info,
+body.imei-page .imei-next { padding-inline: max(1.25rem, calc((100vw - 76rem) / 2)); }
+body.imei-page .imei-section {
+  min-height: 42rem; padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem);
+  background: linear-gradient(135deg, #f3eee5 0%, #fff 47%, #e7eef3 100%);
+}
+body.imei-page .imei-layout { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(22rem, .82fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: center; }
+body.imei-page .imei-hero { margin: 0; text-align: left; }
+body.imei-page .imei-hero h1 { max-width: 12ch; margin: .75rem 0 1.25rem; color: #17324d; font-size: clamp(2.7rem, 6vw, 5.25rem); line-height: .98; letter-spacing: -.055em; }
+body.imei-page .imei-subheadline { max-width: 39rem; margin: 0; color: #3d4a57; font-size: clamp(1.08rem, 2vw, 1.3rem); line-height: 1.65; }
+body.imei-page .imei-privacy-note { display: flex; max-width: 38rem; gap: .8rem; align-items: flex-start; margin-top: 2rem; color: #344a40; }
+body.imei-page .imei-privacy-note p { margin: 0; line-height: 1.55; }
+body.imei-page .imei-privacy-icon { display: grid; width: 1.7rem; height: 1.7rem; flex: 0 0 auto; place-items: center; border-radius: 50%; color: #fff; background: #39715b; font-size: .9rem; font-weight: 800; }
+body.imei-page .imei-container { max-width: none; margin: 0; padding: clamp(1.5rem, 4vw, 2.5rem); border: 1px solid #d4dfe7; border-radius: 1.25rem; background: rgba(255, 255, 255, .94); box-shadow: 0 1rem 3rem rgba(23, 50, 77, .12); }
+body.imei-page .imei-step { margin: 0 0 1.5rem; color: #9a5a00; font-size: .75rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+body.imei-page .imei-form { margin: 0; }
+body.imei-page .imei-input-group { margin-bottom: 1rem; }
+body.imei-page .imei-input-group label { margin-bottom: .65rem; color: #17324d; font-size: 1rem; font-weight: 750; }
+body.imei-page .imei-input-group label span { color: #667684; font-weight: 500; }
+body.imei-page .imei-input-group input { box-sizing: border-box; width: 100%; padding: 1rem 1.05rem; border: 1.5px solid #9dafbd; border-radius: .75rem; color: #17324d; background: #fff; font-family: inherit; font-size: 1.12rem; letter-spacing: .08em; }
+body.imei-page .imei-input-group input:focus { outline: 3px solid rgba(39, 105, 144, .2); outline-offset: 1px; border-color: #276990; box-shadow: none; }
+body.imei-page .btn-check-free { width: 100%; min-height: 3.35rem; margin: .25rem 0 0; padding: .85rem 1.2rem; border: 1.5px solid #17324d; border-radius: .75rem; color: #fff; background: #17324d; box-shadow: none; font-family: inherit; font-size: 1rem; font-weight: 800; }
+body.imei-page .btn-check-free:hover { background: #244b6e; box-shadow: 0 .4rem 1rem rgba(23, 50, 77, .18); transform: translateY(-1px); }
+body.imei-page .btn-check-free:focus-visible { outline: 3px solid #d67a00; outline-offset: 3px; }
+body.imei-page .btn-check-free:disabled { color: #fff; background: #74889a; }
+body.imei-page .error-message { margin: 0 0 1rem; padding: .85rem 1rem; border: 1px solid #b64a4a; border-radius: .65rem; color: #8e2929; background: #fff0f0; }
+body.imei-page .result-box { margin: 1.25rem 0 0; padding: 1.15rem; border: 1px solid #81a99a; border-radius: .75rem; background: #edf7f2; }
+body.imei-page .result-box-content { gap: .8rem; }
+body.imei-page .result-icon { width: 1.7rem; height: 1.7rem; background: #39715b; font-size: .9rem; }
+body.imei-page .result-box h2 { margin: 0 0 .35rem; color: #214f3d; font-size: 1.15rem; }
+body.imei-page .result-box p { color: #344a40; font-size: 1rem; line-height: 1.55; }
+body.imei-page .imei-limit { margin: 1.35rem 0 0; padding-top: 1.2rem; border-top: 1px solid #dbe3e9; color: #5a6874; font-size: .9rem; line-height: 1.55; }
+body.imei-page .imei-info { padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem); background: #fff; }
+body.imei-page .imei-info-heading { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); column-gap: clamp(2rem, 7vw, 7rem); }
+body.imei-page .imei-info-heading .hp-eyebrow { grid-column: 1; }
+body.imei-page .imei-info-heading h2 { grid-column: 1; margin: .65rem 0 0; color: #17324d; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.08; letter-spacing: -.035em; }
+body.imei-page .imei-info-heading > p:last-child { grid-column: 2; grid-row: 1 / span 2; align-self: end; margin: 0; color: #3d4a57; font-size: 1.08rem; line-height: 1.75; }
+body.imei-page .imei-info-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin-top: clamp(2.5rem, 6vw, 5rem); background: #d9e1e8; }
+body.imei-page .imei-info-grid article { min-height: 15rem; padding: clamp(1.5rem, 3vw, 2.5rem); background: #f8fafb; }
+body.imei-page .imei-info-grid span { color: #9a5a00; font-size: .75rem; font-weight: 800; letter-spacing: .14em; }
+body.imei-page .imei-info-grid h3 { margin: 1.2rem 0 .7rem; color: #17324d; font-size: 1.35rem; }
+body.imei-page .imei-info-grid p { margin: 0; color: #52606d; line-height: 1.65; }
+body.imei-page .imei-next { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2rem, 7vw, 7rem); padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem); }
+body.imei-page .imei-next h2 { margin: .65rem 0 0; color: #17324d; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.08; letter-spacing: -.035em; }
+body.imei-page .imei-next > div:last-child { color: #3d4a57; font-size: 1.08rem; line-height: 1.7; }
+body.imei-page .imei-next .hp-btn { margin-top: 1rem; }
+@media (max-width: 959px) {
+  body.imei-page .imei-layout { grid-template-columns: 1fr; }
+  body.imei-page .imei-hero h1 { max-width: 14ch; }
+}
+@media (max-width: 767px) {
+  body.imei-page .imei-section { min-height: auto; padding-top: 4.25rem; padding-bottom: 4.25rem; }
+  body.imei-page .imei-next { grid-template-columns: 1fr; gap: 1.25rem; }
+  body.imei-page .imei-info-heading { display: block; }
+  body.imei-page .imei-info-heading > p:last-child { margin-top: 1.25rem; }
+  body.imei-page .imei-info-grid { grid-template-columns: 1fr; }
+  body.imei-page .imei-info-grid article { min-height: auto; }
+  body.imei-page .imei-container { padding: 1.35rem; }
+}
+@media (prefers-reduced-motion: reduce) { body.imei-page .btn-check-free { transition: none; } }

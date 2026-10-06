@@ -234,85 +234,99 @@
       
     }
   </style>
+  <link rel="stylesheet" href="v2.css">
+  <link rel="stylesheet" href="homepage.css">
+  <link rel="stylesheet" href="imei-check.css">
 </head>
-<body>
-
-  <header class="blog-header">
-    <div style="font-size: 2.5rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); font-weight: bold;">LostPhones.com</div>
-    <nav>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="recovery.html">Start</a></li>
-        <li><a href="preparedness.html">Guide</a></li>
-        <li><a href="/blog/">Blog</a></li>
-        <li><a href="replacement-phone-guide.html">Replacement Phone Guide</a></li>
-        <li><a href="imei-check.html">IMEI Check</a></li>
-        <li><a href="about.html">About</a></li>
-      </ul>
-    </nav>
+<body class="home imei-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="hp-header">
+    <div class="hp-header-inner">
+      <a class="hp-brand" href="/" aria-label="LostPhones home">
+        <img class="hp-logo" src="assets/homepage/logo.svg" alt="" width="56" height="56">
+        <span class="hp-brand-text"><span class="hp-brand-name">LostPhones</span><span class="hp-brand-tag">The hard part's over. You found us.</span></span>
+      </a>
+      <button class="hp-menu-toggle" id="hp-menu-toggle" type="button" aria-expanded="false" aria-controls="hp-nav" aria-label="Open menu"><span class="hp-menu-bars" aria-hidden="true"></span></button>
+      <nav class="hp-nav" id="hp-nav" aria-label="Primary">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="recovery.html">Recovery</a></li>
+          <li><a href="preparedness.html">Protect Your Phone</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="imei-check.html" aria-current="page">Free IMEI Check</a></li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+        <a class="hp-btn hp-btn-header" href="recovery.html">Start Recovery <span aria-hidden="true">→</span></a>
+      </nav>
+    </div>
   </header>
 
-  <div class="main-content">
+  <main id="main" class="imei-main">
     <section class="imei-section">
-      <div class="imei-container">
+      <div class="imei-layout">
         <div class="imei-hero">
-          <h1>Instant Free IMEI Check</h1>
-          <h2 class="imei-subheadline">Find Your Device Model in Seconds</h2>
-        </div>
-        
-        <p class="calming-copy">Enter your 15-digit IMEI number below to instantly identify your device model. This free check gives you basic information to help you understand what you're working with.</p>
-        
-        <form class="imei-form" id="imeiForm">
-          <div class="imei-input-group">
-            <label for="imeiInput">IMEI Number (15 digits)</label>
-            <input 
-              type="text" 
-              id="imeiInput" 
-              name="imei" 
-              placeholder="Enter 15-digit IMEI"
-              maxlength="15"
-              pattern="[0-9]{15}"
-              required
-            >
+          <p class="hp-eyebrow">Free, private, browser-only</p>
+          <h1>Check your IMEI for basic device information.</h1>
+          <p class="imei-subheadline">Enter a 15-digit IMEI to see whether this free checker recognizes the device prefix. No account or payment required.</p>
+          <div class="imei-privacy-note">
+            <span class="imei-privacy-icon" aria-hidden="true">✓</span>
+            <p><strong>Your IMEI stays in this browser.</strong> This page does not send it to LostPhones, a checkout, or an IMEI-report provider.</p>
           </div>
-          
-          <div class="error-message" id="errorMessage"></div>
-          
-          <button type="submit" class="btn-check-free" id="checkFreeBtn">
-            Check Free
-          </button>
-        </form>
-        
-        <div class="result-box" id="resultBox">
-          <div class="result-box-content">
-            <div class="result-icon">✓</div>
-            <div class="result-text">
-              <h3 id="resultTitle"></h3>
-              <p id="resultText"></p>
+        </div>
+        <div class="imei-container">
+          <p class="imei-step">IMEI model check</p>
+          <form class="imei-form" id="imeiForm">
+            <div class="imei-input-group">
+              <label for="imeiInput">IMEI number <span>(15 digits)</span></label>
+              <input
+                type="text"
+                id="imeiInput"
+                name="imei"
+                placeholder="Enter 15-digit IMEI"
+                maxlength="15"
+                pattern="[0-9]{15}"
+                inputmode="numeric"
+                autocomplete="off"
+                required
+              >
+            </div>
+            <div class="error-message" id="errorMessage" role="alert"></div>
+            <button type="submit" class="btn-check-free" id="checkFreeBtn">Check Free</button>
+          </form>
+          <div class="result-box" id="resultBox" aria-live="polite">
+            <div class="result-box-content">
+              <div class="result-icon">✓</div>
+              <div class="result-text"><h2 id="resultTitle"></h2><p id="resultText"></p></div>
             </div>
           </div>
+          <p class="imei-limit"><strong>What this check can do:</strong> recognize a limited set of device prefixes stored in this page. It does not provide carrier, blacklist, ownership, carrier-lock, warranty, location, or theft status.</p>
         </div>
-        
       </div>
     </section>
-  </div>
+    <section class="imei-info" aria-labelledby="imei-info-heading">
+      <div class="imei-info-heading">
+        <p class="hp-eyebrow">A useful clue, offered free</p>
+        <h2 id="imei-info-heading">Why check an IMEI?</h2>
+        <p>When you are identifying or considering a phone, its IMEI prefix can offer another clue about the device model described to you. LostPhones provides this limited model check free for visitors, without an account or payment.</p>
+      </div>
+      <div class="imei-info-grid">
+        <article><span aria-hidden="true">01</span><h3>Find the number</h3><p>Copy the 15-digit IMEI shown in the phone's settings, on its packaging, or by the device's own IMEI display method.</p></article>
+        <article><span aria-hidden="true">02</span><h3>Run the local check</h3><p>Enter all 15 digits. This page compares the first eight digits with a small built-in list of recognized device prefixes.</p></article>
+        <article><span aria-hidden="true">03</span><h3>Treat it as a clue</h3><p>A recognized model can help you compare basic device information, but this result does not verify the seller, ownership, condition, eligibility, or whether a phone is safe to buy.</p></article>
+      </div>
+    </section>
+    <section class="imei-next" aria-labelledby="imei-next-heading">
+      <div><p class="hp-eyebrow">A model check is only one clue</p><h2 id="imei-next-heading">Missing a phone right now?</h2></div>
+      <div><p>Use the guided recovery flow for practical next steps based on what happened and what device you use.</p><a class="hp-btn hp-btn-primary" href="recovery.html">Start Recovery <span aria-hidden="true">→</span></a></div>
+    </section>
+  </main>
 
-  <footer style="background:#e9ecef; padding:60px 20px; text-align:center; border-top:5px solid #007bff; margin-top:120px; font-family:Arial, sans-serif;">
-    <div style="max-width:1200px; margin:0 auto;">
-      <div style="margin-bottom:20px;">
-        <a href="index.html" style="margin:0 15px; color:#333; text-decoration:none;">Home</a>
-        <a href="recovery.html" style="margin:0 15px; color:#333; text-decoration:none;">Start</a>
-        <a href="preparedness.html" style="margin:0 15px; color:#333; text-decoration:none;">Guide</a>
-        <a href="/blog/" style="margin:0 15px; color:#333; text-decoration:none;">Blog</a>
-        <a href="imei-check.html" style="margin:0 15px; color:#333; text-decoration:none;">IMEI Check</a>
-        <a href="about.html" style="margin:0 15px; color:#333; text-decoration:none;">About</a>
-      </div>
-      <div style="margin-bottom:20px;">
-        <a href="privacy.html" style="margin:0 15px; color:#333; text-decoration:none;">Privacy Policy</a>
-        <a href="terms.html" style="margin:0 15px; color:#333; text-decoration:none;">Terms of Service</a>
-      </div>
-      <div style="color:#555; font-size:0.9rem; margin-top:20px;">Questions? Email <a href="mailto:lostphones@jjallanllc.com" style="color:#007bff; text-decoration:none;">lostphones@jjallanllc.com</a></div>
-      <div style="color:#555; font-size:0.9rem; margin-top:30px;">© 2026 LostPhones. Operated by JJ ALLAN, LLC.</div>
+  <footer class="hp-footer">
+    <div class="hp-footer-inner">
+      <a class="hp-brand hp-footer-brand" href="/" aria-label="LostPhones home"><img class="hp-logo" src="assets/homepage/logo.svg" alt="" width="56" height="56"><span class="hp-brand-text"><span class="hp-brand-name">LostPhones</span><span class="hp-brand-tag">The hard part's over. You found us.</span></span></a>
+      <nav aria-label="Footer"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="/blog/">Blog</a></nav>
+      <p class="hp-copyright">© 2026 LostPhones. Operated by <a href="https://jjallanllc.com" rel="noopener noreferrer">JJ ALLAN, LLC</a>.</p>
+      <p class="hp-script hp-script-footer">Same you,<br>just one step ahead.</p>
     </div>
   </footer>
 
@@ -418,6 +432,7 @@
 
   <script src="analytics-events.js"></script>
   <script src="analytics-page-init.js"></script>
+  <script src="homepage.js" defer></script>
 
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>
