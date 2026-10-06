@@ -481,14 +481,14 @@ Your immediate crisis is handled. Now make sure it never turns into a nightmare 
 
 **For iPhone Users (Apple Devices) - Best tools for preventing future loss and speeding up recovery on iPhones.**
 
-- **AirTag** — The most reliable tracker for iPhones. If your phone goes missing again, you'll see its last known location instantly through Find My. [Buy Apple AirTag here](https://amzn.to/4rL89t6)
-- **AirTag-Compatible Phone Case** — A protective case with a built-in AirTag slot so you never forget the tracker at home. [Buy AirTag-Compatible iPhone Case here](https://amzn.to/4oIuSTY)
-- **AirTag Keychain / Luggage Holder** — Great for wallets, bags, backpacks, and anything else you want to keep tabs on. [Buy AirTag Keychain Holder here](https://amzn.to/44fTts4)
+- **AirTag** — The most reliable tracker for iPhones. If your phone goes missing again, you'll see its last known location instantly through Find My. [Buy Apple AirTag here](https://amzn.to/4hxJOUT)
+- **AirTag-Compatible Phone Case** — A protective case with a built-in AirTag slot so you never forget the tracker at home. [Buy AirTag-Compatible iPhone Case here](https://amzn.to/4hIdWeT)
+- **AirTag Keychain / Luggage Holder** — Great for wallets, bags, backpacks, and anything else you want to keep tabs on. [Buy AirTag Keychain Holder here](https://amzn.to/4ec1lQ3)
 
 **For Android Users - Reliable trackers and accessories that integrate smoothly with Android devices.**
 
-- **Samsung SmartTag 2** — Works seamlessly with Samsung Galaxy devices. Lets you locate your phone or items through SmartThings Find. [Buy Samsung SmartTag 2 here](https://amzn.to/44hLxqh)
-- **Tile Tracker** — A cross-platform tracker compatible with most Android phones. Perfect for keys, bags, or keeping your phone findable through the Tile app. [Buy Tile Pro Tracker here](https://amzn.to/44cioN9)
+- **Samsung SmartTag 2** — Works seamlessly with Samsung Galaxy devices. Lets you locate your phone or items through SmartThings Find. [Buy Samsung SmartTag 2 here](https://amzn.to/3VzGobt)
+- **Tile Tracker** — A cross-platform tracker compatible with most Android phones. Perfect for keys, bags, or keeping your phone findable through the Tile app. [Buy Tile Pro Tracker here](https://amzn.to/4rQYnpN)
 
 - These small upgrades make your next lost-phone situation far easier to handle — and in many cases, prevent it entirely.
 
@@ -586,16 +586,16 @@ After losing my phone and going through the recovery process, I built a preventi
 **1. Apple AirTag (4-pack)**
 - Attach one to your keys, one in your wallet, one in your bag, and keep one as a backup.
 - The Find My network has over a billion devices — your AirTag will update its location constantly.
-- [Buy Apple AirTag 4-Pack here](https://amzn.to/4oL5Vrh)
+- [Buy Apple AirTag 4-Pack here](https://amzn.to/4hxJOUT)
 
 **2. AirTag-Compatible Phone Case**
 - I use a case with a built-in AirTag slot. This ensures the tracker is always with my phone, not forgotten at home.
 - Look for cases that are MagSafe compatible and have a secure AirTag holder.
-- [Buy AirTag-Compatible iPhone Case here](https://amzn.to/4oIuSTY)
+- [Buy AirTag-Compatible iPhone Case here](https://amzn.to/4hIdWeT)
 
 **3. AirTag Keychain Holder**
 - For keys, wallets, and bags. The keychain design makes it easy to attach and hard to lose.
-- [Buy AirTag Keychain Holder here](https://amzn.to/44fTts4)
+- [Buy AirTag Keychain Holder here](https://amzn.to/4ec1lQ3)
 
 **4. Screen Protector + Strong Case**
 - A good case and screen protector won't prevent loss, but they'll protect your phone if it falls — and a protected phone is less likely to break and become unusable.
@@ -613,16 +613,16 @@ After losing my phone and going through the recovery process, I built a preventi
 **1. Samsung SmartTag 2 (Samsung users) or Tile Pro (all Android)**
 - Samsung SmartTag 2 integrates seamlessly with Galaxy devices through SmartThings Find.
 - Tile Pro works with any Android phone and has a loud ring and long battery life.
-- [Buy Samsung SmartTag 2 here](https://amzn.to/44hLxqh)
-- [Buy Tile Pro Tracker here](https://amzn.to/44cioN9)
+- [Buy Samsung SmartTag 2 here](https://amzn.to/3VzGobt)
+- [Buy Tile Pro Tracker here](https://amzn.to/4rQYnpN)
 
 **2. Phone Case with Tracker Slot**
 - Similar to iPhone cases, Android cases with built-in tracker slots ensure your tracker is always attached.
 
 **3. Tile Keychain or Wallet Card**
 - For keys and wallets. The Tile Wallet Card is thin enough to fit in any wallet without bulk.
-- [Buy Tile Keychain here](https://amzn.to/4ptE7c2)
-- [Buy Tile Wallet Card here](https://amzn.to/4ptE7c2)
+- [Buy Tile Keychain here](https://amzn.to/4rQYKRd)
+- [Buy Tile Wallet Card here](https://amzn.to/4rQYKRd)
 
 **4. Screen Protector + Strong Case**
 - Protection against drops means your phone stays functional longer.
