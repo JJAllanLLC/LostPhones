@@ -8,10 +8,11 @@ body.imei-page .imei-section {
   background: linear-gradient(135deg, #f3eee5 0%, #fff 47%, #e7eef3 100%);
 }
 body.imei-page .imei-banner { position: absolute; inset: 0 0 auto; height: clamp(16rem, 29vw, 24rem); margin: 0; overflow: hidden; }
-body.imei-page .imei-banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(244, 239, 230, .94) 0%, rgba(244, 239, 230, .72) 31%, rgba(231, 238, 243, .25) 68%, rgba(231, 238, 243, .78) 100%); }
+body.imei-page .imei-banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(244, 239, 230, .76) 0%, rgba(244, 239, 230, .38) 34%, rgba(231, 238, 243, .08) 68%, rgba(231, 238, 243, .5) 100%); }
 body.imei-page .imei-banner img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 54% 50%; }
 body.imei-page .imei-layout { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(22rem, .82fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: center; }
 body.imei-page .imei-hero { margin: 0; text-align: left; }
+body.imei-page .imei-hero .hp-eyebrow { display: inline-flex; width: fit-content; padding: .45rem .65rem; border-radius: .35rem; color: #fff; background: rgba(23, 50, 77, .9); letter-spacing: .13em; }
 body.imei-page .imei-hero h1 { max-width: 12ch; margin: .75rem 0 1.25rem; color: #17324d; font-size: clamp(2.7rem, 6vw, 5.25rem); line-height: .98; letter-spacing: -.055em; }
 body.imei-page .imei-subheadline { max-width: 39rem; margin: 0; color: #3d4a57; font-size: clamp(1.08rem, 2vw, 1.3rem); line-height: 1.65; }
 body.imei-page .imei-privacy-note { display: flex; max-width: 38rem; gap: .8rem; align-items: flex-start; margin-top: 2rem; color: #344a40; }
@@ -48,7 +49,7 @@ body.imei-page .imei-info-grid h3 { margin: 1.2rem 0 .7rem; color: #17324d; font
 body.imei-page .imei-info-grid p { margin: 0; color: #52606d; line-height: 1.65; }
 body.imei-page .imei-related { display: flex; flex-wrap: wrap; gap: .7rem 1.5rem; align-items: center; margin-top: 1.5rem; padding: 1.1rem 1.25rem; border: 1px solid #d9e1e8; border-radius: .8rem; background: #f8fafb; }
 body.imei-page .imei-related p { margin: 0 auto 0 0; color: #17324d; font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
-body.imei-page .imei-related a { min-height: 2.75rem; display: inline-flex; align-items: center; color: #1d5e81; font-weight: 750; }
+body.imei-page .imei-related a { min-height: 2.75rem; display: inline-flex; align-items: center; color: #1d5e81; font-size: 1rem; font-weight: 600; text-shadow: none; }
 body.imei-page .imei-related a:focus-visible { outline: 3px solid #d67a00; outline-offset: 3px; }
 body.imei-page .imei-next { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2rem, 7vw, 7rem); padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem); }
 body.imei-page .imei-next h2 { margin: .65rem 0 0; color: #17324d; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.08; letter-spacing: -.035em; }

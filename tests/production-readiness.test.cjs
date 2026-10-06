@@ -13,6 +13,7 @@ const preparednessHtml = read('preparedness.html');
 const successPaidHtml = read('recovery-plan-success.html');
 const successHtml = read('success.html');
 const privacyHtml = read('privacy.html');
+const termsHtml = read('terms.html');
 const blogIndexHtml = read('blog/index.html');
 const robots = read('robots.txt');
 const vercel = JSON.parse(read('vercel.json'));
@@ -172,6 +173,29 @@ test('free IMEI check has no paid report or checkout entry', () => {
 
 test('homepage navigation exposes the browser-only free IMEI check', () => {
   assert.match(indexHtml, /<a href="imei-check\.html">Free IMEI Check<\/a>/);
+});
+
+test('redesigned public pages use the shared shell without legacy navigation styles', () => {
+  const imeiHtml = read('imei-check.html');
+  assert.equal(imeiHtml.includes('href="style.css"'), false);
+  assert.match(imeiHtml, /href="imei-check\.css"/);
+  [privacyHtml, termsHtml].forEach((html) => {
+    assert.match(html, /class="home legal-page"/);
+    assert.match(html, /href="homepage\.css"/);
+    assert.match(html, /href="legal\.css"/);
+    assert.equal(html.includes('href="style.css"'), false);
+    assert.equal(html.includes('exitIntentOverlay'), false);
+  });
+});
+
+test('redesigned pages expose the complete seven-link footer', () => {
+  [indexHtml, read('about.html'), blogIndexHtml, read('imei-check.html'), privacyHtml, termsHtml].forEach((html) => {
+    const footer = (html.match(/<footer class="hp-footer">([\s\S]*?)<\/footer>/) || [])[1] || '';
+    assert.equal((footer.match(/<a\b/g) || []).length, 9);
+    ['Home', 'Recovery', 'Protect Your Phone', 'Blog', 'About', 'Privacy', 'Terms'].forEach((label) => {
+      assert.match(footer, new RegExp(`>${label}<`));
+    });
+  });
 });
 
 test('canonical blog index presents every article once in recovery or prevention cards', () => {
