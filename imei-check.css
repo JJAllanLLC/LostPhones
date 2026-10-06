@@ -3,14 +3,13 @@ body.imei-page .imei-section,
 body.imei-page .imei-info,
 body.imei-page .imei-next { padding-inline: max(1.25rem, calc((100vw - 76rem) / 2)); }
 body.imei-page .imei-section {
-  position: relative; overflow: hidden;
+  position: relative;
   min-height: 42rem; padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem);
   background: linear-gradient(135deg, #f3eee5 0%, #fff 47%, #e7eef3 100%);
 }
-body.imei-page .imei-banner { position: absolute; inset: 0 0 auto; height: clamp(16rem, 29vw, 24rem); margin: 0; overflow: hidden; }
-body.imei-page .imei-banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(244, 239, 230, .76) 0%, rgba(244, 239, 230, .38) 34%, rgba(231, 238, 243, .08) 68%, rgba(231, 238, 243, .5) 100%); }
+body.imei-page .imei-banner { width: 100%; aspect-ratio: 3 / 1; margin: clamp(2.5rem, 6vw, 5rem) 0 0; overflow: hidden; border-radius: 1.25rem; box-shadow: 0 1rem 3rem rgba(23, 50, 77, .12); }
 body.imei-page .imei-banner img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 54% 50%; }
-body.imei-page .imei-layout { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(22rem, .82fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: center; }
+body.imei-page .imei-layout { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(22rem, .82fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: center; }
 body.imei-page .imei-hero { margin: 0; text-align: left; }
 body.imei-page .imei-hero .hp-eyebrow { display: inline-flex; width: fit-content; padding: .45rem .65rem; border-radius: .35rem; color: #fff; background: rgba(23, 50, 77, .9); letter-spacing: .13em; }
 body.imei-page .imei-hero h1 { max-width: 12ch; margin: .75rem 0 1.25rem; color: #17324d; font-size: clamp(2.7rem, 6vw, 5.25rem); line-height: .98; letter-spacing: -.055em; }
@@ -61,8 +60,7 @@ body.imei-page .imei-next .hp-btn { margin-top: 1rem; }
 }
 @media (max-width: 767px) {
   body.imei-page .imei-section { min-height: auto; padding-top: 4.25rem; padding-bottom: 4.25rem; }
-  body.imei-page .imei-banner { height: 13rem; }
-  body.imei-page .imei-banner::after { background: linear-gradient(180deg, rgba(244, 239, 230, .58) 0%, rgba(244, 239, 230, .92) 84%, #f3eee5 100%); }
+  body.imei-page .imei-banner { min-height: 9rem; border-radius: .9rem; }
   body.imei-page .imei-next { grid-template-columns: 1fr; gap: 1.25rem; }
   body.imei-page .imei-info-heading { display: block; }
   body.imei-page .imei-info-heading > p:last-child { margin-top: 1.25rem; }
