@@ -20,6 +20,9 @@
   <meta name="twitter:image" content="https://lostphones.com/assets/cover.jpg">
   <link rel="canonical" href="https://lostphones.com/blog/phone-insurance-theft-loss-2026.html">
   <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../v2.css">
+  <link rel="stylesheet" href="../homepage.css">
+  <link rel="stylesheet" href="../article.css">
   <script src="https://js.stripe.com/v3/"></script>
   <script src="../checkout.js" defer></script>
   <style>
@@ -179,23 +182,18 @@
   }
   </script>
 </head>
-<body>
+<body class="home article-page">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="blog-header">
-    <div style="font-size: 2.5rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); font-weight: bold;">LostPhones.com</div>
-    <nav>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="../recovery.html">Start</a></li>
-        <li><a href="../preparedness.html">Guide</a></li>
-        <li><a href="/blog/">Blog</a></li>
-        <li><a href="../replacement-phone-guide.html">Replacement Phone Guide</a></li>
-        <li><a href="../about.html">About</a></li>
-      </ul>
-    </nav>
+  <header class="hp-header">
+    <div class="hp-header-inner">
+      <a class="hp-brand" href="/" aria-label="LostPhones home"><img class="hp-logo" src="../assets/homepage/logo.svg" alt="" width="56" height="56"><span class="hp-brand-text"><span class="hp-brand-name">LostPhones</span><span class="hp-brand-tag">The hard part&apos;s over. You found us.</span></span></a>
+      <button class="hp-menu-toggle" id="hp-menu-toggle" type="button" aria-expanded="false" aria-controls="hp-nav" aria-label="Open menu"><span class="hp-menu-bars" aria-hidden="true"></span></button>
+      <nav class="hp-nav" id="hp-nav" aria-label="Primary"><ul><li><a href="/">Home</a></li><li><a href="../recovery.html">Recovery</a></li><li><a href="../preparedness.html">Protect Your Phone</a></li><li><a href="/blog/" aria-current="page">Blog</a></li><li><a href="../about.html">About</a></li></ul><a class="hp-btn hp-btn-header" href="../recovery.html">Start Recovery <span aria-hidden="true">→</span></a></nav>
+    </div>
   </header>
 
-  <div class="main-content">
+  <div class="main-content" id="main">
   <article class="blog-post">
     <div class="blog-container">
       <h1>Why Phone Insurance with Theft & Loss Protection Matters in 2026 – Stay Protected</h1>
@@ -343,39 +341,14 @@
   </article>
   </div>
 
-  <footer style="background:#e9ecef; padding:60px 20px; text-align:center; border-top:5px solid #007bff; margin-top:120px; font-family:Arial, sans-serif;">
-
-  <div style="max-width:1200px; margin:0 auto;">
-
-    <div style="margin-bottom:20px;">
-
-      <a href="../index.html" style="margin:0 15px; color:#333; text-decoration:none;">Home</a>
-
-      <a href="../recovery.html" style="margin:0 15px; color:#333; text-decoration:none;">Start</a>
-
-      <a href="../preparedness.html" style="margin:0 15px; color:#333; text-decoration:none;">Guide</a>
-
-      <a href="/blog/" style="margin:0 15px; color:#333; text-decoration:none;">Blog</a>
-
-      <a href="../about.html" style="margin:0 15px; color:#333; text-decoration:none;">About</a>
-
+  <footer class="hp-footer">
+    <div class="hp-footer-inner">
+      <a class="hp-brand hp-footer-brand" href="/" aria-label="LostPhones home"><img class="hp-logo" src="../assets/homepage/logo.svg" alt="" width="56" height="56"><span class="hp-brand-text"><span class="hp-brand-name">LostPhones</span><span class="hp-brand-tag">The hard part&apos;s over. You found us.</span></span></a>
+      <nav aria-label="Footer"><a href="/">Home</a><a href="../recovery.html">Recovery</a><a href="../preparedness.html">Protect Your Phone</a><a href="/blog/">Blog</a><a href="../about.html">About</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
+      <p class="hp-copyright">© 2026 LostPhones. Operated by <a href="https://jjallanllc.com" rel="noopener noreferrer">JJ ALLAN, LLC</a>.</p>
+      <p class="hp-script hp-script-footer">Same you,<br>just one step ahead.</p>
     </div>
-
-    <div style="margin-bottom:20px;">
-
-      <a href="../privacy.html" style="margin:0 15px; color:#333; text-decoration:none;">Privacy Policy</a>
-
-      <a href="../terms.html" style="margin:0 15px; color:#333; text-decoration:none;">Terms of Service</a>
-
-    </div>
-
-    <div style="color:#555; font-size:0.9rem; margin-top:20px;">Questions? Email <a href="mailto:lostphones@jjallanllc.com" style="color:#007bff; text-decoration:none;">lostphones@jjallanllc.com</a></div>
-
-    <div style="color:#555; font-size:0.9rem; margin-top:30px;">© 2026 LostPhones.com – Helping You Breathe Easier When Phones Go Missing</div>
-
-  </div>
-
-</footer>
+  </footer>
 
   <!-- Exit-Intent Lightbox -->
   <div id="exitIntentOverlay" class="exit-intent-overlay">
@@ -446,5 +419,6 @@
   <!-- Vercel Analytics -->
   <script async src="https://va.vercel-scripts.com/v1/script.js"></script>
 
+  <script src="../homepage.js" defer></script>
 </body>
 </html>
