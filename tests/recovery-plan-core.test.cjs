@@ -359,7 +359,7 @@ test('purchase decline and checkout cancel keep the free plan and prevention pat
   const recoveryHtml = fs.readFileSync(path.join(__dirname, '..', 'recovery.html'), 'utf8');
   const recoveryJs = fs.readFileSync(path.join(__dirname, '..', 'recovery.js'), 'utf8');
   const successHtml = fs.readFileSync(path.join(__dirname, '..', 'recovery-plan-success.html'), 'utf8');
-  assert.match(recoveryHtml + recoveryJs, /Emergency recovery is complete/);
+  assert.match(recoveryHtml + recoveryJs, /Immediate recovery steps are complete/);
   assert.match(recoveryHtml, /Protect My Phone for Next Time/);
   assert.match(recoveryHtml, /preparedness\.html/);
   assert.match(recoveryHtml, /I[’']m done for now/);

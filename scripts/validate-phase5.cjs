@@ -84,7 +84,7 @@ if (!/Continue later/.test(recoveryHtml)) fail('Resume controls must sit behind 
 if (!/View full recovery plan/.test(recoveryHtml)) fail('Detailed plan disclosure is missing.');
 if (!/I could not complete this/.test(recoveryHtml)) fail('Outcome exception disclosure is missing.');
 if (!/Print my free summary/.test(recoveryHtml)) fail('Free print control is missing.');
-if (!/Emergency recovery is complete/.test(recoveryHtml + recoveryJs)) fail('Completion boundary copy is missing.');
+if (!/Immediate recovery steps are complete/.test(recoveryHtml + recoveryJs)) fail('Completion boundary copy is missing.');
 if (!/Protect My Phone for Next Time/.test(recoveryHtml) || !/href="preparedness\.html"/.test(recoveryHtml)) {
   fail('Prevention transition must enter preparedness without restarting from the homepage.');
 }

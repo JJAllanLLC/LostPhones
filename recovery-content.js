@@ -996,7 +996,13 @@
 
   function planStatusText(item) {
     if (!item) return 'Not started yet';
-    if (item.status === 'completed') return 'Done';
+    if (item.status === 'completed') {
+      if ((item.actionId === 'apple-locate-device' || item.actionId === 'google-locate-device')
+        && ['offline', 'not_found', 'unknown'].indexOf(item.outcome) !== -1) {
+        return item.outcome === 'offline' ? 'Checked — phone offline' : 'Checked — no useful location';
+      }
+      return 'Done';
+    }
     if (item.status === 'active') return 'Current';
     if (item.status === 'not_applicable') return 'Not needed';
     if (item.status === 'skipped') return 'Skipped';

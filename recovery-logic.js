@@ -267,8 +267,11 @@
       return false;
     }
     const mark = markLostId(answers.platform);
+    const missingWithoutUsefulLocation = stillMissing(state)
+      && ['offline', 'not_found', 'unknown', 'located_unsafe'].indexOf(answers.deviceLocation) !== -1;
     return answers.situation === 'stolen'
       || answers.situation === 'unsure'
+      || missingWithoutUsefulLocation
       || answers.verificationAccess === 'no'
       || isSignInBlock(state.blockedReason)
       || statusOf(state, 'apple-auth-fallback') === 'blocked'
@@ -1131,6 +1134,14 @@
     const snapshot = clone(state || createInitialState());
     syncPlatformActions(snapshot);
     const platform = snapshot.answers.platform || 'unsure';
+    const auth = authFallbackId(platform);
+    if (auth && isOpen(snapshot, auth) && !isSignInBlock(snapshot.blockedReason)
+      && statusOf(snapshot, 'protect-primary-account') === 'completed') {
+      setNotApplicable(snapshot, auth);
+    }
+    if (stillMissing(snapshot) && isOpen(snapshot, 'recovered-device-security-check')) {
+      setNotApplicable(snapshot, 'recovered-device-security-check');
+    }
     const lanes = { now: [], next: [], later: [] };
     content.APPROVED_ACTION_IDS.forEach((actionId) => {
       const action = content.getAction(actionId, platform) || content.getAction(actionId, 'unsure');

@@ -606,9 +606,24 @@
     const sound = record && record.boundedOutcomes && record.boundedOutcomes.some(function (outcome) {
       return outcome.id === 'not_heard';
     });
+    const offlineIphone = record && record.actionId === 'apple-mark-lost'
+      && state.answers.deviceLocation === 'offline';
     cards.forEach(function (card) {
-      card.hidden = !sound;
+      card.hidden = !sound && !offlineIphone;
     });
+    if (offlineIphone) {
+      document.querySelectorAll('.action-help-title').forEach(function (title) {
+        title.textContent = 'Is the battery dead?';
+      });
+      document.querySelectorAll('.action-help-copy').forEach(function (copy) {
+        copy.textContent = '';
+        const link = document.createElement('a');
+        link.href = '/blog/lost-iphone-dead-battery.html';
+        link.textContent = 'Use the dead-battery guide while Lost Mode waits to activate.';
+        copy.appendChild(link);
+      });
+      return;
+    }
     if (!sound) return;
     document.querySelectorAll('.action-help-title').forEach(function (title) {
       title.textContent = "Can't hear the sound?";
@@ -706,6 +721,10 @@
   }
 
   function outcomeDisplayLabel(action, outcome) {
+    if (action && action.actionId === 'google-mark-lost' && outcome) {
+      if (outcome.id === 'marked') return 'I used Secure Device';
+      if (outcome.id === 'could_not_mark') return 'I could not use Secure Device';
+    }
     if (outcome && outcome.id === 'waiting_for_provider') {
       if (action && action.officialProvider === 'Apple') return 'I am waiting on Apple';
       if (action && action.officialProvider === 'Google') return 'I am waiting on Google';
@@ -733,7 +752,7 @@
     const extras = [];
     action.boundedOutcomes.forEach(function (outcome) {
       const button = outcomeButton(action, outcome);
-      if (EXCEPTION_OUTCOMES[outcome.id]) extras.push(button);
+      if (EXCEPTION_OUTCOMES[outcome.id] && action.actionId !== 'protect-mobile-line') extras.push(button);
       else primary.appendChild(button);
     });
     extras.forEach(function (button) { exceptions.appendChild(button); });
@@ -793,11 +812,17 @@
     const all = [].concat(plan.now, plan.next, plan.later).filter(function (item) {
       return item.actionId !== 'recovered-device-security-check';
     });
-    const secured = all.filter(function (item) { return item.status === 'completed'; });
+    const checked = all.filter(function (item) {
+      return item.status === 'completed'
+        && (item.actionId === 'apple-locate-device' || item.actionId === 'google-locate-device')
+        && ['offline', 'not_found', 'unknown'].indexOf(item.outcome) !== -1;
+    });
+    const secured = all.filter(function (item) { return item.status === 'completed' && checked.indexOf(item) === -1; });
     const attention = all.filter(function (item) { return item.status === 'blocked'; });
     const later = all.filter(function (item) { return item.status === 'pending' || item.status === 'skipped'; });
     groups.innerHTML = '';
     appendSummaryGroup(groups, 'Secured', secured, 3);
+    if (checked.length) appendSummaryGroup(groups, 'Checked — no useful location', checked, 3);
     appendSummaryGroup(groups, 'Still needs attention', attention, 4);
     appendSummaryGroup(groups, 'Can wait', later, 3);
     const eraseStatus = state.actions['erase-device-decision'] && state.actions['erase-device-decision'].status;
@@ -860,7 +885,7 @@
     if (!record) {
       document.body.setAttribute('data-recovery-complete', '1');
       document.getElementById('action-kicker').textContent = 'Finished';
-      setActionTitle(title, 'Emergency recovery is complete.');
+      setActionTitle(title, state.status === 'recovered' ? 'The phone is safely back with you.' : 'Immediate recovery steps are complete.');
       reason.textContent = completeLede(state);
       renderSteps('');
       renderCaution('');
@@ -967,7 +992,7 @@
         const official = externalLink(record.officialUrl, record.primaryControlLabel, record.leavingLabel, record.actionId, record.officialProvider);
         if (official) controls.appendChild(official);
       } else if (isManualExternal(record)) {
-        if (manualOutcomeMode) {
+        if (manualOutcomeMode || record.actionId === 'protect-mobile-line') {
           renderOutcomes(record, false);
         } else {
           controls.appendChild(internalControl('I finished in the official app or site', 'btn btn-primary', function () {

@@ -120,6 +120,19 @@ test('lost Android offline', () => {
   assert.equal(logic.isEraseAvailable(view.state), false);
 });
 
+test('missing Android with no useful location requires carrier follow-up before completion', () => {
+  let view = triage('lost', 'android', 'trusted');
+  view = logic.recordOutcome(view.state, 'google-locate-device', 'not_found');
+  view = logic.recordOutcome(view.state, 'google-mark-lost', 'marked');
+  assertAction(view, 'protect-primary-account');
+  view = logic.recordOutcome(view.state, 'protect-primary-account', 'secured');
+  assertAction(view, 'protect-mobile-line');
+  assert.equal(view.state.status, 'active');
+  const plan = logic.buildPlan(view.state);
+  const locate = [].concat(plan.now, plan.next, plan.later).find((item) => item.actionId === 'google-locate-device');
+  assert.equal(content.planStatusText(locate), 'Checked — no useful location');
+});
+
 test('lost Android cannot sign in', () => {
   let view = triage('lost', 'android', 'trusted');
   view = logic.recordOutcome(view.state, 'google-locate-device', 'cannot_sign_in');
@@ -386,6 +399,8 @@ test('offline or low-risk missing journeys cannot expose erase', () => {
   lowRisk = logic.recordOutcome(lowRisk.state, 'apple-locate-device', 'not_found');
   lowRisk = logic.recordOutcome(lowRisk.state, 'apple-mark-lost', 'marked');
   lowRisk = logic.recordOutcome(lowRisk.state, 'protect-primary-account', 'secured');
+  assert.equal(lowRisk.actionId, 'protect-mobile-line');
+  lowRisk = logic.recordOutcome(lowRisk.state, 'protect-mobile-line', 'secured');
   assert.equal(logic.isEraseAvailable(lowRisk.state), false);
   review = logic.reviewErase(lowRisk.state);
   assert.notEqual(review.questionId, 'eraseAcknowledge');
@@ -551,6 +566,8 @@ test('H01 recovered and low-risk stabilized journeys keep erase ineligible', () 
   lowRisk = logic.recordOutcome(lowRisk.state, 'apple-locate-device', 'not_found');
   lowRisk = logic.recordOutcome(lowRisk.state, 'apple-mark-lost', 'marked');
   lowRisk = logic.recordOutcome(lowRisk.state, 'protect-primary-account', 'secured');
+  assert.equal(lowRisk.actionId, 'protect-mobile-line');
+  lowRisk = logic.recordOutcome(lowRisk.state, 'protect-mobile-line', 'secured');
   assert.equal(logic.isEraseAvailable(lowRisk.state), false);
   assert.ok(lowRisk.state.status === 'stabilized' || lowRisk.state.status === 'stabilized_with_blockers' || lowRisk.type === 'complete');
 });
@@ -665,6 +682,11 @@ test('M03 unknown-platform progress stays provider-neutral', () => {
 });
 
 test('L02 full recovery plan uses plain outcomes instead of internal workflow labels', () => {
+  assert.equal(content.planStatusText({
+    actionId: 'google-locate-device',
+    status: 'completed',
+    outcome: 'not_found'
+  }), 'Checked — no useful location');
   assert.equal(content.planStatusText({
     actionId: 'apple-mark-lost',
     status: 'blocked',
