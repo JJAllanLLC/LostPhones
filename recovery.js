@@ -885,7 +885,12 @@
     if (!record) {
       document.body.setAttribute('data-recovery-complete', '1');
       document.getElementById('action-kicker').textContent = 'Finished';
-      setActionTitle(title, state.status === 'recovered' ? 'The phone is safely back with you.' : 'Immediate recovery steps are complete.');
+      const completionTitle = state.status === 'recovered'
+        ? 'The phone is safely back with you.'
+        : state.status === 'stabilized_with_blockers'
+          ? 'Immediate steps are complete. Follow-up still needs attention.'
+          : 'Immediate recovery steps are complete.';
+      setActionTitle(title, completionTitle);
       reason.textContent = completeLede(state);
       renderSteps('');
       renderCaution('');
