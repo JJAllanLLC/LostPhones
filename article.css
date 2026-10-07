@@ -47,7 +47,7 @@
 
 .article-page .blog-container > .blog-date {
   display: inline-flex;
-  margin: 0 0 2.25rem;
+  margin: 0 0 .75rem;
   padding: .45rem .7rem;
   border: 1px solid #d4dfe7;
   border-radius: .35rem;
@@ -58,6 +58,19 @@
   letter-spacing: .045em;
   line-height: 1.2;
   text-transform: none;
+}
+
+.article-page .blog-container > .blog-byline {
+  margin: 0 0 2.25rem;
+  color: #52606d;
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+.article-page .blog-container > .blog-byline a {
+  color: #17324d;
+  font-weight: 700;
+  text-underline-offset: .18em;
 }
 
 .article-page .blog-container > img,

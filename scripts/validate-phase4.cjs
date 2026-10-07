@@ -169,12 +169,14 @@ const globalHeaders = vercel.headers.find((block) => block.source === '/(.*)' &&
 if (globalHeaders && globalHeaders.headers.some((header) => header.key === 'X-Robots-Tag')) {
   fail('Global X-Robots-Tag must not noindex production.');
 }
-['/preparedness.html', '/recovery-plan-success.html'].forEach((source) => {
-  const block = vercel.headers.find((item) => item.source === source);
-  if (!block || !block.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, nofollow, noarchive')) {
-    fail('Sensitive route must remain noindex: ' + source);
-  }
-});
+const preparednessRobots = vercel.headers.find((item) => item.source === '/preparedness.html');
+if (!preparednessRobots || !preparednessRobots.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, noarchive')) {
+  fail('Preparedness route must remain noindex/noarchive without nofollow.');
+}
+const paidSuccessRobots = vercel.headers.find((item) => item.source === '/recovery-plan-success.html');
+if (!paidSuccessRobots || !paidSuccessRobots.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, nofollow, noarchive')) {
+  fail('Paid success route must remain noindex/nofollow/noarchive.');
+}
 const previewRobots = vercel.headers.find((block) => block.source === '/(.*)' && block.has && /vercel/.test(JSON.stringify(block.has)));
 if (!previewRobots || !previewRobots.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, nofollow, noarchive')) {
   fail('Preview/staging hosts must remain noindex.');

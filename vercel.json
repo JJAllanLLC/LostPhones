@@ -82,7 +82,7 @@
         },
         {
           "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
+          "value": "noindex, noarchive"
         },
         {
           "key": "Cache-Control",
@@ -107,7 +107,7 @@
         },
         {
           "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
+          "value": "noindex, noarchive"
         },
         {
           "key": "Cache-Control",

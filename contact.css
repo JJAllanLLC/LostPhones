@@ -1,0 +1,26 @@
+body.contact-page .contact-main { max-width: none; margin: 0; padding: 0; }
+body.contact-page .contact-hero,
+body.contact-page .contact-panel { padding-inline: max(1.25rem, calc((100vw - 64rem) / 2)); }
+body.contact-page .contact-hero {
+  padding-top: clamp(4.5rem, 9vw, 8rem); padding-bottom: clamp(4rem, 8vw, 7rem);
+  background: linear-gradient(135deg, #f3eee5 0%, #fff 48%, #e7eef3 100%);
+}
+body.contact-page .contact-hero h1 { max-width: 11ch; margin: .7rem 0 1.25rem; color: #17324d; font-size: clamp(3rem, 8vw, 6rem); line-height: .96; letter-spacing: -.055em; }
+body.contact-page .contact-hero > p:last-child { max-width: 42rem; margin: 0; color: #3d4a57; font-size: 1.18rem; line-height: 1.7; }
+body.contact-page .contact-panel {
+  display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(2rem, 7vw, 7rem);
+  padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem);
+}
+body.contact-page .contact-panel h2 { max-width: 13ch; margin: .65rem 0 0; color: #17324d; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.08; letter-spacing: -.035em; }
+body.contact-page .contact-copy { color: #3d4a57; font-size: 1.08rem; line-height: 1.75; }
+body.contact-page .contact-copy p { margin: 0 0 1.5rem; }
+body.contact-page .contact-email {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0 0 2rem; padding: 1.25rem 1.4rem;
+  border: 1px solid #c7d6e1; border-radius: .8rem; color: #17324d; font-size: clamp(1rem, 3vw, 1.3rem); font-weight: 750; text-decoration: none; background: #f5f8fa;
+}
+body.contact-page .contact-email:hover { border-color: #7895aa; background: #edf3f7; }
+@media (max-width: 767px) {
+  body.contact-page .contact-hero { padding-top: 4.5rem; padding-bottom: 4rem; }
+  body.contact-page .contact-panel { grid-template-columns: 1fr; gap: 1.75rem; }
+  body.contact-page .contact-email { overflow-wrap: anywhere; }
+}

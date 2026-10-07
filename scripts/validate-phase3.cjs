@@ -124,8 +124,8 @@ const recoveryHtml = read('recovery.html');
 if (!/noopener noreferrer/.test(recoveryHtml + recoveryJs)) {
   fail('Official links must use noopener noreferrer.');
 }
-if (!/noindex, nofollow, noarchive/.test(recoveryHtml)) {
-  fail('Recovery page must remain noindex/nofollow/noarchive.');
+if (!/noindex, noarchive/.test(recoveryHtml) || /name="robots"[^>]*nofollow/i.test(recoveryHtml)) {
+  fail('Recovery page must remain noindex/noarchive without nofollow.');
 }
 if (/<textarea|<input[^>]*(type="text"|type="email"|type="password")/i.test(recoveryHtml)) {
   fail('Recovery page must not collect free-form or credential fields.');
@@ -141,8 +141,8 @@ if (!referrer || referrer.value !== 'no-referrer') {
   fail('Recovery route must send Referrer-Policy: no-referrer.');
 }
 const recoveryRobotsHeader = recoveryHeaders.headers.find((header) => header.key === 'X-Robots-Tag');
-if (!recoveryRobotsHeader || recoveryRobotsHeader.value !== 'noindex, nofollow, noarchive') {
-  fail('Recovery route must remain noindex/nofollow/noarchive.');
+if (!recoveryRobotsHeader || recoveryRobotsHeader.value !== 'noindex, noarchive') {
+  fail('Recovery route must remain noindex/noarchive without nofollow.');
 }
 const globalHeaders = vercel.headers.find((block) => block.source === '/(.*)' && !block.has);
 if (globalHeaders && globalHeaders.headers.some((header) => header.key === 'X-Robots-Tag')) {

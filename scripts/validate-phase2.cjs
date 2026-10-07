@@ -85,8 +85,8 @@ if (/localStorage|sessionStorage|document\.cookie/.test(storageHaystack)) {
 if (/User-agent:\s*\*\s*Disallow:\s*\//i.test(robots.replace(/\n/g, ' '))) {
   fail('robots.txt must not globally disallow all production crawling.');
 }
-if (!/Disallow:\s*\/recovery\.html/.test(robots) || !/Disallow:\s*\/preparedness\.html/.test(robots) || !/Disallow:\s*\/recovery-plan-success\.html/.test(robots)) {
-  fail('robots.txt must keep sensitive recovery routes disallowed.');
+if (/Disallow:\s*\/(recovery|preparedness)\.html/.test(robots) || !/Disallow:\s*\/recovery-plan-success\.html/.test(robots)) {
+  fail('robots.txt must allow crawling tool pages while keeping the paid success route disallowed.');
 }
 if (/name="robots"[^>]*noindex/i.test(indexHtml)) {
   fail('Homepage must be indexable in production.');
@@ -102,8 +102,8 @@ if (!previewRobots || !previewRobots.headers.some((header) => header.key === 'X-
   fail('Vercel preview/staging hosts must remain noindex.');
 }
 const recoveryRobots = vercel.headers.find((block) => block.source === '/recovery.html');
-if (!recoveryRobots || !recoveryRobots.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, nofollow, noarchive')) {
-  fail('Recovery route must remain noindex.');
+if (!recoveryRobots || !recoveryRobots.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, noarchive')) {
+  fail('Recovery route must remain noindex/noarchive without nofollow.');
 }
 
 if (vercel.domains || /lostphones\.com/.test(JSON.stringify(vercel.rewrites || [])) === false && false) {

@@ -1,0 +1,35 @@
+.replacement-page .main-content {
+  padding: 3.5rem 1.25rem 1rem;
+}
+
+.replacement-page .blog-post {
+  margin: 0 auto;
+}
+
+.replacement-page .blog-container {
+  overflow: hidden;
+}
+
+.replacement-page .blog-container > h1 {
+  max-width: 18ch;
+  margin-inline: auto;
+}
+
+.replacement-page .blog-date {
+  text-align: center;
+}
+
+@media (max-width: 680px) {
+  .replacement-page .main-content {
+    padding: 2rem 0.75rem 0;
+  }
+
+  .replacement-page .blog-content [style*="padding: 2rem"] {
+    padding: 1.25rem !important;
+  }
+
+  .replacement-page .blog-content a[style*="display:inline-block"] {
+    display: block !important;
+    text-align: center;
+  }
+}

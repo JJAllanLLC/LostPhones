@@ -1158,6 +1158,46 @@ body.home .hp-copyright a {
   }
 }
 
+body.home .hp-first-steps {
+  padding: clamp(4.5rem, 8vw, 7rem) max(1.25rem, calc((100vw - 76rem) / 2));
+  background: #fff;
+}
+body.home .hp-first-steps-inner {
+  max-width: 76rem; margin: 0 auto; padding: clamp(2rem, 5vw, 4rem);
+  border: 1px solid #d8e0e6; border-radius: 1.25rem; background: #fff;
+  box-shadow: 0 .9rem 2.5rem rgba(23, 50, 77, .06);
+}
+body.home .hp-first-steps-heading {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(18rem, .9fr);
+  gap: clamp(2rem, 7vw, 6rem); align-items: end; margin-bottom: 2.5rem;
+}
+body.home .hp-first-steps-heading h2 {
+  max-width: 13ch; margin: .65rem 0 0; color: #17324d;
+  font-size: clamp(2.4rem, 5vw, 4.5rem); line-height: 1; letter-spacing: -.045em;
+}
+body.home .hp-first-steps-intro > p { margin: 0 0 1.35rem; color: #3d4a57; font-size: 1.08rem; line-height: 1.7; }
+body.home .hp-first-steps-intro > strong { display: block; color: #17324d; font-size: 1rem; }
+body.home .hp-first-steps-intro > span { display: block; margin-top: .25rem; color: #687684; font-size: .9rem; }
+body.home .hp-first-steps-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #d8e0e6; }
+body.home .hp-first-step-card {
+  position: relative; display: flex; min-height: 19rem; flex-direction: column;
+  padding: 2rem; overflow: hidden; border-right: 1px solid #d8e0e6;
+  color: #17324d; text-decoration: none; background: #fff;
+}
+body.home .hp-first-step-card:last-child { border-right: 0; }
+body.home .hp-first-step-number { position: absolute; top: 1rem; right: 1.25rem; color: #d6e0e7; font-size: 3rem; font-weight: 800; }
+body.home .hp-first-step-tag { align-self: flex-start; margin-bottom: 3.5rem; color: #9a5a00; font-size: .74rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+body.home .hp-first-step-card strong { max-width: 12ch; margin-bottom: 1rem; font-size: 1.75rem; line-height: 1.08; letter-spacing: -.025em; }
+body.home .hp-first-step-card > span:not(.hp-first-step-number):not(.hp-first-step-tag) { color: #52606d; line-height: 1.65; }
+body.home .hp-first-step-card b { margin-top: auto; padding-top: 1.5rem; color: #9a5a00; font-size: .9rem; }
+body.home .hp-first-step-card:hover { background: #f7fafc; }
+@media (max-width: 800px) {
+  body.home .hp-first-steps-heading { grid-template-columns: 1fr; gap: 1.25rem; }
+  body.home .hp-first-steps-grid { grid-template-columns: 1fr; }
+  body.home .hp-first-step-card { min-height: 18rem; border-right: 0; border-bottom: 1px solid #d8e0e6; }
+  body.home .hp-first-step-card:last-child { border-bottom: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   body.home * {
     transition: none !important;

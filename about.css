@@ -21,6 +21,7 @@ body.about-page .about-limits {
   display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(2rem, 7vw, 7rem);
   padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem);
 }
+body.about-page .about-creator { scroll-margin-top: 6rem; border-top: 1px solid #d9e1e8; }
 body.about-page .about-story h2,
 body.about-page .about-limits h2,
 body.about-page .about-closing h2 { margin: .65rem 0 0; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.08; letter-spacing: -.035em; }

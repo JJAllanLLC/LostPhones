@@ -67,6 +67,10 @@ function hasRobotsNoindex(block) {
   return !!(block && block.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, nofollow, noarchive'));
 }
 
+function hasCrawlableNoindex(block) {
+  return !!(block && block.headers.some((header) => header.key === 'X-Robots-Tag' && header.value === 'noindex, noarchive'));
+}
+
 test('homepage is production-indexable and global noindex is removed', () => {
   assert.equal(/name="robots"[^>]*noindex/i.test(indexHtml), false);
   assert.equal(/name="robots"[^>]*noindex/i.test(privacyHtml), false);
@@ -80,8 +84,8 @@ test('homepage is production-indexable and global noindex is removed', () => {
 test('production robots no longer globally disallow all', () => {
   assert.equal(/User-agent:\s*\*\s*Disallow:\s*\/\s*$/m.test(robots), false);
   assert.match(robots, /Allow:\s*\//);
-  assert.match(robots, /Disallow:\s*\/recovery\.html/);
-  assert.match(robots, /Disallow:\s*\/preparedness\.html/);
+  assert.doesNotMatch(robots, /Disallow:\s*\/recovery\.html/);
+  assert.doesNotMatch(robots, /Disallow:\s*\/preparedness\.html/);
   assert.match(robots, /Disallow:\s*\/recovery-plan-success\.html/);
   assert.match(robots, /Disallow:\s*\/success\.html/);
   assert.match(robots, /Disallow:\s*\/api\//);
@@ -89,10 +93,17 @@ test('production robots no longer globally disallow all', () => {
 });
 
 test('sensitive pages remain noindex', () => {
-  [recoveryHtml, preparednessHtml, successPaidHtml, successHtml].forEach((html) => {
+  [recoveryHtml, preparednessHtml].forEach((html) => {
+    assert.match(html, /noindex, noarchive/);
+    assert.doesNotMatch(html, /nofollow/);
+  });
+  [successPaidHtml, successHtml].forEach((html) => {
     assert.match(html, /noindex, nofollow, noarchive/);
   });
-  ['/recovery.html', '/preparedness.html', '/recovery-plan-success.html', '/success.html'].forEach((source) => {
+  ['/recovery.html', '/preparedness.html'].forEach((source) => {
+    assert.equal(hasCrawlableNoindex(headerBlock(source)), true, source);
+  });
+  ['/recovery-plan-success.html', '/success.html'].forEach((source) => {
     assert.equal(hasRobotsNoindex(headerBlock(source)), true, source);
   });
 });
@@ -188,11 +199,11 @@ test('redesigned public pages use the shared shell without legacy navigation sty
   });
 });
 
-test('redesigned pages expose the complete seven-link footer', () => {
-  [indexHtml, read('about.html'), blogIndexHtml, read('imei-check.html'), privacyHtml, termsHtml].forEach((html) => {
+test('redesigned pages expose the complete nine-link footer', () => {
+  [indexHtml, read('about.html'), blogIndexHtml, read('imei-check.html'), read('contact.html'), read('replacement-phone-guide.html'), privacyHtml, termsHtml].forEach((html) => {
     const footer = (html.match(/<footer class="hp-footer">([\s\S]*?)<\/footer>/) || [])[1] || '';
-    assert.equal((footer.match(/<a\b/g) || []).length, 9);
-    ['Home', 'Recovery', 'Protect Your Phone', 'Blog', 'About', 'Privacy', 'Terms'].forEach((label) => {
+    assert.equal((footer.match(/<a\b/g) || []).length, 11);
+    ['Home', 'Recovery', 'Protect Your Phone', 'Blog', 'Replacement Guide', 'About', 'Contact', 'Privacy', 'Terms'].forEach((label) => {
       assert.match(footer, new RegExp(`>${label}<`));
     });
   });
