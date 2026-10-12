@@ -215,7 +215,7 @@ if (/\$0\.99|Full Verification Report|create-imei-checkout-session|fetch-imei-re
 });
 
 const analytics = read('analytics-events.js');
-if (!analytics.includes('G-VQ8XCGGXN7')) fail('GA4 measurement ID is missing.');
+if (!analytics.includes('G-KQTTP3KMKN')) fail('GA4 measurement ID is missing.');
 if (!analytics.includes('uivo0q97p5')) fail('Clarity project ID is missing.');
 if (!/send_page_view:\s*false/.test(analytics)) fail('GA4 must disable automatic page views.');
 if (!analytics.includes('lostphones.com') || !analytics.includes('www.lostphones.com')) {

@@ -322,7 +322,7 @@ test('purchase event requires a verified payment result', () => {
 
 test('Clarity does not receive sensitive custom tags or user IDs', () => {
   assert.equal(analytics.CLARITY_PROJECT_ID, 'uivo0q97p5');
-  assert.equal(analytics.GA_MEASUREMENT_ID, 'G-VQ8XCGGXN7');
+  assert.equal(analytics.GA_MEASUREMENT_ID, 'G-KQTTP3KMKN');
   assert.equal(/clarity\(\s*['"]identify/.test(helperSrc), false);
   assert.equal(/clarity\(\s*['"]set/.test(helperSrc), false);
   analytics.resetForTests();
@@ -343,7 +343,7 @@ test('Clarity does not receive sensitive custom tags or user IDs', () => {
     location: win.location
   });
   assert.ok(documentRef.scripts.some((script) => script.src === 'https://www.clarity.ms/tag/uivo0q97p5'));
-  assert.ok(documentRef.scripts.some((script) => script.src.indexOf('googletagmanager.com/gtag/js?id=G-VQ8XCGGXN7') !== -1));
+  assert.ok(documentRef.scripts.some((script) => script.src.indexOf('googletagmanager.com/gtag/js?id=G-KQTTP3KMKN') !== -1));
   assert.equal(typeof win.clarity, 'function');
   assert.equal((win.clarity.q || []).length, 0);
   const config = gtag.calls.find((call) => call[0] === 'config');

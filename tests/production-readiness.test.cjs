@@ -121,7 +121,7 @@ test('paid PDF protection is unchanged', () => {
 });
 
 test('analytics production-only host gating is unchanged', () => {
-  assert.equal(analytics.GA_MEASUREMENT_ID, 'G-VQ8XCGGXN7');
+  assert.equal(analytics.GA_MEASUREMENT_ID, 'G-KQTTP3KMKN');
   assert.equal(analytics.CLARITY_PROJECT_ID, 'uivo0q97p5');
   assert.equal(analytics.isProductionHost('lostphones.com'), true);
   assert.equal(analytics.isProductionHost('www.lostphones.com'), true);
@@ -225,6 +225,6 @@ test('only the approved GA and Clarity production identifiers are present', () =
     .filter((name) => /\.(?:html|js)$/.test(name))
     .concat(fs.readdirSync(path.join(root, 'blog')).filter((name) => /\.(?:html|js)$/.test(name)).map((name) => `blog/${name}`));
   const combined = sourceFiles.map(read).join('\n');
-  assert.deepEqual([...new Set(combined.match(/G-[A-Z0-9]+/g) || [])], ['G-VQ8XCGGXN7']);
+  assert.deepEqual([...new Set(combined.match(/G-[A-Z0-9]+/g) || [])], ['G-KQTTP3KMKN']);
   assert.equal(analytics.CLARITY_PROJECT_ID, 'uivo0q97p5');
 });

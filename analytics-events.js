@@ -7,7 +7,7 @@
     global.LostPhonesAnalytics = api;
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
-  const GA_MEASUREMENT_ID = 'G-VQ8XCGGXN7';
+  const GA_MEASUREMENT_ID = 'G-KQTTP3KMKN';
   const CLARITY_PROJECT_ID = 'uivo0q97p5';
   const PRODUCT_ID = 'recovery_plan';
   const PRODUCT_VALUE = 8.95;
