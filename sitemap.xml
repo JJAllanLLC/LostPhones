@@ -7,6 +7,18 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://lostphones.com/recovery.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lostphones.com/preparedness.html</loc>
+    <lastmod>2026-10-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://lostphones.com/imei-check.html</loc>
     <lastmod>2026-10-06</lastmod>
     <changefreq>weekly</changefreq>
@@ -37,12 +49,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lostphones.com/blog1.html</loc>
-    <lastmod>2026-10-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://lostphones.com/blog/</loc>
     <lastmod>2026-10-06</lastmod>
     <changefreq>weekly</changefreq>
@@ -50,7 +56,7 @@
   </url>
   <url>
     <loc>https://lostphones.com/blog/lost-android-checklist-2025.html</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -62,7 +68,7 @@
   </url>
   <url>
     <loc>https://lostphones.com/blog/lost-phone-airport-2025.html</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -80,25 +86,25 @@
   </url>
   <url>
     <loc>https://lostphones.com/blog/lost-phone-in-hotel-room-2026.html</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lostphones.com/blog/lost-phone-uber-lyft-2025.html</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lostphones.com/blog/ultimate-airtag-setup-2025.html</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lostphones.com/blog/lost-phone-in-taxi-uber-2026.html</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -122,19 +128,19 @@
   </url>
   <url>
     <loc>https://lostphones.com/blog/phone-insurance-theft-loss-2026.html</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lostphones.com/blog/iphone-vs-android-safer-if-lost-2026.html</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://lostphones.com/blog/how-to-report-lost-stolen-phone-carrier-2026.html</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -146,7 +152,7 @@
   </url>
   <url>
     <loc>https://lostphones.com/blog/lost-iphone-dead-battery.html</loc>
-    <lastmod>2026-10-06</lastmod>
+    <lastmod>2026-10-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
